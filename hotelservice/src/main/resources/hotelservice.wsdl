@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="hotelservice" targetNamespace="http://j2ee.netbeans.org/wsdl/hotelservice/java/newWSDL"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/hotelservice/java/newWSDL" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/hotelservice/java/newWSDL" xmlns:tns="http://j2ee.netbeans.org/wsdl/hotelservice/java/newWSDL">
+            <xsd:complexType name="hotelBookingType">
+                <xsd:sequence>
+                    <xsd:element name="hotelName" type="xsd:string"></xsd:element>
+                    <xsd:element name="address" type="tns:addressType"></xsd:element>
+                    <xsd:element name="bookingNo" type="xsd:string"></xsd:element>
+                    <xsd:element name="price" type="xsd:float"></xsd:element>
+                    <xsd:element name="ccGuaranteeReq" type="xsd:boolean"></xsd:element>
+                    <xsd:element name="hotelServiceName" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="addressType">
+                <xsd:sequence>
+                    <xsd:element name="street" type="xsd:string"></xsd:element>
+                    <xsd:element name="houseNo" type="xsd:string"></xsd:element>
+                    <xsd:element name="city" type="xsd:string"></xsd:element>
+                    <xsd:element name="zip" type="xsd:string"></xsd:element>
+                    <xsd:element name="country" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="hotelBookingArrayType">
+                <xsd:sequence>
+                    <xsd:element name="newElement" type="tns:hotelBookingType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="hotelQueryType">
+                <xsd:sequence>
+                    <xsd:element name="city" type="xsd:string"></xsd:element>
+                    <xsd:element name="arrivalDate" type="xsd:date"></xsd:element>
+                    <xsd:element name="departureDate" type="xsd:date"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="hotelQuery" type="tns:hotelQueryType"></xsd:element>
+            <xsd:element name="hotelQueryResult" type="tns:hotelBookingArrayType"></xsd:element>
+            <xsd:complexType name="bookingType">
+                <xsd:sequence>
+                    <xsd:element name="bookingNo" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="hotelBooking" type="tns:hotelBookingType"></xsd:element>
+            <xsd:element name="hotelBookingFault">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="errorMessage" type="xsd:string"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="bookingCancellationType">
+                <xsd:sequence>
+                    <xsd:element name="bookingNo" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="bookingCancellation" type="tns:bookingCancellationType"></xsd:element>
+            <xsd:element name="bookingCancellationFault">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="errorMessage" type="xsd:string"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="hotelBookingResult" type="xsd:boolean"></xsd:element>
+            <xsd:element name="bookingCancellationResult" type="xsd:boolean"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="getHotelsOperationRequest">
+        <part name="hotelQuery" element="tns:hotelQuery"/>
+    </message>
+    <message name="getHotelsOperationResponse">
+        <part name="hotelBookingArray" element="tns:hotelQueryResult"/>
+    </message>
+    <message name="bookHotelOperationRequest">
+        <part name="hotelBooking" element="tns:hotelBooking"/>
+    </message>
+    <message name="bookHotelOperationResponse">
+        <part name="bookingResult" element="tns:hotelBookingResult"/>
+    </message>
+    <message name="bookHotelOperationFault">
+        <part name="bookingFault" element="tns:hotelBookingFault"/>
+    </message>
+    <message name="cancelHotelOperationRequest">
+        <part name="bookingCancellation" element="tns:bookingCancellation"/>
+    </message>
+    <message name="cancelHotelOperationResponse">
+        <part name="cancellationResult" element="tns:bookingCancellationResult"/>
+    </message>
+    <message name="cancelHotelOperationFault">
+        <part name="cancellationFault" element="tns:bookingCancellationFault"/>
+    </message>
+    <portType name="hotelServicePortType">
+        <operation name="cancelHotelOperation">
+            <input name="cancelHotelOperationInput" message="tns:cancelHotelOperationRequest"/>
+            <output name="cancelHotelOperationOutput" message="tns:cancelHotelOperationResponse"/>
+            <fault name="cancelHotelOperationFault" message="tns:cancelHotelOperationFault"/>
+        </operation>
+        <operation name="bookHotelOperation">
+            <input name="bookHotelOperationInput" message="tns:bookHotelOperationRequest"/>
+            <output name="bookHotelOperationOutput" message="tns:bookHotelOperationResponse"/>
+            <fault name="bookHotelOperationFault" message="tns:bookHotelOperationFault"/>
+        </operation>
+        <operation name="getHotelsOperation">
+            <input name="getHotelsOperationInput" message="tns:getHotelsOperationRequest"/>
+            <output name="getHotelsOperationOutput" message="tns:getHotelsOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="hotelServiceSOAP" type="tns:hotelServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="cancelHotelOperation">
+            <soap:operation/>
+            <input name="cancelHotelOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="cancelHotelOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+            <fault name="cancelHotelOperationFault">
+                <soap:fault name="cancelHotelOperationFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="bookHotelOperation">
+            <soap:operation/>
+            <input name="bookHotelOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="bookHotelOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+            <fault name="bookHotelOperationFault">
+                <soap:fault name="bookHotelOperationFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="getHotelsOperation">
+            <soap:operation/>
+            <input name="getHotelsOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="getHotelsOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="hotelService">
+        <port name="hotelServiceSOAPPort" binding="tns:hotelServiceSOAP"/>
+    </service>
+</definitions>
