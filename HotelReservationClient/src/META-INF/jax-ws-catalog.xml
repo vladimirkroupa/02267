@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/home/prasopes/skola/02267/project/02267/HotelReservation/src/java/hotelservice.wsdl" uri="wsdl/hotelservice.wsdl"/>
+    <system systemId="http://localhost:8080/HotelReservation/hotelService?wsdl" uri="wsdl/localhost_8080/HotelReservation/hotelService.wsdl"/>
+</catalog>
