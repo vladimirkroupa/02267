@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/C:/Users/s114671/Documents/NetBeansProjects/LameDuck/src/java/lameDuckWSDL.wsdl" uri="src/conf/xml-resources/web-services/lameDuckService/wsdl/lameDuckWSDL.wsdl"/>
+    <system systemId="file:/C:/Users/s114671/Documents/NetBeansProjects/LameDuck/src/java/flightData.xsd" uri="src/conf/xml-resources/web-services/lameDuckService/wsdl/flightData.xsd"/>
+</catalog>
