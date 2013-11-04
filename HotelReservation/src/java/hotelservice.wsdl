@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions name="hotelservice" targetNamespace="http://dk.dtu.02267.hotelservice/WSDL"
-    xmlns="http://schemas.xmlsoap.org/wsdl/"
-    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-    <types>
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="urn://types.fastmoney.imm.dtu.dk" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns1="urn://types.fastmoney.imm.dtu.dk" xmlns:ns2="urn://types.fastmoney.imm.dtu.dk">
+    <types>   
         <xsd:schema targetNamespace="http://dk.dtu.02267.hotelservice/WSDL" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL">
-            <xsd:complexType name="hotelBookingType">
+            <xsd:import namespace="urn://types.fastmoney.imm.dtu.dk" schemaLocation="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1"></xsd:import>            
+            <xsd:complexType name="hotelType">
                 <xsd:sequence>
                     <xsd:element name="hotelName" type="xsd:string"></xsd:element>
                     <xsd:element name="address" type="tns:addressType"></xsd:element>
@@ -24,9 +25,9 @@
                     <xsd:element name="country" type="xsd:string"></xsd:element>
                 </xsd:sequence>
             </xsd:complexType>
-            <xsd:complexType name="hotelBookingArrayType">
+            <xsd:complexType name="hotelArrayType">
                 <xsd:sequence>
-                    <xsd:element name="bookings" type="tns:hotelBookingType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+                    <xsd:element name="hotels" type="tns:hotelType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
                 </xsd:sequence>
             </xsd:complexType>
             <xsd:complexType name="hotelQueryType">
@@ -37,45 +38,35 @@
                 </xsd:sequence>
             </xsd:complexType>
             <xsd:element name="hotelQuery" type="tns:hotelQueryType"></xsd:element>
-            <xsd:element name="hotelQueryResult" type="tns:hotelBookingArrayType"></xsd:element>
-            <xsd:complexType name="bookingType">
-                <xsd:sequence>
-                    <xsd:element name="bookingNo" type="xsd:string"></xsd:element>
-                </xsd:sequence>
-            </xsd:complexType>
-            <xsd:element name="hotelBooking" type="tns:hotelBookingType"></xsd:element>
-            <xsd:element name="hotelBookingFault">
-                <xsd:complexType>
-                    <xsd:sequence>
-                        <xsd:element name="errorMessage" type="xsd:string"></xsd:element>
-                    </xsd:sequence>
-                </xsd:complexType>
-            </xsd:element>
-            <xsd:complexType name="bookingCancellationType">
-                <xsd:sequence>
-                    <xsd:element name="bookingNo" type="xsd:string"></xsd:element>
-                </xsd:sequence>
-            </xsd:complexType>
-            <xsd:element name="bookingCancellation" type="tns:bookingCancellationType"></xsd:element>
-            <xsd:element name="bookingCancellationFault">
-                <xsd:complexType>
-                    <xsd:sequence>
-                        <xsd:element name="errorMessage" type="xsd:string"></xsd:element>
-                    </xsd:sequence>
-                </xsd:complexType>
-            </xsd:element>
+            <xsd:element name="hotelQueryResult" type="tns:hotelArrayType"></xsd:element>
+            <xsd:element name="hotelBookingWithCreditCard" type="tns:hotelBookingWithCreditCardType"></xsd:element>
+            <xsd:element name="hotelBookingFault" type="tns:hotelFaultType"></xsd:element>
+            <xsd:element name="hotelCancellation" type="xsd:string"></xsd:element>
+            <xsd:element name="hotelCancellationFault" type="tns:hotelFaultType"></xsd:element>
             <xsd:element name="hotelBookingResult" type="xsd:boolean"></xsd:element>
-            <xsd:element name="bookingCancellationResult" type="xsd:boolean"></xsd:element>
+            <xsd:element name="hotelCancellationResult" type="xsd:boolean"></xsd:element>
+            <xsd:complexType name="hotelBookingWithCreditCardType">
+                <xsd:sequence>
+                    <xsd:element name="bookingNumber" type="xsd:string"></xsd:element>
+                    <xsd:element name="validateCreditCardInfo" type="ns0:validateCreditCard"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="hotelFaultType">
+                <xsd:sequence>
+                    <xsd:element name="errorMessage" type="xsd:string"></xsd:element>
+                    <xsd:element name="errorDetail" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
         </xsd:schema>
     </types>
     <message name="getHotelsOperationRequest">
         <part name="hotelQuery" element="tns:hotelQuery"/>
     </message>
     <message name="getHotelsOperationResponse">
-        <part name="hotelBookingArray" element="tns:hotelQueryResult"/>
+        <part name="hotelArray" element="tns:hotelQueryResult"/>
     </message>
     <message name="bookHotelOperationRequest">
-        <part name="hotelBooking" element="tns:hotelBooking"/>
+        <part name="bookingWithCreditCard" element="tns:hotelBookingWithCreditCard"/>
     </message>
     <message name="bookHotelOperationResponse">
         <part name="bookingResult" element="tns:hotelBookingResult"/>
@@ -84,13 +75,13 @@
         <part name="bookingFault" element="tns:hotelBookingFault"/>
     </message>
     <message name="cancelHotelOperationRequest">
-        <part name="bookingCancellation" element="tns:bookingCancellation"/>
+        <part name="bookingCancellation" element="tns:hotelCancellation"/>
     </message>
     <message name="cancelHotelOperationResponse">
-        <part name="cancellationResult" element="tns:bookingCancellationResult"/>
+        <part name="cancellationResult" element="tns:hotelCancellationResult"/>
     </message>
     <message name="cancelHotelOperationFault">
-        <part name="cancellationFault" element="tns:bookingCancellationFault"/>
+        <part name="cancellationFault" element="tns:hotelCancellationFault"/>
     </message>
     <portType name="hotelServicePortType">
         <operation name="cancelHotelOperation">
@@ -149,4 +140,7 @@
             <soap:address location="http://localhost:${HttpDefaultPort}/HotelReservation/hotelservice/hotelServiceSOAPPort"/>
         </port>
     </service>
+    <plink:partnerLinkType name="partnerlinktype1">
+        <plink:role name="hotelServiceRole" portType="tns:hotelServicePortType"/>
+    </plink:partnerLinkType>
 </definitions>

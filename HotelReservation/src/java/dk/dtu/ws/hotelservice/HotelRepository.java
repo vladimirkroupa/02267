@@ -1,22 +1,29 @@
+
 package dk.dtu.ws.hotelservice;
 
 import hotelservice._02267.dtu.dk.wsdl.AddressType;
-import hotelservice._02267.dtu.dk.wsdl.HotelBookingArrayType;
-import hotelservice._02267.dtu.dk.wsdl.HotelBookingType;
+import hotelservice._02267.dtu.dk.wsdl.HotelArrayType;
 import hotelservice._02267.dtu.dk.wsdl.HotelQueryType;
+import hotelservice._02267.dtu.dk.wsdl.HotelType;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  *
  * @author prasopes
+ * 2013-11-1 Modified by Henry Lie to use HashMap for hotelBooking
  */
+
 public class HotelRepository {
     
-    private HotelBookingType booking1;
-    private HotelBookingType booking2;
-    private HotelBookingType booking3;
+    private HotelType hotel1;
+    private HotelType hotel2;
+    private HotelType hotel3;
+    private HashMap<String,HotelType> bookingNoToHotelMap = new HashMap<String,HotelType>();
             
     public HotelRepository() {
+        String bookingNo = null;
+        
         AddressType address1 = new AddressType();
         address1.setCity("Copenhagen");
         address1.setCountry("Denmark");
@@ -24,13 +31,15 @@ public class HotelRepository {
         address1.setStreet("Dynamovej");
         address1.setZip("2750");
         
-        booking1 = new HotelBookingType();        
-        booking1.setAddress(address1);
-        booking1.setBookingNo("000001");
-        booking1.setCcGuaranteeReq(true);        
-        booking1.setHotelServiceName("NiceView");
-        booking1.setHotelName("Royal Hotel");      
-        booking1.setPrice(450.0f);
+        hotel1 = new HotelType();        
+        hotel1.setAddress(address1);
+        bookingNo = "000001";
+        hotel1.setBookingNo("bookingNo");
+        hotel1.setCcGuaranteeReq(true);        
+        hotel1.setHotelServiceName("NiceView");
+        hotel1.setHotelName("Royal Hotel");      
+        hotel1.setPrice(450.0f);
+        bookingNoToHotelMap.put(bookingNo, hotel1);
         
         AddressType address2 = new AddressType();
         address2.setCity("Copenhagen");
@@ -39,13 +48,15 @@ public class HotelRepository {
         address2.setStreet("Elektrovej");
         address2.setZip("2750");
 
-        booking2 = new HotelBookingType();        
-        booking2.setAddress(address2);
-        booking2.setBookingNo("000002");
-        booking2.setCcGuaranteeReq(false);        
-        booking2.setHotelServiceName("NiceView");
-        booking2.setHotelName("Cheap Hotel");      
-        booking2.setPrice(250.0f);      
+        hotel2 = new HotelType();        
+        hotel2.setAddress(address2);
+        bookingNo = "000002";        
+        hotel2.setBookingNo(bookingNo);
+        hotel2.setCcGuaranteeReq(false);        
+        hotel2.setHotelServiceName("NiceView");
+        hotel2.setHotelName("Cheap Hotel");      
+        hotel2.setPrice(250.0f);    
+        bookingNoToHotelMap.put(bookingNo, hotel2);
         
         AddressType address3 = new AddressType();
         address3.setCity("Copenhagen");
@@ -54,25 +65,35 @@ public class HotelRepository {
         address3.setStreet("Magnetovej");
         address3.setZip("2750");
 
-        booking3 = new HotelBookingType();        
-        booking3.setAddress(address3);
-        booking3.setBookingNo("000003");
-        booking3.setCcGuaranteeReq(false);        
-        booking3.setHotelServiceName("NiceView");
-        booking3.setHotelName("DTU Dormitory"); 
-        booking3.setPrice(50.0f);        
+        hotel3 = new HotelType();        
+        hotel3.setAddress(address3);
+        bookingNo = "000003";        
+        hotel3.setBookingNo(bookingNo);
+        hotel3.setCcGuaranteeReq(false);        
+        hotel3.setHotelServiceName("NiceView");
+        hotel3.setHotelName("DTU Dormitory"); 
+        hotel3.setPrice(50.0f);  
+        bookingNoToHotelMap.put(bookingNo, hotel3);        
     }
     
-    public HotelBookingArrayType listHotels(HotelQueryType hotelQuery) {
+    public HotelArrayType listHotels(HotelQueryType hotelQuery) {
         //hotelQuery.getArrivalDate();
         //hotelQuery.getDepartureDate();
         //hotelQuery.getCity();
-        HotelBookingArrayType result = new HotelBookingArrayType();
-        List<HotelBookingType> bookings = result.getBookings();
-        bookings.add(booking1);
-        bookings.add(booking2);
-        bookings.add(booking3);
+        HotelArrayType result = new HotelArrayType();
+        List<HotelType> hotels = result.getHotels();
+        hotels.add(hotel1);
+        hotels.add(hotel2);
+        hotels.add(hotel3);
         return result;
     }
     
+    public boolean isValidHotel(String bookingNo){
+        return bookingNoToHotelMap.containsKey(bookingNo);
+    }
+    
+    public boolean isCCGuaranteeRequired(String bookingNo){
+        HotelType hotel = bookingNoToHotelMap.get(bookingNo);
+        return hotel.isCcGuaranteeReq();
+    }
 }

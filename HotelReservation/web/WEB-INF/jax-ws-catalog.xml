@@ -3,6 +3,6 @@
     <system systemId="file:/home/prasopes/skola/02267/project/02267/hotelreservation/src/java/hotelservice.wsdl" uri="src/conf/xml-resources/web-services/HotelReservation/wsdl/hotelservice.wsdl"/>
     <system systemId="file:/home/prasopes/skola/02267/project/02267/HotelReservation/src/java/hotelservice.wsdl" uri="src/conf/xml-resources/web-services/HotelReservation/wsdl/hotelservice.wsdl"/>
     <system systemId="file:/D:/OpenESBProjects/02267/HotelReservation/src/java/hotelservice.wsdl" uri="src/conf/xml-resources/web-services/HotelReservation/wsdl/hotelservice.wsdl"/>
-    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?wsdl" uri="src/conf/xml-resources/web-service-references/BankService/wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl"/>
-    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="src/conf/xml-resources/web-service-references/BankService/wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
+    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?wsdl" uri="wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl"/>
+    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
 </catalog>

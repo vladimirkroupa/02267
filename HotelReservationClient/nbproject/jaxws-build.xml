@@ -19,7 +19,7 @@
     <target name="wsimport-client-hotelService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/hotelService"/>
         <property name="wsdl-hotelService" location="xml-resources/web-service-references/hotelService/wsdl/localhost_8080/HotelReservation/hotelService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/hotelService" destdir="${build.generated.dir}/jax-wsCache/hotelService" wsdl="${wsdl-hotelService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="http://localhost:8080/HotelReservation/hotelService?wsdl" xnocompile="true" xendorsed="true" package="dk.dtu.ws">
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/hotelService" destdir="${build.generated.dir}/jax-wsCache/hotelService" wsdl="${wsdl-hotelService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="http://localhost:8080/HotelReservation/hotelService?wsdl" xnocompile="true" xendorsed="true" package="dk.dtu.ws.hotelservice">
             <depends file="${wsdl-hotelService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/hotelService"/>
         </wsimport>
@@ -31,7 +31,7 @@
     </target>
     <target name="wsimport-client-clean-hotelService" depends="-init-project">
         <delete dir="${build.generated.dir}/jax-wsCache/hotelService"/>
-        <delete dir="${build.generated.sources.dir}/jax-ws/dk/dtu/ws"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/dk/dtu/ws/hotelservice"/>
     </target>
     <target name="wsimport-client-generate" depends="wsimport-client-hotelService"/>
 </project>
