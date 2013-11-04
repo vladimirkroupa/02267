@@ -90,4 +90,9 @@ public class HotelReservation {
     public HotelArrayType getHotelsOperation(HotelQueryType hotelQuery) {
         return hotelRepository.listHotels(hotelQuery);
     }
+    
+    public void resetOperation(String reset) {
+        bookedHotel.clear();
+    }
+    
 }

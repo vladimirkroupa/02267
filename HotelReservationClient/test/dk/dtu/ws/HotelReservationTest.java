@@ -20,6 +20,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -28,6 +29,11 @@ import org.junit.Test;
  */
 public class HotelReservationTest {
 
+    @Before
+    public void cleanBookings() {
+        resetOperation("");
+    }
+    
     @Test
     public void testGetHotelOperation() throws DatatypeConfigurationException {
         HotelQueryType query = new HotelQueryType();
@@ -42,20 +48,7 @@ public class HotelReservationTest {
     @Test
     public void testBookHotelOperation() {
         try {
-            HotelBookingWithCreditCardType booking = new HotelBookingWithCreditCardType();
-            booking.setBookingNumber("000001");
-            CreditCardInfoType info = new CreditCardInfoType();
-            info.setName("Anne Strandberg");
-            info.setNumber("50408816");
-            ExpirationDateType date = new ExpirationDateType();
-            date.setMonth(5);
-            date.setYear(9);
-            info.setExpirationDate(date);
-            ValidateCreditCard v = new ValidateCreditCard();
-            v.setCreditCardInfo(info);
-            v.setAmount(250);
-            v.setGroup(1);
-            booking.setValidateCreditCardInfo(v);
+            HotelBookingWithCreditCardType booking = createBooking();
             boolean bookStatus = bookHotelOperation(booking);
             Assert.assertTrue(bookStatus);
         } catch (BookHotelOperationFault ex) {
@@ -63,20 +56,39 @@ public class HotelReservationTest {
             ex.printStackTrace();
         }
     }
-
+        
     @Test
-    public void testCancelHotelOperation() {
+    public void testCancelHotelOperation() throws CancelHotelOperationFault, BookHotelOperationFault {
+        HotelBookingWithCreditCardType booking = createBooking();
+        bookHotelOperation(booking);
         boolean cancelStatus;
-        try {
-            cancelStatus = cancelHotelOperation("000001");
-            Assert.assertTrue(cancelStatus);            
-        } catch (CancelHotelOperationFault ex) {
-            Logger.getLogger(HotelReservationTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
+        cancelStatus = cancelHotelOperation("000001");
+        Assert.assertTrue(cancelStatus);            
     }
 
+    @Test(expected = CancelHotelOperationFault.class)
+    public void testCancelHotelOperationNonExistingBooking() throws CancelHotelOperationFault {
+        cancelHotelOperation("000002");
+    }
+
+    private HotelBookingWithCreditCardType createBooking() {
+        HotelBookingWithCreditCardType booking = new HotelBookingWithCreditCardType();
+        booking.setBookingNumber("000001");
+        CreditCardInfoType info = new CreditCardInfoType();
+        info.setName("Anne Strandberg");
+        info.setNumber("50408816");
+        ExpirationDateType date = new ExpirationDateType();
+        date.setMonth(5);
+        date.setYear(9);
+        info.setExpirationDate(date);
+        ValidateCreditCard v = new ValidateCreditCard();
+        v.setCreditCardInfo(info);
+        v.setAmount(250);
+        v.setGroup(1);
+        booking.setValidateCreditCardInfo(v);
+        return booking;
+    }
+    
     private XMLGregorianCalendar toXMLGregCal(Date date) throws DatatypeConfigurationException {
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(date);
@@ -101,5 +113,11 @@ public class HotelReservationTest {
         dk.dtu.ws.hotelservice.HotelService service = new dk.dtu.ws.hotelservice.HotelService();
         dk.dtu.ws.hotelservice.HotelServicePortType port = service.getHotelServiceSOAPPort();
         return port.getHotelsOperation(hotelQuery);
+    }
+
+    private static void resetOperation(java.lang.String reset) {
+        dk.dtu.ws.hotelservice.HotelService service = new dk.dtu.ws.hotelservice.HotelService();
+        dk.dtu.ws.hotelservice.HotelServicePortType port = service.getHotelServiceSOAPPort();
+        port.resetOperation(reset);
     }
 }
