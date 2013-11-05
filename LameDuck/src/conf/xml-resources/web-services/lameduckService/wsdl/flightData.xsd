@@ -15,8 +15,8 @@
     </xsd:complexType>
     <xsd:complexType name="FlightInfoType">
         <xsd:sequence>
-            <xsd:element name="bookingNumber" type="xsd:int"></xsd:element>
-            <xsd:element name="flightPrice" type="xsd:double"></xsd:element>
+            <xsd:element name="bookingNumber" type="xsd:string"></xsd:element>
+            <xsd:element name="flightPrice" type="xsd:int"></xsd:element>
             <xsd:element name="airlineReservationServiceName" type="xsd:string"></xsd:element>
             <xsd:element name="flight" type="tns:flightType"></xsd:element>
         </xsd:sequence>
