@@ -42,7 +42,7 @@ public class lameduckJUnitTest {
         ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
         ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
         flightdata.FlightInfoListType testResult = port.getFlights("Copenhagen, Denmark", "Beijing, China", date("2013-12-02T12:00:00.000+00:00"));
-        System.out.println("SIZE: "+testResult.getFlightInfo().size());
+       // System.out.println("SIZE: "+testResult.getFlightInfo().size());
         assertEquals("1234568", testResult.getFlightInfo().get(0).getBookingNumber());
     }
     
@@ -83,35 +83,11 @@ public class lameduckJUnitTest {
 
     }
 
-    @Test
-    public void testValidateCreditCard() throws CreditCardFaultMessage {
-        dk.dtu.imm.fastmoney.BankService service = new dk.dtu.imm.fastmoney.BankService();
-        dk.dtu.imm.fastmoney.BankPortType port = service.getBankPort();
-        dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcardInfo = new dk.dtu.imm.fastmoney.types.CreditCardInfoType();
-        dk.dtu.imm.fastmoney.types.ExpirationDateType expDate = new dk.dtu.imm.fastmoney.types.ExpirationDateType();
-        expDate.setMonth(5);
-        expDate.setYear(9);
-
-        creditcardInfo.setName("Anne Strandberg");
-        creditcardInfo.setNumber("50408816");
-        creditcardInfo.setExpirationDate(expDate);
-        boolean result = port.validateCreditCard(02, creditcardInfo, 10000000);
-        System.out.println(result);
-        
-        dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcardInfo2 = new dk.dtu.imm.fastmoney.types.CreditCardInfoType();
-        dk.dtu.imm.fastmoney.types.ExpirationDateType expDate2 = new dk.dtu.imm.fastmoney.types.ExpirationDateType();
-        expDate2.setMonth(7);
-        expDate2.setYear(9);
-
-        creditcardInfo2.setName("Bech Camilla");
-        creditcardInfo2.setNumber("50408822");
-        creditcardInfo2.setExpirationDate(expDate2);
-        
-        boolean result2 = port.validateCreditCard(02, creditcardInfo2,999);
-        System.out.println(result2);
-    }
-    
-    public void testBookFlight() throws BookFlightFault {
+   @Test
+   public void testBookFlight() throws BookFlightFault {   
+        System.out.println("------------start testBookFlight():");
+        String testBookingNumber1="1234567";
+        System.out.println(" try to book flight : "+testBookingNumber1);
         ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
         ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
         //not enough money creditcard
@@ -131,12 +107,64 @@ public class lameduckJUnitTest {
         creditcardInfo.setNumber("50408816");
         creditcardInfo.setExpirationDate(expDate);
         ///book the flight
-        boolean result= port.bookFlight("1234567", creditcardInfo);
-        System.out.println("test book flight : "+result);
+        boolean result= port.bookFlight(testBookingNumber1, creditcardInfo);
+        if(result){
+        System.out.println(" flight  "+testBookingNumber1+" is booked ;");}
+        System.out.println("------------end testBookFlight():");
     }
-    @Test
+   
+    public void BookFlight(String bookingNumber) throws BookFlightFault {
+        System.out.println("in Bookflight() : try to book flight : "+bookingNumber);
+        ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
+        ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
+        //not enough money creditcard
+        dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcardInfo2 = new dk.dtu.imm.fastmoney.types.CreditCardInfoType();
+        dk.dtu.imm.fastmoney.types.ExpirationDateType expDate2 = new dk.dtu.imm.fastmoney.types.ExpirationDateType();
+        expDate2.setMonth(7);
+        expDate2.setYear(9);
+        creditcardInfo2.setName("Bech Camilla");
+        creditcardInfo2.setNumber("50408822");
+        creditcardInfo2.setExpirationDate(expDate2);
+        //enough money creditcard
+        dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcardInfo = new dk.dtu.imm.fastmoney.types.CreditCardInfoType();
+        dk.dtu.imm.fastmoney.types.ExpirationDateType expDate = new dk.dtu.imm.fastmoney.types.ExpirationDateType();
+        expDate.setMonth(5);
+        expDate.setYear(9);
+        creditcardInfo.setName("Anne Strandberg");
+        creditcardInfo.setNumber("50408816");
+        creditcardInfo.setExpirationDate(expDate);
+        ///book the flight
+        boolean result= port.bookFlight(bookingNumber, creditcardInfo);
+        if(result){
+        System.out.println("in Bookflight(): flight "+bookingNumber+" is booked ");
+        }
+    }
+ @Test
     public void testCancelFlight() throws CancelFlightFault, BookFlightFault {
-        testBookFlight();
+        System.out.println("------------start testCancelFlight():");
+        String testBookingNumber="1234573";
+        BookFlight(testBookingNumber);
+        ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
+        ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
+        dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcardInfo = new dk.dtu.imm.fastmoney.types.CreditCardInfoType();
+        dk.dtu.imm.fastmoney.types.ExpirationDateType expDate = new dk.dtu.imm.fastmoney.types.ExpirationDateType();
+        expDate.setMonth(5);
+        expDate.setYear(9);
+        creditcardInfo.setName("Anne Strandberg");
+        creditcardInfo.setNumber("50408816");
+        creditcardInfo.setExpirationDate(expDate);
+        
+        boolean result= port.cancelFlight(testBookingNumber, 1500, creditcardInfo);
+        if(result){
+            System.out.println(" flight: "+testBookingNumber+" is canceled");
+        }  
+        System.out.println("------------end testCancelFlight():");
+    }
+//try to cancel a flight that is not booked or exist 
+    // data stored in the server side can be refresh by redploy the web service 
+    @Test(expected=CancelFlightFault.class)
+    public void testCancelFlight_fault() throws CancelFlightFault{
+        System.out.println("------------start testCancelFlight_fault():");
         ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
         ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
         
@@ -148,8 +176,15 @@ public class lameduckJUnitTest {
         creditcardInfo.setNumber("50408816");
         creditcardInfo.setExpirationDate(expDate);
         
-        boolean result= port.cancelFlight("1234567", 1500, creditcardInfo);
-        System.out.println("test cancel flight result is : "+ result);
+        boolean result= port.cancelFlight("1222782266", 1500, creditcardInfo);
+       
+    }
+   @Test(expected=BookFlightFault.class)
+    public void testTwice_booking_withsameBookingNumber() throws BookFlightFault{
+         System.out.println("------------start testTwice_booking_withsameBookingNumber():");
+    BookFlight("1234571");
+    BookFlight("1234571");
+     System.out.println("------------end testTwice_booking_withsameBookingNumber():");
     }
     
 }

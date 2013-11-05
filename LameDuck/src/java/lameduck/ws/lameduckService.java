@@ -42,8 +42,6 @@ public class lameDuckService {
             int day = flightInfo1.getFlight().getDatetimeLift().getDay();
             int month = flightInfo1.getFlight().getDatetimeLift().getMonth();
             int year = flightInfo1.getFlight().getDatetimeLift().getYear();
-
-
             // System.out.println("Input: " + date.getYear() + "-" + date.getMonth() + "-" + date.getDay() + " Thisflight: " + year + "-" + month + "-" + day);
             //System.out.println("Size: " +fligthInfo.size());
             //System.out.println("Compare Result: " + date.compare(createDate(day, month, year)));
@@ -70,8 +68,11 @@ public class lameDuckService {
         lameDuckAccount.setNumber("50208812");
         flightdata.FlightInfoType flightInfo=getFlightByBookingNumber(bookingNumber);
         if(flightInfo==null){
-            System.out.println("No such flight found by booking number in BOOKING process.");
-            return false;
+            throw new BookFlightFault("No such flight found by booking number in BOOKING process.",
+                  "No such flight found by booking number in BOOKING process.");
+        } else if(flight_isBooked(flightInfo)){
+            throw new BookFlightFault("The flight is already booked, can't book it again.",
+                  "The flight is already booked, can't book it again.");
         }
         int flight_price= flightInfo.getFlightPrice();
         try {
@@ -89,7 +90,7 @@ public class lameDuckService {
         return true;
     }
 
-    public boolean cancelFlight(java.lang.String bookingNumber, int flightPrice, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcardInfo) throws CancelFlightFault {
+   public boolean cancelFlight(java.lang.String bookingNumber, int flightPrice, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcardInfo) throws CancelFlightFault {
         //TODO implement this method
         dk.dtu.imm.fastmoney.types.AccountType lameDuckAccount= new dk.dtu.imm.fastmoney.types.AccountType();
         lameDuckAccount.setName("LameDuck");
@@ -99,8 +100,9 @@ public class lameDuckService {
         
         flightdata.FlightInfoType flightInfo=getFlightByBookingNumber_in_booked_flight(bookingNumber);
         if(flightInfo==null){
-            System.out.println("No such flight found by booking number in CANCEL process.");
-            return false;
+         throw new CancelFlightFault("No such flight found by booking number in CANCEL process.",
+                  "No such flight found by booking number in CANCEL process.");
+           // return false;
         }
         try{
         refundCreditCard(2, creditcardInfo, refundAmount, lameDuckAccount);
@@ -114,7 +116,18 @@ public class lameDuckService {
         }
         return true;
     }
+    public boolean flight_isBooked( flightdata.FlightInfoType flightInfo){
+       for (int i = 0; i < bookedFlights.size(); i++) {
 
+            flightdata.FlightInfoType fund_flightInfo = bookedFlights.get(i);
+
+            if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(flightInfo.getBookingNumber())) { //2 == that this date matches a flight date
+                return true;
+            }
+        }
+    return false;
+    }
+    
     public flightdata.FlightInfoType getFlightByBookingNumber(String bookingNumber) {
         flightdata.FlightInfoType thisFlightInfo = new flightdata.FlightInfoType();
         List<flightdata.FlightInfoType> fligthInfo = fdb.flightInfoList.getFlightInfo();
@@ -126,27 +139,24 @@ public class lameDuckService {
                 thisFlightInfo = fund_flightInfo;
             }
         }
-        if (thisFlightInfo == null) {
-            //throw exception
-            throw new UnsupportedOperationException("Not matched booking number in all the flight list.");
-        }
+     
         return thisFlightInfo;
     }
     
     public flightdata.FlightInfoType getFlightByBookingNumber_in_booked_flight(String bookingNumber) {
-        flightdata.FlightInfoType thisFlightInfo = new flightdata.FlightInfoType();
-   
+        flightdata.FlightInfoType thisFlightInfo =null;
+     // System.out.println("size of booked flight "+bookedFlights.size());
+        if(bookedFlights.size()>0){    
         for (int i = 0; i < bookedFlights.size(); i++) {
 
             flightdata.FlightInfoType fund_flightInfo = bookedFlights.get(i);
 
             if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(bookingNumber)) { //2 == that this date matches a flight date
                 thisFlightInfo = fund_flightInfo;
+            }else{
+            thisFlightInfo=null;
             }
         }
-        if (thisFlightInfo == null) {
-            //throw exception
-            throw new UnsupportedOperationException("Not matched booking number in the booked flight list.");
         }
         return thisFlightInfo;
     }
