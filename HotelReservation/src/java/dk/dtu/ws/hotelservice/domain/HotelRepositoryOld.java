@@ -1,5 +1,5 @@
 
-package dk.dtu.ws.hotelservice;
+package dk.dtu.ws.hotelservice.domain;
 
 import hotelservice._02267.dtu.dk.wsdl.AddressType;
 import hotelservice._02267.dtu.dk.wsdl.HotelArrayType;
@@ -14,14 +14,14 @@ import java.util.List;
  * 2013-11-1 Modified by Henry Lie to use HashMap for hotelBooking
  */
 
-public class HotelRepository {
+public class HotelRepositoryOld {
     
     private HotelType hotel1;
     private HotelType hotel2;
     private HotelType hotel3;
     private HashMap<String,HotelType> bookingNoToHotelMap = new HashMap<String,HotelType>();
             
-    public HotelRepository() {
+    public HotelRepositoryOld() {
         String bookingNo = null;
         
         AddressType address1 = new AddressType();
