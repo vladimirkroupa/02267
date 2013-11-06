@@ -2,18 +2,12 @@
 <definitions name="lameDuckWSDL" targetNamespace="http://lameDuck.ws"
     xmlns="http://schemas.xmlsoap.org/wsdl/"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://lameDuck.ws" xmlns:ns="urn:flightData" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://lameDuck.ws" xmlns:ns="urn:flightData" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="urn://types.fastmoney.imm.dtu.dk">
     <types>
         <xsd:schema targetNamespace="http://lameDuck.ws">
             <xsd:import namespace="urn:flightData" schemaLocation="flightData.xsd"/>
+            <xsd:import namespace="urn://types.fastmoney.imm.dtu.dk" schemaLocation="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1"/>
             <xsd:element name="bookFlightFailure" type="xsd:string"></xsd:element>
-            <xsd:complexType name="creditcardInfoType">
-                <xsd:sequence>
-                    <xsd:element name="holderName" type="xsd:string"></xsd:element>
-                    <xsd:element name="creditcardNumber" type="xsd:int"></xsd:element>
-                    <xsd:element name="expDate" type="xsd:date"></xsd:element>
-                </xsd:sequence>
-            </xsd:complexType>
             <xsd:element name="cancelFlightFailure" type="xsd:string"></xsd:element>
         </xsd:schema>
     </types>
@@ -26,8 +20,8 @@
         <part name="flightsList" type="ns:flightInfoListType"/>
     </message>
     <message name="bookFlightRequest">
-        <part name="bookingNumber" type="xsd:int"/>
-        <part name="creditcardInfo" type="tns:creditcardInfoType"/>
+        <part name="bookingNumber" type="xsd:string"/>
+        <part name="creditcardInfo" type="ns0:creditCardInfoType"/>
     </message>
     <message name="bookFlightResponse">
         <part name="bookingResult" type="xsd:boolean"/>
@@ -36,9 +30,9 @@
         <part name="bookingFfault" element="tns:bookFlightFailure"/>
     </message>
     <message name="cancelFlightRequest">
-        <part name="bookingNumber" type="xsd:int"/>
-        <part name="flightPrice" type="xsd:double"/>
-        <part name="creditcardInfo" type="tns:creditcardInfoType"/>
+        <part name="bookingNumber" type="xsd:string"/>
+        <part name="flightPrice" type="xsd:int"/>
+        <part name="creditcardInfo" type="ns0:creditCardInfoType"/>
     </message>
     <message name="cancelFlightResponse">
         <part name="cancelFlightResult" type="xsd:boolean"/>
