@@ -4,129 +4,147 @@ import dk.dtu.imm.fastmoney.CreditCardFaultMessage;
 import dk.dtu.imm.fastmoney.types.CreditCardFaultType;
 import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import dk.dtu.ws.bankservice.client.BankServiceClient;
+import dk.dtu.ws.hotelservice.WSTypeConverter;
 import dk.dtu.ws.hotelservice.domain.dataset.StaticHotelSource;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
+import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
+import hotelservice._02267.dtu.dk.wsdl.HotelArrayType;
 import hotelservice._02267.dtu.dk.wsdl.HotelFaultType;
+import hotelservice._02267.dtu.dk.wsdl.HotelType;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author prasopes
- */
 public class NiceView {
 
-    public static final int GROUP_NUMBER = 1;
-    public static final double CC_AUTH_THRESHOLD = 200.0;
+    public static final int GROUP_NUMBER = 2;
+    public static final String SERVICE_NAME = "NiceView";
     
     private final HotelRepository hotels;
-    private final Map<String, BookingOffer> offeredBookings = new HashMap<String, BookingOffer>();
-    private final Map<String, Hotel> confirmedBookings = new HashMap<String, Hotel>();
+    private final Map<String, Booking> offeredBookings = new HashMap<String, Booking>();
+    private final Map<String, Booking> confirmedBookings = new HashMap<String, Booking>();
     private final BankServiceClient bank = new BankServiceClient();
 
     public NiceView() {
         hotels = new HotelRepository(StaticHotelSource.hotels());
     }
-    
-    public List<Hotel> listHotels(String city, Date checkIn, Date checkOut) {
-        return hotels.listHotelsAvailable(city, checkIn, checkOut);
-    }
-    
-    public void bookHotel(String bookingNo, CreditCardInfoType cc) throws BookHotelOperationFault {
-        if (validateBookingNo(bookingNo)) {
-            //if (ccAuthRequired)
+
+    public HotelArrayType listHotels(String city, Date checkIn, Date checkOut) {
+        HotelArrayType result = new HotelArrayType();
+        for (Booking booking : listBookingOffers(city, checkIn, checkOut)) {
+            HotelType ht = WSTypeConverter.toHotelType(booking);
+            result.getHotels().add(ht);
         }
+        return result;
+    }
+
+    List<Booking> listBookingOffers(String city, Date checkIn, Date checkOut) {
+        List<Booking> result = new ArrayList<Booking>();
+        for (Hotel h : hotels.listHotelsAvailable(city, checkIn, checkOut)) {
+            Booking booking = createBookingOffer(checkIn, checkOut, h);
+            offeredBookings.put(booking.getBookingNumber(), booking);
+            result.add(booking);
+        }
+        return result;
+    }
+
+    public boolean bookHotel(String bookingNo, CreditCardInfoType cc) throws BookHotelOperationFault {
+        if (validateBooking(bookingNo)) {
+            Booking booking = offeredBookings.get(bookingNo);
+
+            if (booking.ccAuthRequired()) {
+                validateCreditCard(booking.getPrice(), cc);
+            }
+
+            offeredBookings.remove(bookingNo);
+            confirmedBookings.put(bookingNo, booking);
+
+            return true;
+        }
+        return false;
+    }
+
+    public boolean cancelBooking(String bookingNo) throws CancelHotelOperationFault {
+        if (validateBookingCancellation(bookingNo)) {
+            confirmedBookings.remove(bookingNo);
+            return true;
+        }
+        return false;
     }
     
-    private boolean ccAuthRequired(double amount) {
-        return amount > CC_AUTH_THRESHOLD;
+    public void reset() {
+        this.offeredBookings.clear();
+        this.confirmedBookings.clear();
+        BookingNumberSequence.reset();
     }
-    
-    private boolean validateBookingNo(String bookingNo) throws BookHotelOperationFault {
-        if (! hotels.containsKey(bookingNo)) {
-            BookHotelOperationFault fault = createHotelOpFault("Invalid hotel specified", "Booking number: " + bookingNo);
+
+    private Booking createBookingOffer(Date checkIn, Date checkOut, Hotel hotel) {
+        String bookingNo = BookingNumberSequence.nextBookingNo();
+        Booking booking = new Booking(hotel, bookingNo, checkIn, checkOut);
+        return booking;
+    }
+
+    private boolean validateBooking(String bookingNo) throws BookHotelOperationFault {
+        if (confirmedBookings.containsKey(bookingNo)) {
+            BookHotelOperationFault fault = createBookingFault("Booking already exists.", "Booking number: " + bookingNo);
+            throw fault;
+        }
+        if (!offeredBookings.containsKey(bookingNo)) {
+            BookHotelOperationFault fault = createBookingFault("Invalid booking number specified", "Booking number: " + bookingNo);
             throw fault;
         }
         return true;
     }
-    
-    private boolean validateCreditCard(int amount, CreditCardInfoType cc) throws BookHotelOperationFault {
+
+    private boolean validateBookingCancellation(String bookingNo) throws CancelHotelOperationFault {
+        boolean offered = offeredBookings.containsKey(bookingNo);
+        boolean confirmed = confirmedBookings.containsKey(bookingNo);
+
+        if (!confirmed && !offered) {
+            throw createCancellationFault("Invalid booking number specified", "Booking number: " + bookingNo);
+        }
+        if (offered && !confirmed) {
+            throw createCancellationFault("Attempt to cancel unconfirmed booking.", "Booking number: " + bookingNo);
+        }
+        if (offered && confirmed) {
+            throw new IllegalStateException("Invalid booking state.");
+        }
+        return true;
+    }
+
+    private boolean validateCreditCard(double amount, CreditCardInfoType cc) throws BookHotelOperationFault {
         boolean valid;
         CreditCardFaultType ccFault = null;
+        int intAmount = new BigDecimal(amount).intValue();
         try {
-            valid = bank.validateCreditCard(GROUP_NUMBER, cc, amount);
+            valid = bank.validateCreditCard(GROUP_NUMBER, cc, intAmount);
         } catch (CreditCardFaultMessage ex) {
             ccFault = ex.getFaultInfo();
             valid = false;
         }
-        if (! valid) {
+        if (!valid) {
             String faultMsg = ccFault != null ? ccFault.getMessage() : "Card information are not valid.";
-            BookHotelOperationFault bookingFault = createHotelOpFault("Could not process credit card.", faultMsg);
+            BookHotelOperationFault bookingFault = createBookingFault("Could not process credit card.", faultMsg);
             throw bookingFault;
         }
         return true;
-        
+
     }
-    
-    private BookHotelOperationFault createHotelOpFault(String message, String detail) {
+
+    private BookHotelOperationFault createBookingFault(String message, String detail) {
         HotelFaultType hotelFault = new HotelFaultType();
         hotelFault.setErrorMessage(message);
         hotelFault.setErrorDetail(detail);
         return new BookHotelOperationFault(message, hotelFault);
     }
-    
-    static class HotelBooking {
-        
-        Booking booking;
-        Hotel hotel;
 
-        public HotelBooking(Booking booking, Hotel hotel) {
-            this.booking = booking;
-            this.hotel = hotel;
-        }
-
-        public Booking getBooking() {
-            return booking;
-        }
-
-        public Hotel getHotel() {
-            return hotel;
-        }
-
-        @Override
-        public String toString() {
-            return "HotelBooking{" + "booking=" + booking + ", hotel=" + hotel + '}';
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 71 * hash + (this.booking != null ? this.booking.hashCode() : 0);
-            hash = 71 * hash + (this.hotel != null ? this.hotel.hashCode() : 0);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final HotelBooking other = (HotelBooking) obj;
-            if (this.booking != other.booking && (this.booking == null || !this.booking.equals(other.booking))) {
-                return false;
-            }
-            if (this.hotel != other.hotel && (this.hotel == null || !this.hotel.equals(other.hotel))) {
-                return false;
-            }
-            return true;
-        }
-        
+    private CancelHotelOperationFault createCancellationFault(String message, String detail) {
+        HotelFaultType hotelFault = new HotelFaultType();
+        hotelFault.setErrorMessage(message);
+        hotelFault.setErrorDetail(detail);
+        return new CancelHotelOperationFault(message, hotelFault);
     }
-            
 }

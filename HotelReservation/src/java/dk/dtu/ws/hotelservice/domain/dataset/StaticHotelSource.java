@@ -5,10 +5,6 @@ import dk.dtu.ws.hotelservice.domain.Hotel;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- *
- * @author prasopes
- */
 public class StaticHotelSource {
     
     public static List<Hotel> hotels() {

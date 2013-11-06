@@ -8,10 +8,6 @@ import org.joda.time.Days;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
-/**
- *
- * @author prasopes
- */
 public class Hotel {
 
     private final String name;
@@ -45,11 +41,12 @@ public class Hotel {
     }
     
     public double getPriceForStay(Date checkIn, Date checkOut) {
-        return getPriceForStay(new LocalDate(checkIn), new LocalDate(checkOut));
+        Interval stay = new Interval(new LocalDate(checkIn).toDateTimeAtStartOfDay(), new LocalDate(checkOut).toDateTimeAtStartOfDay());
+        return getPriceForStay(stay);
     }
     
-    public double getPriceForStay(LocalDate checkIn, LocalDate checkOut) {
-        int days = Days.daysBetween(checkIn, checkOut).getDays();
+    public double getPriceForStay(Interval stay) {
+        int days = Days.daysIn(stay).getDays();
         return days * pricePerNight;
     }
 
@@ -93,6 +90,10 @@ public class Hotel {
         return freeRooms;
     }
 
+    void cancelAllBookings() {
+        bookings.clear();
+    }
+    
     @Override
     public String toString() {
         return "Hotel{" + "name=" + name + ", address=" + address + ", pricePerNight=" + pricePerNight + ", rooms=" + rooms + ", bookings=" + bookings + '}';

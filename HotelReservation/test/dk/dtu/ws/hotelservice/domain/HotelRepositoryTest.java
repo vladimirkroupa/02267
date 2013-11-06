@@ -1,9 +1,5 @@
 package dk.dtu.ws.hotelservice.domain;
 
-import dk.dtu.ws.hotelservice.domain.HotelRepository;
-import dk.dtu.ws.hotelservice.domain.Hotel;
-import dk.dtu.ws.hotelservice.domain.OverbookingException;
-import dk.dtu.ws.hotelservice.domain.Address;
 import java.util.Arrays;
 import java.util.List;
 import org.joda.time.LocalDate;
@@ -11,10 +7,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
-/**
- *
- * @author prasopes
- */
 public class HotelRepositoryTest {
     
     private HotelRepository hotelRepo;

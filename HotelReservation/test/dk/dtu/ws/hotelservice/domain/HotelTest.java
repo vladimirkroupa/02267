@@ -5,10 +5,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
-/**
- *
- * @author prasopes
- */
 public class HotelTest {
     
     private Hotel hotel;
@@ -23,7 +19,7 @@ public class HotelTest {
         LocalDate from = LocalDate.now();
         LocalDate to = from.plusDays(5);
         double expectedPrice = 250.0;
-        double actualPrice = hotel.getPriceForStay(from, to);
+        double actualPrice = hotel.getPriceForStay(from.toDate(), to.toDate());
         assertEquals(expectedPrice, actualPrice, 0.1);
     }
 

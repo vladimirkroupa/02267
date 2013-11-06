@@ -1,23 +1,18 @@
 package dk.dtu.ws.hotelservice.domain;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.joda.time.LocalDate;
-
-/**
- *
- * @author prasopes
- */
 
 public class HotelRepository {
     
     /** City => Hotels map */
-    private final Map<String, List<Hotel>> hotels = new HashMap<String, List<Hotel>>();
+    private final Multimap<String, Hotel> hotels = HashMultimap.create();
     
     public HotelRepository(Hotel... hotels) {
         this(Arrays.asList(hotels));
@@ -31,27 +26,29 @@ public class HotelRepository {
     
     private void add(Hotel hotel) {
         String city = hotel.getAddress().getCity();
-        if (! this.hotels.containsKey(city)) {
-           this.hotels.put(city, new ArrayList<Hotel>());
-        }
-        List<Hotel> cityHotels = this.hotels.get(city);
-        cityHotels.add(hotel);
+        hotels.put(city, hotel);
     }
     
     public List<Hotel> listHotelsAvailable(String city, Date checkIn, Date checkOut) {
-        return listHotelsAvailable(city, checkIn, checkOut);
+        return listHotelsAvailable(city, new LocalDate(checkIn), new LocalDate(checkOut));
     }
     
     public List<Hotel> listHotelsAvailable(String city, LocalDate checkIn, LocalDate checkOut) {
         List<Hotel> availableHotels = new ArrayList<Hotel>();
 
-        List<Hotel> hotelsInCity = hotels.get(city);
+        Collection<Hotel> hotelsInCity = hotels.get(city);
         for (Hotel hotel : hotelsInCity) {
             if (hotel.hasAvailableRoom(checkIn, checkOut)) {
                 availableHotels.add(hotel);
             }
         }
         return availableHotels;
+    }
+ 
+    void cancelAllBookings() {
+        for (Hotel h : hotels.values()) {
+            h.cancelAllBookings();
+        }
     }
     
 }
