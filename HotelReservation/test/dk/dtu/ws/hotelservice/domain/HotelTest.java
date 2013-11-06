@@ -1,7 +1,6 @@
 package dk.dtu.ws.hotelservice.domain;
 
-import java.util.Date;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -21,18 +20,18 @@ public class HotelTest {
 
     @Test
     public void testPrice() {
-        DateTime from = DateTime.now();
-        DateTime to = from.plusDays(5);
+        LocalDate from = LocalDate.now();
+        LocalDate to = from.plusDays(5);
         double expectedPrice = 250.0;
         double actualPrice = hotel.getPriceForStay(from, to);
         assertEquals(expectedPrice, actualPrice, 0.1);
     }
 
     @Test
-    public void testBooking() {
-        DateTime today = DateTime.now();
-        DateTime tommorow = today.plusDays(1);
-        DateTime day_after_tommorow = tommorow.plusDays(1);
+    public void testBooking() throws OverbookingException {
+        LocalDate today = LocalDate.now();
+        LocalDate tommorow = today.plusDays(1);
+        LocalDate day_after_tommorow = tommorow.plusDays(1);
         
         assertEquals(3, hotel.freeRoomsOn(today));
         assertEquals(3, hotel.freeRoomsOn(tommorow));
@@ -54,10 +53,10 @@ public class HotelTest {
         assertFalse(hotel.hasAvailableRoom(today, day_after_tommorow));
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void testOverbooking() {
-        DateTime today = DateTime.now();
-        DateTime tommorow = today.plusDays(1);
+    @Test(expected = OverbookingException.class)
+    public void testOverbooking() throws OverbookingException {
+        LocalDate today = LocalDate.now();
+        LocalDate tommorow = today.plusDays(1);
         
         hotel.bookHotel(today, tommorow);
         hotel.bookHotel(today, tommorow);

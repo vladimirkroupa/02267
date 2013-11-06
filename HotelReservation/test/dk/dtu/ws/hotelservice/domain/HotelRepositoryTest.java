@@ -1,10 +1,12 @@
 package dk.dtu.ws.hotelservice.domain;
 
-import hotelservice._02267.dtu.dk.wsdl.AddressType;
-import hotelservice._02267.dtu.dk.wsdl.HotelType;
+import dk.dtu.ws.hotelservice.domain.HotelRepository;
+import dk.dtu.ws.hotelservice.domain.Hotel;
+import dk.dtu.ws.hotelservice.domain.OverbookingException;
+import dk.dtu.ws.hotelservice.domain.Address;
 import java.util.Arrays;
 import java.util.List;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -26,17 +28,17 @@ public class HotelRepositoryTest {
 
     @Test
     public void testHotelsAvailableNoBookings() {
-        DateTime today = DateTime.now();
-        DateTime tommorow = today.plusDays(1);
+        LocalDate today = LocalDate.now();
+        LocalDate tommorow = today.plusDays(1);
         List<Hotel> expectedHotels = Arrays.asList(hotel1, hotel2);
         List<Hotel> actualHotels = hotelRepo.listHotelsAvailable("Copenhagen", today, tommorow);
         assertEquals(expectedHotels, actualHotels);
     }
 
     @Test
-    public void testListHotelsAvailableFullyBooked() {
-        DateTime today = DateTime.now();
-        DateTime tommorow = today.plusDays(1);
+    public void testListHotelsAvailableFullyBooked() throws OverbookingException {
+        LocalDate today = LocalDate.now();
+        LocalDate tommorow = today.plusDays(1);
         hotel1.bookHotel(today, tommorow);
         hotel1.bookHotel(today, tommorow);
         hotel1.bookHotel(today, tommorow);

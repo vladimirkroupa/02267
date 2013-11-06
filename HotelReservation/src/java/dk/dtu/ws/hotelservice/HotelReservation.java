@@ -10,6 +10,7 @@ import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import dk.dtu.imm.fastmoney.types.ExpirationDateType;
 import dk.dtu.imm.fastmoney.types.ValidateCreditCard;
 import dk.dtu.ws.bankservice.client.BankServiceClient;
+import dk.dtu.ws.hotelservice.domain.HotelRepository;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
 import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
 import hotelservice._02267.dtu.dk.wsdl.HotelArrayType;
@@ -26,7 +27,7 @@ import javax.jws.WebService;
 @WebService(serviceName = "hotelService", portName = "hotelServiceSOAPPort", endpointInterface = "hotelservice._02267.dtu.dk.wsdl.HotelServicePortType", targetNamespace = "http://dk.dtu.02267.hotelservice/WSDL", wsdlLocation = "WEB-INF/wsdl/HotelReservation/hotelservice.wsdl")
 public class HotelReservation {
 
-    private HotelRepositoryOld hotelRepository = new HotelRepositoryOld();
+    private HotelRepository hotelRepository = new HotelRepository();
     private ArrayList<String> bookedHotel = new ArrayList<String>();
 
     public boolean cancelHotelOperation(String bookingCancellation) throws CancelHotelOperationFault {

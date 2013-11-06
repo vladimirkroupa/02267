@@ -1,11 +1,13 @@
 package dk.dtu.ws.hotelservice.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -18,6 +20,10 @@ public class HotelRepository {
     private final Map<String, List<Hotel>> hotels = new HashMap<String, List<Hotel>>();
     
     public HotelRepository(Hotel... hotels) {
+        this(Arrays.asList(hotels));
+    }
+        
+    public HotelRepository(Collection<Hotel> hotels) {
         for (Hotel hotel : hotels) {
             add(hotel);
         }
@@ -36,7 +42,7 @@ public class HotelRepository {
         return listHotelsAvailable(city, checkIn, checkOut);
     }
     
-    public List<Hotel> listHotelsAvailable(String city, DateTime checkIn, DateTime checkOut) {
+    public List<Hotel> listHotelsAvailable(String city, LocalDate checkIn, LocalDate checkOut) {
         List<Hotel> availableHotels = new ArrayList<Hotel>();
 
         List<Hotel> hotelsInCity = hotels.get(city);

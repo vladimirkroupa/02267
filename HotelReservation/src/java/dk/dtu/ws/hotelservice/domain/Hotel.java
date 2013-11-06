@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.Interval;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -16,14 +18,14 @@ public class Hotel {
     private final Address address;
     private final double pricePerNight;
     private final int rooms;
-    private final List<HotelBooking> bookings;
+    private final List<Interval> bookings;
 
     public Hotel(String name, Address address, int rooms, double pricePerNight) {
         this.name = name;
         this.address = address;
         this.rooms = rooms;
         this.pricePerNight = pricePerNight;
-        this.bookings = new ArrayList<HotelBooking>();
+        this.bookings = new ArrayList<Interval>();
     }
 
     public String getName() {
@@ -43,31 +45,31 @@ public class Hotel {
     }
     
     public double getPriceForStay(Date checkIn, Date checkOut) {
-        return getPriceForStay(new DateTime(checkIn), new DateTime(checkOut));
+        return getPriceForStay(new LocalDate(checkIn), new LocalDate(checkOut));
     }
     
-    public double getPriceForStay(DateTime checkIn, DateTime checkOut) {
+    public double getPriceForStay(LocalDate checkIn, LocalDate checkOut) {
         int days = Days.daysBetween(checkIn, checkOut).getDays();
         return days * pricePerNight;
     }
 
-    public void bookHotel(Date checkIn, Date checkOut) {
-        bookHotel(new DateTime(checkIn), new DateTime(checkOut));
+    public void bookHotel(Date checkIn, Date checkOut) throws OverbookingException {
+        bookHotel(new LocalDate(checkIn), new LocalDate(checkOut));
     }
     
-    public void bookHotel(DateTime checkIn, DateTime checkOut) {
+    public void bookHotel(LocalDate checkIn, LocalDate checkOut) throws OverbookingException {
         if (!hasAvailableRoom(checkIn, checkOut)) {
-            throw new IllegalArgumentException("No rooms available for selected period.");
+            throw new OverbookingException("No rooms available for selected period.");
         }
-        HotelBooking booking = new HotelBooking(checkIn, checkOut);
+        Interval booking = new Interval(checkIn.toDateTimeAtStartOfDay(), checkOut.plusDays(1).toDateTimeAtStartOfDay());
         bookings.add(booking);
     }
 
     public boolean hasAvailableRoom(Date from, Date to) {
-        return hasAvailableRoom(new DateTime(from), new DateTime(to));
+        return hasAvailableRoom(new LocalDate(from), new LocalDate(to));
     }
     
-    public boolean hasAvailableRoom(DateTime from, DateTime to) {
+    public boolean hasAvailableRoom(LocalDate from, LocalDate to) {
         while (from.compareTo(to) <= 0) {            
             if (freeRoomsOn(from) == 0) {
                 return false;
@@ -77,11 +79,15 @@ public class Hotel {
         return true;
     }
 
-    int freeRoomsOn(DateTime day) {
+    int freeRoomsOn(LocalDate day) {
+        DateTime dayDT = day.toDateTimeAtStartOfDay();
         int freeRooms = this.rooms;
-        for (HotelBooking booking : bookings) {
-            if (booking.containsDate(day)) {
+        for (Interval booking : bookings) {            
+            if (booking.contains(dayDT)) {
+                System.out.println("Interval " + booking + " contains day " + day);
                 freeRooms--;
+            } else {
+                System.out.println("Interval " + booking + " does not contain day " + day);
             }
         }
         return freeRooms;
