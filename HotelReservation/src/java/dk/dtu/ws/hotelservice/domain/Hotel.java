@@ -58,8 +58,12 @@ public class Hotel {
         if (!hasAvailableRoom(checkIn, checkOut)) {
             throw new OverbookingException("No rooms available for selected period.");
         }
-        Interval booking = new Interval(checkIn.toDateTimeAtStartOfDay(), checkOut.plusDays(1).toDateTimeAtStartOfDay());
+        Interval booking = new Interval(checkIn.toDateTimeAtStartOfDay(), checkOut.toDateTimeAtStartOfDay());
         bookings.add(booking);
+    }
+    
+    public boolean cancelBooking(Interval interval) {
+        return bookings.remove(interval);
     }
 
     public boolean hasAvailableRoom(Date from, Date to) {
@@ -80,11 +84,8 @@ public class Hotel {
         DateTime dayDT = day.toDateTimeAtStartOfDay();
         int freeRooms = this.rooms;
         for (Interval booking : bookings) {            
-            if (booking.contains(dayDT)) {
-                System.out.println("Interval " + booking + " contains day " + day);
+            if (booking.contains(dayDT) || booking.getEnd().equals(dayDT)) {
                 freeRooms--;
-            } else {
-                System.out.println("Interval " + booking + " does not contain day " + day);
             }
         }
         return freeRooms;

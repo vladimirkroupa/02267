@@ -33,9 +33,24 @@ public class Booking {
     public Hotel getHotel() {
         return hotel;
     }
+
+    public Interval getStay() {
+        return stay;
+    }
     
     public boolean ccAuthRequired() {
         return getPrice() > CC_AUTH_THRESHOLD;
+    }
+    
+    public boolean book() throws OverbookingException {
+        LocalDate from = getStay().getStart().toLocalDate();
+        LocalDate to = getStay().getEnd().toLocalDate();        
+        getHotel().bookHotel(from, to);
+        return true;
+    }
+    
+    public boolean cancel() {
+        return getHotel().cancelBooking(getStay());
     }
     
     /* generated */

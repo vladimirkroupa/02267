@@ -1,6 +1,9 @@
 package dk.dtu.ws.hotelservice.domain;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -37,9 +40,10 @@ public class HotelTest {
         hotel.bookHotel(today, tommorow);
         assertEquals(1, hotel.freeRoomsOn(today));
         assertEquals(1, hotel.freeRoomsOn(tommorow));
+        assertEquals(3, hotel.freeRoomsOn(day_after_tommorow));
         assertTrue(hotel.hasAvailableRoom(today, day_after_tommorow));
 
-        hotel.bookHotel(day_after_tommorow, day_after_tommorow);
+        hotel.bookHotel(day_after_tommorow, day_after_tommorow.plusDays(1));
         assertEquals(1, hotel.freeRoomsOn(today));
         assertEquals(1, hotel.freeRoomsOn(tommorow));
         assertEquals(2, hotel.freeRoomsOn(day_after_tommorow));                                
@@ -47,6 +51,8 @@ public class HotelTest {
         
         hotel.bookHotel(today.minusDays(1), today);
         assertFalse(hotel.hasAvailableRoom(today, day_after_tommorow));
+        hotel.cancelBooking(new Interval(today.minusDays(1).toDateTimeAtStartOfDay(), today.toDateTimeAtStartOfDay()));
+        assertTrue(hotel.hasAvailableRoom(today, day_after_tommorow));
     }
     
     @Test(expected = OverbookingException.class)
@@ -59,4 +65,5 @@ public class HotelTest {
         hotel.bookHotel(today, tommorow);
         hotel.bookHotel(today, tommorow);
     }
+    
 }

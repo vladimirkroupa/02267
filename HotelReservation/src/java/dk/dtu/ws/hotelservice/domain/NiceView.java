@@ -17,6 +17,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.joda.time.Interval;
 
 public class NiceView {
 
@@ -61,6 +64,11 @@ public class NiceView {
 
             offeredBookings.remove(bookingNo);
             confirmedBookings.put(bookingNo, booking);
+            try {
+                booking.book();
+            } catch (OverbookingException ex) {
+                throw createBookingFault("Hotel overbooked.", "" + bookingNo);
+            }
 
             return true;
         }
@@ -68,9 +76,10 @@ public class NiceView {
     }
 
     public boolean cancelBooking(String bookingNo) throws CancelHotelOperationFault {
-        if (validateBookingCancellation(bookingNo)) {
+        if (validateBookingCancellation(bookingNo)) {                      
+            Booking booking = confirmedBookings.get(bookingNo);
             confirmedBookings.remove(bookingNo);
-            return true;
+            return booking.cancel();
         }
         return false;
     }
