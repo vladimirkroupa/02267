@@ -78,18 +78,16 @@ public class HotelReservationTest {
     private HotelBookingWithCreditCardType createBooking() {
         HotelBookingWithCreditCardType booking = new HotelBookingWithCreditCardType();
         booking.setBookingNumber("00001");
+        
         CreditCardInfoType info = new CreditCardInfoType();
         info.setName("Anne Strandberg");
         info.setNumber("50408816");
         ExpirationDateType date = new ExpirationDateType();
         date.setMonth(5);
         date.setYear(9);
-        info.setExpirationDate(date);
-        ValidateCreditCard v = new ValidateCreditCard();
-        v.setCreditCardInfo(info);
-        v.setAmount(250);
-        v.setGroup(1);
-        booking.setValidateCreditCardInfo(v);
+        info.setExpirationDate(date);        
+        
+        //booking.setCreditCardInfo(info);
         return booking;
     }
     

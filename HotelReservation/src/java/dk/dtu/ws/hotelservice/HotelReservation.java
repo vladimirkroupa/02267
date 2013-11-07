@@ -26,7 +26,7 @@ public class HotelReservation {
     }
 
     public boolean bookHotelOperation(HotelBookingWithCreditCardType bookingWithCreditCard) throws BookHotelOperationFault, CreditCardFaultMessage {
-        return niceView.bookHotel(bookingWithCreditCard.getBookingNumber(), bookingWithCreditCard.getValidateCreditCardInfo().getCreditCardInfo());
+        return niceView.bookHotel(bookingWithCreditCard.getBookingNumber(), bookingWithCreditCard.getCreditCardInfo());
     }
 
     public boolean cancelHotelOperation(String bookingCancellation) throws CancelHotelOperationFault {

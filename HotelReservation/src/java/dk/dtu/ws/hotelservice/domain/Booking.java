@@ -8,7 +8,7 @@ import org.joda.time.LocalDate;
 
 public class Booking {
 
-    public static final double CC_AUTH_THRESHOLD = 200.0;
+    public static final double CC_AUTH_THRESHOLD = 20.0;
     
     private final Hotel hotel;
     private final String bookingNo;
