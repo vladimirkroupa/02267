@@ -11,7 +11,9 @@ import dk.dtu.ws.hotelservice.ExpirationDateType;
 import dk.dtu.ws.hotelservice.HotelArrayType;
 import dk.dtu.ws.hotelservice.HotelBookingWithCreditCardType;
 import dk.dtu.ws.hotelservice.HotelQueryType;
+import dk.dtu.ws.hotelservice.HotelType;
 import dk.dtu.ws.hotelservice.ValidateCreditCard;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
@@ -35,66 +37,71 @@ public class HotelReservationTest {
     }
     
     @Test
-    public void testGetHotelOperation() throws DatatypeConfigurationException {
-        HotelQueryType query = new HotelQueryType();
-        query.setArrivalDate(toXMLGregCal(new Date()));
-        query.setCity("Copenhagen");
-        query.setDepartureDate(toXMLGregCal(new Date()));
-
-        HotelArrayType result = getHotelsOperation(query);
+    public void testGetHotelOperation() {
+        HotelArrayType result = getHotelsOperation(createHotelQuery());
+        Assert.assertEquals("00001", result.getHotels().get(0).getBookingNo());
+        Assert.assertEquals("00002", result.getHotels().get(1).getBookingNo());
         Assert.assertFalse(result.getHotels().isEmpty());
     }
 
     @Test
-    public void testBookHotelOperation() {
-        try {
-            HotelBookingWithCreditCardType booking = createBooking();
-            boolean bookStatus = bookHotelOperation(booking);
-            Assert.assertTrue(bookStatus);
-        } catch (BookHotelOperationFault ex) {
-            Logger.getLogger(HotelReservationTest.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-        }
+    public void testBookHotelOperation() throws BookHotelOperationFault {
+        getHotelsOperation(createHotelQuery());
+        HotelBookingWithCreditCardType booking = createBooking();
+        boolean bookStatus = bookHotelOperation(booking);
+        Assert.assertTrue(bookStatus);
     }
         
     @Test
     public void testCancelHotelOperation() throws CancelHotelOperationFault, BookHotelOperationFault {
+        getHotelsOperation(createHotelQuery());
         HotelBookingWithCreditCardType booking = createBooking();
         bookHotelOperation(booking);
         boolean cancelStatus;
-        cancelStatus = cancelHotelOperation("000001");
+        cancelStatus = cancelHotelOperation("00001");
         Assert.assertTrue(cancelStatus);            
     }
 
     @Test(expected = CancelHotelOperationFault.class)
     public void testCancelHotelOperationNonExistingBooking() throws CancelHotelOperationFault {
-        cancelHotelOperation("000002");
+        cancelHotelOperation("00002");
     }
 
+    private HotelQueryType createHotelQuery() {
+        HotelQueryType query = new HotelQueryType();
+        query.setArrivalDate(toXMLGregCal(DateUtil.today()));
+        query.setCity("Copenhagen");
+        query.setDepartureDate(toXMLGregCal(DateUtil.tommorow()));
+        return query;
+    }
+    
     private HotelBookingWithCreditCardType createBooking() {
         HotelBookingWithCreditCardType booking = new HotelBookingWithCreditCardType();
-        booking.setBookingNumber("000001");
+        booking.setBookingNumber("00001");
+        
         CreditCardInfoType info = new CreditCardInfoType();
         info.setName("Anne Strandberg");
         info.setNumber("50408816");
         ExpirationDateType date = new ExpirationDateType();
         date.setMonth(5);
         date.setYear(9);
-        info.setExpirationDate(date);
-        ValidateCreditCard v = new ValidateCreditCard();
-        v.setCreditCardInfo(info);
-        v.setAmount(250);
-        v.setGroup(1);
-        booking.setValidateCreditCardInfo(v);
+        info.setExpirationDate(date);        
+        
+        //booking.setCreditCardInfo(info);
         return booking;
     }
     
-    private XMLGregorianCalendar toXMLGregCal(Date date) throws DatatypeConfigurationException {
+    private XMLGregorianCalendar toXMLGregCal(Date date) {
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(date);
 
-        DatatypeFactory dtf = DatatypeFactory.newInstance();
-        return dtf.newXMLGregorianCalendar(cal);
+        try {
+            DatatypeFactory dtf = DatatypeFactory.newInstance();
+            return dtf.newXMLGregorianCalendar(cal);
+        } catch (DatatypeConfigurationException e) {
+            throw new IllegalStateException(e);
+        }
+        
     }
 
     private static boolean bookHotelOperation(HotelBookingWithCreditCardType bookingWithCreditCard) throws BookHotelOperationFault {

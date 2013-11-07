@@ -33,19 +33,10 @@
                     <xsd:element name="departureDate" type="xsd:date"/>
                 </xsd:sequence>
             </xsd:complexType>
-            <xsd:element name="hotelQuery" type="tns:hotelQueryType"/>
-            <xsd:element name="hotelQueryResult" type="tns:hotelArrayType"/>
-            <xsd:element name="hotelBookingWithCreditCard" type="tns:hotelBookingWithCreditCardType"/>
-            <xsd:element name="hotelBookingFault" type="tns:hotelFaultType"/>
-            <xsd:element name="hotelCancellation" type="xsd:string"/>
-            <xsd:element name="hotelCancellationFault" type="tns:hotelFaultType"/>
-            <xsd:element name="hotelBookingResult" type="xsd:boolean"/>
-            <xsd:element name="hotelCancellationResult" type="xsd:boolean"/>
-            <xsd:element name="reset" type="xsd:string"/>
             <xsd:complexType name="hotelBookingWithCreditCardType">
                 <xsd:sequence>
                     <xsd:element name="bookingNumber" type="xsd:string"/>
-                    <xsd:element name="validateCreditCardInfo" type="ns0:validateCreditCard"/>
+                    <xsd:element name="creditCardInfo" type="ns0:creditCardInfoType"/>
                 </xsd:sequence>
             </xsd:complexType>
             <xsd:complexType name="hotelFaultType">
@@ -54,6 +45,15 @@
                     <xsd:element name="errorDetail" type="xsd:string"/>
                 </xsd:sequence>
             </xsd:complexType>
+            <xsd:element name="hotelQuery" type="tns:hotelQueryType"/>
+            <xsd:element name="hotelQueryResult" type="tns:hotelArrayType"/>
+            <xsd:element name="hotelBookingWithCreditCard" type="tns:hotelBookingWithCreditCardType"/>
+            <xsd:element name="hotelBookingFault" type="tns:hotelFaultType"/>
+            <xsd:element name="hotelCancellation" type="xsd:string"/>
+            <xsd:element name="hotelCancellationFault" type="tns:hotelFaultType"/>
+            <xsd:element name="hotelBookingResult" type="xsd:boolean"/>
+            <xsd:element name="hotelCancellationResult" type="xsd:boolean"/>
+            <xsd:element name="reset" type="xsd:string"/>            
         </xsd:schema>
     </types>
     <message name="getHotelsOperationRequest">
