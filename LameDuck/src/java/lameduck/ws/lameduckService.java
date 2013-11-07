@@ -30,7 +30,8 @@ public class lameDuckService {
     flightDB fdb = new flightDB();
     List<flightdata.FlightInfoType> bookedFlights = new ArrayList();
     flightdata.FlightInfoListType matchedFlights; //= new flightdata.FlightInfoListType();
-
+    int GROUP_NUMBER = 2;
+    
     public flightdata.FlightInfoListType getFlights(java.lang.String startDest, java.lang.String finalDest, javax.xml.datatype.XMLGregorianCalendar date) {
         matchedFlights = new flightdata.FlightInfoListType();
 
@@ -52,8 +53,6 @@ public class lameDuckService {
 
                     matchedFlights.getFlightInfo().add(flightInfo1);
                 }
-
-
             } else {
                 System.out.println("NO FLIGHT FOUND for date,start and dest");
             }
@@ -77,8 +76,8 @@ public class lameDuckService {
         int flight_price= flightInfo.getFlightPrice();
         try {
             //TODO implement this method
-            validateCreditCard(2, creditcardInfo, flight_price);
-            chargeCreditCard(2, creditcardInfo, flight_price,lameDuckAccount);
+            validateCreditCard(GROUP_NUMBER, creditcardInfo, flight_price);
+            chargeCreditCard(GROUP_NUMBER, creditcardInfo, flight_price,lameDuckAccount);
             bookedFlights.add(flightInfo);
             System.out.println("New flight booked, booking number is:  "+bookedFlights.get(0).getBookingNumber());
             
@@ -105,7 +104,7 @@ public class lameDuckService {
            // return false;
         }
         try{
-        refundCreditCard(2, creditcardInfo, refundAmount, lameDuckAccount);
+        refundCreditCard(GROUP_NUMBER, creditcardInfo, refundAmount, lameDuckAccount);
         System.out.println("Flight has booking number "+bookedFlights.get(0).getBookingNumber()+" is canceled.");
         bookedFlights.remove(flightInfo);
         //System.out.println("Flight has booking number "+bookedFlights.get(0).getBookingNumber()+" is canceled.");
@@ -121,7 +120,7 @@ public class lameDuckService {
 
             flightdata.FlightInfoType fund_flightInfo = bookedFlights.get(i);
 
-            if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(flightInfo.getBookingNumber())) { //2 == that this date matches a flight date
+            if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(flightInfo.getBookingNumber())) {
                 return true;
             }
         }
@@ -135,7 +134,7 @@ public class lameDuckService {
 
             flightdata.FlightInfoType fund_flightInfo = fligthInfo.get(i);
 
-            if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(bookingNumber)) { //2 == that this date matches a flight date
+            if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(bookingNumber)) {
                 thisFlightInfo = fund_flightInfo;
             }
         }
@@ -151,7 +150,7 @@ public class lameDuckService {
 
             flightdata.FlightInfoType fund_flightInfo = bookedFlights.get(i);
 
-            if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(bookingNumber)) { //2 == that this date matches a flight date
+            if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(bookingNumber)) {
                 thisFlightInfo = fund_flightInfo;
             }else{
             thisFlightInfo=null;
