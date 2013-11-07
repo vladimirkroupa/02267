@@ -51,6 +51,14 @@ public class HotelReservationTest {
         boolean bookStatus = bookHotelOperation(booking);
         Assert.assertTrue(bookStatus);
     }
+    
+    @Test(expected = BookHotelOperationFault.class)
+    public void testBookHotelOperationDuplicate() throws BookHotelOperationFault {
+        getHotelsOperation(createHotelQuery());
+        HotelBookingWithCreditCardType booking = createBooking();
+        bookHotelOperation(booking);
+        bookHotelOperation(booking);
+    }
         
     @Test
     public void testCancelHotelOperation() throws CancelHotelOperationFault, BookHotelOperationFault {
