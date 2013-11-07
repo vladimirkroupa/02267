@@ -15,8 +15,8 @@ import javax.xml.ws.WebServiceRef;
  */
 public class BankServiceClient {
 
-    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl")
-    private BankService service;
+    //@WebServiceRef(wsdlLocation = "WEB-INF/wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl")
+    //private BankService service;
  
     public boolean validateCreditCard(int group, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditCardInfo, int amount) throws CreditCardFaultMessage {
         dk.dtu.imm.fastmoney.BankService service = new dk.dtu.imm.fastmoney.BankService();        
