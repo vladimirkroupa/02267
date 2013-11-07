@@ -6,3 +6,6 @@ target
 *.war
 *.ear
 /HotelReservationClient/dist/
+/LameDuck/dist/
+/HotelReservation/dist/
+/LameDuckTest/dist
