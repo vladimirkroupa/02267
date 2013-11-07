@@ -6,20 +6,17 @@ import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import dk.dtu.ws.bankservice.client.BankServiceClient;
 import dk.dtu.ws.hotelservice.WSTypeConverter;
 import dk.dtu.ws.hotelservice.domain.dataset.StaticHotelSource;
+import hotelreservationtypes.HotelArrayType;
+import hotelreservationtypes.HotelFaultType;
+import hotelreservationtypes.HotelType;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
 import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
-import hotelservice._02267.dtu.dk.wsdl.HotelArrayType;
-import hotelservice._02267.dtu.dk.wsdl.HotelFaultType;
-import hotelservice._02267.dtu.dk.wsdl.HotelType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.joda.time.Interval;
 
 public class NiceView {
 

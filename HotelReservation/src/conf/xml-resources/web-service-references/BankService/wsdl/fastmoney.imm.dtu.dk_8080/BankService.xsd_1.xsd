@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.3.1-hudson-417-SNAPSHOT. -->
-<xs:schema xmlns:tns="urn://types.fastmoney.imm.dtu.dk" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="urn://types.fastmoney.imm.dtu.dk">
+<xs:schema xmlns:tns="urn://types.fastmoney.imm.dtu.dk" 
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           version="1.0" 
+           targetNamespace="urn://types.fastmoney.imm.dtu.dk">
 
     <xs:element name="CreditCardFault" nillable="true" type="tns:CreditCardFaultType"></xs:element>
 

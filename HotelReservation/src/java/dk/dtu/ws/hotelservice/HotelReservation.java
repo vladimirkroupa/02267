@@ -2,11 +2,11 @@ package dk.dtu.ws.hotelservice;
 
 import dk.dtu.imm.fastmoney.CreditCardFaultMessage;
 import dk.dtu.ws.hotelservice.domain.NiceView;
+import hotelreservationtypes.HotelArrayType;
+import hotelreservationtypes.HotelBookingWithCreditCardType;
+import hotelreservationtypes.HotelQueryType;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
 import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
-import hotelservice._02267.dtu.dk.wsdl.HotelArrayType;
-import hotelservice._02267.dtu.dk.wsdl.HotelBookingWithCreditCardType;
-import hotelservice._02267.dtu.dk.wsdl.HotelQueryType;
 import java.util.Date;
 import javax.jws.WebService;
 

@@ -4,4 +4,5 @@
     <system systemId="http://localhost:8080/HotelReservation/hotelService?wsdl" uri="wsdl/localhost_8080/HotelReservation/hotelService.wsdl"/>
     <system systemId="file:/D:/OpenESBProjects/02267/HotelReservation/src/java/hotelservice.wsdl" uri="wsdl/hotelservice.wsdl"/>
     <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/HotelReservation/hotelService?xsd=1" uri="wsdl/localhost_8080/HotelReservation/hotelService.xsd_1.xsd"/>
 </catalog>
