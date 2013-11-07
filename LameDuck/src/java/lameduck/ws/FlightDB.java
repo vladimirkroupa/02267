@@ -14,11 +14,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *
  * @author moonlight
  */
- public class flightDB {
+ public class FlightDB {
 
         flightdata.FlightInfoListType flightInfoList = new flightdata.FlightInfoListType();
 
-        public flightDB() {
+        public FlightDB() {
 
             flightdata.FlightType flight1 = new flightdata.FlightType();
             flight1.setCarrier("SAS");
@@ -117,7 +117,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
             try {
                 df = DatatypeFactory.newInstance();
             } catch (DatatypeConfigurationException ex) {
-                Logger.getLogger(lameDuckService.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LameDuckService.class.getName()).log(Level.SEVERE, null, ex);
             }
             XMLGregorianCalendar date = df.newXMLGregorianCalendar(dateinput);
             return date;

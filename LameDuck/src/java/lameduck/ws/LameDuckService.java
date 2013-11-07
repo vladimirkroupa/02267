@@ -23,11 +23,11 @@ import ws.lameduck.CancelFlightFault;
  * @author moonlight
  */
 @WebService(serviceName = "lameDuckService", portName = "lameDuckPortTypeBindingPort", endpointInterface = "ws.lameduck.LameDuckPortType", targetNamespace = "http://lameDuck.ws", wsdlLocation = "WEB-INF/wsdl/lameDuckService/lameDuckWSDL.wsdl")
-public class lameDuckService {
+public class LameDuckService {
 //
 //    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl")
 //    private BankService service;
-    flightDB fdb = new flightDB();
+    FlightDB fdb = new FlightDB();
     List<flightdata.FlightInfoType> bookedFlights = new ArrayList();
     flightdata.FlightInfoListType matchedFlights; //= new flightdata.FlightInfoListType();
     int GROUP_NUMBER = 2;
@@ -168,7 +168,7 @@ public class lameDuckService {
         try {
             df = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException ex) {
-            Logger.getLogger(lameDuckService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LameDuckService.class.getName()).log(Level.SEVERE, null, ex);
         }
         XMLGregorianCalendar date = df.newXMLGregorianCalendar();
         date.setDay(day);
