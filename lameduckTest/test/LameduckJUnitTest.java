@@ -23,9 +23,9 @@ import ws.lameduck.CancelFlightFault;
  *
  * @author s114671
  */
-public class lameduckJUnitTest {
+public class LameduckJUnitTest {
 
-    public lameduckJUnitTest() {
+    public LameduckJUnitTest() {
     }
 
     @Test
