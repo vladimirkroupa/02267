@@ -14,15 +14,22 @@
     xmlns:bnk="urn://types.fastmoney.imm.dtu.dk">
     
     <types>
-        <xsd:schema targetNamespace="urn://traveGood" 
-                    xmlns:tns="urn://traveGood">
+        <xsd:schema targetNamespace="urn://travelGood" 
+                    xmlns:tns="urn://travelGood">
             <xsd:import namespace="urn://travelGoodTypes"
-                        schemaLocation="travelGood.xsd">
-            </xsd:import>
+                        schemaLocation="travelGood.xsd"></xsd:import>
+            <xsd:import namespace="urn://hotelReservationTypes" 
+                        schemaLocation="hotelReservation.xsd"/>
+            <xsd:import namespace="urn:flightData" 
+                        schemaLocation="flightData.xsd"/>
+            <xsd:import namespace="urn://types.fastmoney.imm.dtu.dk" 
+                        schemaLocation="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1"/>
+            
             <xsd:element name="hotelQuery" type="hr:hotelQueryType"></xsd:element>
             <xsd:element name="hotelQueryResult" type="hr:hotelArrayType"></xsd:element>
             <xsd:element name="flightQuery" type="tgt:flightQueryType"></xsd:element>
             <xsd:element name="flightQueryResult" type="fd:flightInfoListType"></xsd:element>
+            <xsd:element name="createItineraryRequest" type="xsd:string"></xsd:element>
             <xsd:element name="createItineraryResult" type="xsd:string"></xsd:element>
             <xsd:element name="itineraryItem" type="tgt:itineraryItemType"></xsd:element>
             <xsd:element name="itineraryItemResult" type="xsd:string"></xsd:element>
@@ -53,8 +60,8 @@
     
     <!-- createItinerary messages -->
     
-    <message name="createItineraryRequest">
-        <part name="part"/>
+   <message name="createItineraryRequest">
+        <part name="part" element="tns:createItineraryRequest"/>
     </message>
     
     <message name="createItineraryResponse">

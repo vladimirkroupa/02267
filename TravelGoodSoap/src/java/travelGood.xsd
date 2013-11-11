@@ -16,7 +16,7 @@
                 schemaLocation="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1"/>
 
     <xsd:simpleType name="itineraryItemStatusType">
-        <xsd:restriction base="xs:string">
+        <xsd:restriction base="xsd:string">
             <xsd:enumeration value="unconfirmed"/>
             <xsd:enumeration value="confirmed"/>
             <xsd:enumeration value="cancelled"/>
