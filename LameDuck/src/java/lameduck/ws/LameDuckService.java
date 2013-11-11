@@ -34,7 +34,7 @@ public class LameDuckService {
     
     public flightdata.FlightInfoListType getFlights(java.lang.String startDest, java.lang.String finalDest, javax.xml.datatype.XMLGregorianCalendar date) {
         matchedFlights = new flightdata.FlightInfoListType();
-
+        System.out.println("getFlight() called");
         //TODO implement this method
         List<flightdata.FlightInfoType> fligthInfo = fdb.flightInfoList.getFlightInfo();
         for (int i = 0; i < fligthInfo.size(); i++) {
