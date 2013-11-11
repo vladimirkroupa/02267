@@ -195,23 +195,117 @@
             <fault name="cancelBookingOperationFault" message="tns:cancelBookingFault"/>
         </operation>
                 
-    </portType>        
+    </portType>
     
     <binding name="travelGoodSoapBinding" type="tns:travelGoodPortType">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        
         <operation name="listHotelsOperation">
             <soap:operation/>
-            <input name="input1">
+            <input name="listHotelsOperationInput">
                 <soap:body use="literal"/>
             </input>
-            <output name="output1">
+            <output name="listHotelsOperationOutput">
                 <soap:body use="literal"/>
             </output>
         </operation>
+        
+        <operation name="listFlightsOperation">
+            <soap:operation/>
+            <input name="listFlightsOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="listFlightsOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        
+        <operation name="createItineraryOperation">
+            <soap:operation/>
+            <input name="createItineraryOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="createItineraryOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        
+        <operation name="addHotelToItineraryOperation">
+            <soap:operation/>
+            <input name="addHotelToItineraryOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="addHotelToItineraryOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        
+        <operation name="addFlightToItineraryOperation">
+            <soap:operation/>
+            <input name="addFlightToItineraryOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="addFlightToItineraryOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        
+        <operation name="getItineraryOperation">
+            <soap:operation/>
+            <input name="getItineraryOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="getItineraryOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        
+        <operation name="bookItineraryOperation">
+            <soap:operation/>
+            <input name="bookItineraryOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="bookItineraryOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+            <fault name="bookItineraryOperationFault">
+                <soap:fault name="bookItineraryOperationFault" use="literal"/>
+            </fault>
+        </operation>
+        
+        <operation name="cancelItineraryOperation">
+            <soap:operation/>
+            <input name="cancelItineraryOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="cancelItineraryOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+            <fault name="cancelItineraryOperationFault">
+                <soap:fault name="cancelItineraryOperationFault" use="literal"/>
+            </fault>
+        </operation>
+        
+        <operation name="cancelBookingOperation">
+            <soap:operation/>
+            <input name="cancelBookingOperationInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="cancelBookingOperationOutput">
+                <soap:body use="literal"/>
+            </output>
+            <fault name="cancelBookingOperationFault">
+                <soap:fault name="cancelBookingOperationFault" use="literal"/>
+            </fault>
+        </operation>
+        
     </binding>
     <service name="travelGoodService">
         <port name="travelGoodPortType" binding="tns:travelGoodSoapBinding">
             <soap:address location="http://localhost:${HttpDefaultPort}/travelGoodService/travelGoodPortType"/>
+        </port>
+        <port name="travelGoodPortTypeBindingPort" binding="tns:travelGoodSoapBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service"/>
         </port>
     </service>
     <plnk:partnerLinkType name="travelGood">
