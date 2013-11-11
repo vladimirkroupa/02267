@@ -35,6 +35,11 @@
             <xsd:element name="itineraryItemResult" type="xsd:string"></xsd:element>
             <xsd:element name="itineraryNo" type="xsd:string"></xsd:element>
             <xsd:element name="itinerary" type="tgt:itineraryItemStatusType"></xsd:element>
+            <xsd:element name="itineraryNumberWithCCInfo" type="tgt:itineraryNumberWithCCInfoType"></xsd:element>
+            <xsd:element name="bookItineraryResult" type="xsd:boolean"></xsd:element>
+            <xsd:element name="itineraryFault" type="tgt:itineraryFaultType"></xsd:element>
+            <xsd:element name="cancelItineraryResult" type="xsd:boolean"></xsd:element>
+            <xsd:element name="cancelBookingResult" type="xsd:boolean"></xsd:element>
         </xsd:schema>
     </types>
     
@@ -98,11 +103,48 @@
         <part name="itinerary" element="tns:itinerary"/>
     </message>    
     
-    <!-- TODO: bookItinerary messages -->
+    <!-- bookItinerary messages -->
     
-    <!-- TODO: cancelItinerary messages -->
+    <message name="bookItineraryRequest">
+        <part name="itineraryNumberWithCCInfo" element="tns:itineraryNumberWithCCInfo"/>
+    </message>
+
+    <message name="bookItineraryResponse">
+        <part name="bookItineraryResult" element="tns:bookItineraryResult"/>
+    </message>
     
-    <!-- TODO: cancelBooking ? messages -->    
+    <message name="bookItineraryFault">
+        <part name="bookingFault" element="tns:itineraryFault"/>
+    </message>
+     
+    <!-- cancelItinerary messages -->
+    
+    <message name="cancelItineraryRequest">
+        <part name="itineraryNo" element="tns:itineraryNo"/>
+    </message>
+
+    <message name="cancelItineraryResponse">
+        <part name="cancelItineraryResult" element="tns:cancelItineraryResult"/>
+    </message>
+    
+    <message name="cancelItineraryFault">
+        <part name="itineraryFault" element="tns:itineraryFault"/>
+    </message>
+    
+    <!-- cancelBooking messages -->
+    
+    <message name="cancelBookingRequest">
+        <part name="itineraryNo" element="tns:itineraryNo"/>
+    </message>
+
+    <message name="cancelBookingResponse">
+        <part name="cancelBookingResult" element="tns:cancelBookingResult"/>
+    </message>
+    
+    <message name="cancelBookingFault">
+        <part name="itineraryFault" element="tns:itineraryFault"/>
+    </message>    
+    
     
     <portType name="travelGoodPort">
         <operation name="listHotelsOperation">
