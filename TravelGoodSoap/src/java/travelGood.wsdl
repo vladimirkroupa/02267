@@ -146,14 +146,58 @@
     </message>    
     
     
-    <portType name="travelGoodPort">
+    <portType name="travelGoodPortType">
         <operation name="listHotelsOperation">
-            <input name="input1" message="tns:listHotelsOperationRequest"/>
-            <output name="output1" message="tns:listHotelsOperationResponse"/>
+            <input name="listHotelsOperationInput" message="tns:listHotelsRequest"/>
+            <output name="listHotelsOperationOutput" message="tns:listHotelsResponse"/>
         </operation>
+
+        <operation name="listFlightsOperation">
+            <input name="listFlightsOperationInput" message="tns:listFlightsRequest"/>
+            <output name="listFlightsOperationOutput" message="tns:listFlightsResponse"/>
+        </operation>
+
+        <operation name="createItineraryOperation">
+            <input name="createItineraryOperationInput" message="tns:createItineraryRequest"/>
+            <output name="createItineraryOperationOutput" message="tns:createItineraryResponse"/>
+        </operation>
+
+        <operation name="addHotelToItineraryOperation">
+            <input name="addHotelToItineraryOperationInput" message="tns:addHotelToItineraryRequest"/>
+            <output name="addHotelToItineraryOperationOutput" message="tns:addHotelToItineraryResponse"/>
+        </operation>
+
+        <operation name="addFlightToItineraryOperation">
+            <input name="addFlightToItineraryOperationInput" message="tns:addFlightToItineraryRequest"/>
+            <output name="addFlightToItineraryOperationOutput" message="tns:addFlightToItineraryResponse"/>
+        </operation>
+
+        <operation name="getItineraryOperation">
+            <input name="getItineraryOperationInput" message="tns:getItineraryRequest"/>
+            <output name="getItineraryOperationOutput" message="tns:getItineraryResponse"/>
+        </operation>
+
+        <operation name="bookItineraryOperation">
+            <input name="bookItineraryOperationInput" message="tns:bookItineraryRequest"/>
+            <output name="bookItineraryOperationOutput" message="tns:bookItineraryResponse"/>
+            <fault name="bookItineraryOperationFault" message="tns:bookItineraryFault"/>
+        </operation>
+
+        <operation name="cancelItineraryOperation">
+            <input name="cancelItineraryOperationInput" message="tns:cancelItineraryRequest"/>
+            <output name="cancelItineraryOperationOutput" message="tns:cancelItineraryResponse"/>
+            <fault name="cancelItineraryOperationFault" message="tns:cancelItineraryFault"/>
+        </operation>
+        
+        <operation name="cancelBookingOperation">
+            <input name="cancelBookingOperationInput" message="tns:cancelBookingRequest"/>
+            <output name="cancelBookingOperationOutput" message="tns:cancelBookingResponse"/>
+            <fault name="cancelBookingOperationFault" message="tns:cancelBookingFault"/>
+        </operation>
+                
     </portType>        
     
-    <binding name="travelGoodSoapBinding" type="tns:travelGoodPort">
+    <binding name="travelGoodSoapBinding" type="tns:travelGoodPortType">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
         <operation name="listHotelsOperation">
             <soap:operation/>
@@ -166,14 +210,14 @@
         </operation>
     </binding>
     <service name="travelGoodService">
-        <port name="travelGoodPort" binding="tns:travelGoodSoapBinding">
-            <soap:address location="http://localhost:${HttpDefaultPort}/travelGoodService/travelGoodPort"/>
+        <port name="travelGoodPortType" binding="tns:travelGoodSoapBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/travelGoodService/travelGoodPortType"/>
         </port>
     </service>
     <plnk:partnerLinkType name="travelGood">
         <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
 In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
 A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
-        <plnk:role name="travelGoodPortRole" portType="tns:travelGoodPort"/>
+        <plnk:role name="travelGoodPortRole" portType="tns:travelGoodPortType"/>
     </plnk:partnerLinkType>
 </definitions>
