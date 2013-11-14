@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1 (branches/2.1-6844; 2011-07-29T12:07:24+0000) JAXWS-RI/2.2.5 JAXWS/2.2. --><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://lameDuck.ws" xmlns:ns="urn:flightData" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="urn://types.fastmoney.imm.dtu.dk" name="lameDuckWSDL" targetNamespace="http://lameDuck.ws">
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1 (branches/2.1-6844; 2011-07-29T12:07:24+0000) JAXWS-RI/2.2.5 JAXWS/2.2. --><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://lameDuck.ws" xmlns:ns="urn:flightData" xmlns:ns0="urn://types.fastmoney.imm.dtu.dk" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="lameDuckWSDL" targetNamespace="http://lameDuck.ws">
     <types>
         <xsd:schema targetNamespace="http://lameDuck.ws">
             <xsd:import namespace="urn:flightData" schemaLocation="http://localhost:8080/LameDuck/lameDuckService?xsd=1"/>
@@ -8,30 +8,25 @@
         </xsd:schema>
     </types>
     <message name="getFlightsRequest">
-        <part name="startDest" type="xsd:string"/>
-        <part name="finalDest" type="xsd:string"/>
-        <part name="date" type="xsd:date"/>
+        <part name="getFlightQuery" element="ns:getFlightQueryType"/>
     </message>
     <message name="getFlightsResponse">
-        <part name="flightsList" type="ns:flightInfoListType"/>
+        <part name="flightsList" element="ns:flightList"/>
     </message>
     <message name="bookFlightRequest">
-        <part name="bookingNumber" type="xsd:string"/>
-        <part name="creditcardInfo" type="ns0:creditCardInfoType"/>
+        <part name="bookFlightQuery" element="ns:bookFlightQueryType"/>
     </message>
     <message name="bookFlightResponse">
-        <part name="bookingResult" type="xsd:boolean"/>
+        <part name="bookingResult" element="ns:bookflightResult"/>
     </message>
     <message name="bookFlightFault">
         <part name="bookingFfault" element="tns:bookFlightFailure"/>
     </message>
     <message name="cancelFlightRequest">
-        <part name="bookingNumber" type="xsd:string"/>
-        <part name="flightPrice" type="xsd:int"/>
-        <part name="creditcardInfo" type="ns0:creditCardInfoType"/>
+        <part name="cancelFlightQuery" element="ns:cancelFlightQueryType"/>
     </message>
     <message name="cancelFlightResponse">
-        <part name="cancelFlightResult" type="xsd:boolean"/>
+        <part name="cancelResult" element="ns:cancelflightResult"/>
     </message>
     <message name="cancelFlightFault">
         <part name="cancelFfault" element="tns:cancelFlightFailure"/>
@@ -53,7 +48,7 @@
         </operation>
     </portType>
     <binding name="lameDuckPortTypeBinding" type="tns:lameDuckPortType">
-        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
         <operation name="getFlights">
             <soap:operation/>
             <input name="input1">

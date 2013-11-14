@@ -32,18 +32,21 @@ public class getFlightJUnitTest {
     // @Test
     // public void hello() {}
     
+
+    
+    @Test
     public void testslistFlightsOperation() {
          travelgood.TravelGoodService service = new travelgood.TravelGoodService();
         travelgood.TravelGoodPortType port = service.getTravelGoodPortTypeBindingPort();
         String startDest="Copenhagen, Denmark";
         String finalDest="Oslo, Norway";
       
-        travelgoodtypes.FlightQueryType flightQuery = new travelgoodtypes.FlightQueryType();
-        flightQuery.setFinalDest(finalDest);
-        flightQuery.setStartDest(startDest);
+        flightdata.GetFlightQuery flightQuery = new flightdata.GetFlightQuery();
         flightQuery.setDate(date("2013-12-06T12:00:00.000+00:00"));
-       port.listFlightsOperation(flightQuery);
-       // System.out.println( port.listFlightsOperation(flightQuery));
+        flightQuery.setStartDest("Copenhagen, Denmark");
+        flightQuery.setFinalDest("Oslo, Norway");
+      // port.listFlightsOperation(flightQuery);
+      String a = port.listFlightsOperation(flightQuery).getFlightInfo().get(0).getBookingNumber();
         
     }
        public XMLGregorianCalendar date(String dateinput) {
@@ -61,7 +64,7 @@ public class getFlightJUnitTest {
 
     }
        
-    @Test
+    //@Test
     public void  listHotelsOperation() {
         travelgood.TravelGoodService service = new travelgood.TravelGoodService();
         travelgood.TravelGoodPortType port = service.getTravelGoodPortTypeBindingPort();
@@ -74,6 +77,8 @@ public class getFlightJUnitTest {
         System.out.println(port.listHotelsOperation(hq).getHotels().get(0).getHotelName());
     }
 
+
+   
 
  
 

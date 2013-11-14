@@ -53,7 +53,7 @@
     <!-- listFlights messages -->
 
     <message name="listFlightsRequest">
-        <part name="flightQuery" element="tns:flightQuery"/>
+        <part name="flightQuery" element="fd:getFlightQueryType"/>
     </message>
     
     <message name="listFlightsResponse">

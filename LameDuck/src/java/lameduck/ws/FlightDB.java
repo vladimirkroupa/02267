@@ -117,7 +117,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
             try {
                 df = DatatypeFactory.newInstance();
             } catch (DatatypeConfigurationException ex) {
-                Logger.getLogger(LameDuckService.class.getName()).log(Level.SEVERE, null, ex);
+               // Logger.getLogger(LameDuckService.class.getName()).log(Level.SEVERE, null, ex);
             }
             XMLGregorianCalendar date = df.newXMLGregorianCalendar(dateinput);
             return date;
