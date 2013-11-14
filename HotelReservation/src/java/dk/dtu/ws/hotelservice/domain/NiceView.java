@@ -6,8 +6,8 @@ import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import dk.dtu.ws.bankservice.client.BankServiceClient;
 import dk.dtu.ws.hotelservice.WSTypeConverter;
 import dk.dtu.ws.hotelservice.domain.dataset.StaticHotelSource;
-import hotelreservationtypes.HotelArrayType;
 import hotelreservationtypes.HotelFaultType;
+import hotelreservationtypes.HotelQueryResult;
 import hotelreservationtypes.HotelType;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
 import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
@@ -32,8 +32,8 @@ public class NiceView {
         hotels = new HotelRepository(StaticHotelSource.hotels());
     }
 
-    public HotelArrayType listHotels(String city, Date checkIn, Date checkOut) {
-        HotelArrayType result = new HotelArrayType();
+    public HotelQueryResult listHotels(String city, Date checkIn, Date checkOut) {
+        HotelQueryResult result = new HotelQueryResult();
         for (Booking booking : listBookingOffers(city, checkIn, checkOut)) {
             HotelType ht = WSTypeConverter.toHotelType(booking);
             result.getHotels().add(ht);

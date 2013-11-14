@@ -2,9 +2,9 @@ package dk.dtu.ws.hotelservice;
 
 import dk.dtu.imm.fastmoney.CreditCardFaultMessage;
 import dk.dtu.ws.hotelservice.domain.NiceView;
-import hotelreservationtypes.HotelArrayType;
-import hotelreservationtypes.HotelBookingWithCreditCardType;
-import hotelreservationtypes.HotelQueryType;
+import hotelreservationtypes.HotelBookingWithCreditCard;
+import hotelreservationtypes.HotelQuery;
+import hotelreservationtypes.HotelQueryResult;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
 import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
 import java.util.Date;
@@ -19,13 +19,13 @@ public class HotelReservation {
 
     private NiceView niceView = new NiceView();
 
-    public HotelArrayType getHotelsOperation(HotelQueryType hotelQuery) {
+    public HotelQueryResult getHotelsOperation(HotelQuery hotelQuery) {
         Date from = WSTypeConverter.toDate(hotelQuery.getArrivalDate());
         Date to = WSTypeConverter.toDate(hotelQuery.getDepartureDate());
         return niceView.listHotels(hotelQuery.getCity(), from, to);
     }
 
-    public boolean bookHotelOperation(HotelBookingWithCreditCardType bookingWithCreditCard) throws BookHotelOperationFault, CreditCardFaultMessage {
+    public boolean bookHotelOperation(HotelBookingWithCreditCard bookingWithCreditCard) throws BookHotelOperationFault, CreditCardFaultMessage {
         return niceView.bookHotel(bookingWithCreditCard.getBookingNumber(), bookingWithCreditCard.getCreditCardInfo());
     }
 
