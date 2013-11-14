@@ -15,4 +15,7 @@
     <plnk:partnerLinkType name="lameDuckLinkType3">
         <plnk:role name="lameDuckRole" portType="ns:lameDuckPortType"/>
     </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="lameDuckLinkTypeOne">
+        <plnk:role name="lameDuckRole" portType="ns:lameDuckPortType"/>
+    </plnk:partnerLinkType>
 </definitions>

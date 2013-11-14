@@ -27,12 +27,21 @@ public class LameduckJUnitTest {
 
     public LameduckJUnitTest() {
     }
+    
+    
+
 
     @Test
     public void testGetFlightsCPH_LONDON() {
         ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
         ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
-        flightdata.FlightInfoListType testResult = port.getFlights("Copenhagen, Denmark", "London, Heathrow, England", date("2013-09-18T17:00:00.000+00:00"));
+        flightdata.GetFlightQuery getFlightQuery = new flightdata.GetFlightQuery();
+        
+        getFlightQuery.setDate(date("2013-09-18T17:00:00.000+00:00"));
+        getFlightQuery.setStartDest("Copenhagen, Denmark");
+        getFlightQuery.setFinalDest("London, Heathrow, England");
+        
+        flightdata.FlightInfoListType testResult = port.getFlights(getFlightQuery);
 
         assertEquals("1234567", testResult.getFlightInfo().get(0).getBookingNumber());
     }
@@ -41,7 +50,14 @@ public class LameduckJUnitTest {
     public void testGetFlightsCPH_BEIJING() {
         ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
         ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
-        flightdata.FlightInfoListType testResult = port.getFlights("Copenhagen, Denmark", "Beijing, China", date("2013-12-02T12:00:00.000+00:00"));
+        
+        flightdata.GetFlightQuery getFlightQuery = new flightdata.GetFlightQuery();
+        
+        getFlightQuery.setDate(date("2013-12-02T12:00:00.000+00:00"));
+        getFlightQuery.setStartDest("Copenhagen, Denmark");
+        getFlightQuery.setFinalDest("Beijing, China");
+        
+        flightdata.FlightInfoListType testResult = port.getFlights(getFlightQuery);
        // System.out.println("SIZE: "+testResult.getFlightInfo().size());
         assertEquals("1234568", testResult.getFlightInfo().get(0).getBookingNumber());
     }
@@ -50,7 +66,14 @@ public class LameduckJUnitTest {
     public void testGetFlightsCPH_OSLO() {
         ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
         ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
-        flightdata.FlightInfoListType testResult = port.getFlights("Copenhagen, Denmark", "Oslo, Norway", date("2013-12-06T12:00:00.000+00:00"));
+        flightdata.GetFlightQuery getFlightQuery = new flightdata.GetFlightQuery();
+        getFlightQuery.setDate(date("2013-12-06T12:00:00.000+00:00"));
+        getFlightQuery.setStartDest("Copenhagen, Denmark");
+        getFlightQuery.setFinalDest("Oslo, Norway");
+        
+        flightdata.FlightInfoListType testResult = port.getFlights(getFlightQuery);
+        
+        //flightdata.FlightInfoListType testResult = port.getFlights("Copenhagen, Denmark", "Oslo, Norway", date("2013-12-06T12:00:00.000+00:00"));
 
         assertEquals(testResult.getFlightInfo().get(0).getBookingNumber(), "1234571");
     }
@@ -59,7 +82,15 @@ public class LameduckJUnitTest {
     public void testGetFlightsCPH_OSLO_MULTIPLERESULTS() {
         ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
         ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
-        flightdata.FlightInfoListType testResult = port.getFlights("Copenhagen, Denmark", "Oslo, Norway", date("2013-12-06T12:00:00.000+00:00"));
+        
+                flightdata.GetFlightQuery getFlightQuery = new flightdata.GetFlightQuery();
+        getFlightQuery.setDate( date("2013-12-06T12:00:00.000+00:00"));
+        getFlightQuery.setStartDest("Copenhagen, Denmark");
+        getFlightQuery.setFinalDest("Oslo, Norway");
+        
+        flightdata.FlightInfoListType testResult = port.getFlights(getFlightQuery);
+        
+        //flightdata.FlightInfoListType testResult = port.getFlights("Copenhagen, Denmark", "Oslo, Norway", date("2013-12-06T12:00:00.000+00:00"));
         for(int i=0;i<testResult.getFlightInfo().size();i++){
             System.out.println(testResult.getFlightInfo().get(i).getBookingNumber());       
         }
@@ -107,7 +138,13 @@ public class LameduckJUnitTest {
         creditcardInfo.setNumber("50408816");
         creditcardInfo.setExpirationDate(expDate);
         ///book the flight
-        boolean result= port.bookFlight(testBookingNumber1, creditcardInfo);
+        
+        
+        
+        flightdata.BookFlightQuery bookFlightQuery = new flightdata.BookFlightQuery();
+        bookFlightQuery.setBookingNumber(testBookingNumber1);
+        bookFlightQuery.setCreditcardInfo(creditcardInfo);
+        boolean result= port.bookFlight(bookFlightQuery);
         if(result){
         System.out.println(" flight  "+testBookingNumber1+" is booked ;");}
         System.out.println("------------end testBookFlight():");
@@ -134,7 +171,11 @@ public class LameduckJUnitTest {
         creditcardInfo.setNumber("50408816");
         creditcardInfo.setExpirationDate(expDate);
         ///book the flight
-        boolean result= port.bookFlight(bookingNumber, creditcardInfo);
+        
+        flightdata.BookFlightQuery bookFlightQuery = new flightdata.BookFlightQuery();
+        bookFlightQuery.setBookingNumber(bookingNumber);
+        bookFlightQuery.setCreditcardInfo(creditcardInfo);
+        boolean result= port.bookFlight(bookFlightQuery);
         if(result){
         System.out.println("in Bookflight(): flight "+bookingNumber+" is booked ");
         }
@@ -153,8 +194,12 @@ public class LameduckJUnitTest {
         creditcardInfo.setName("Anne Strandberg");
         creditcardInfo.setNumber("50408816");
         creditcardInfo.setExpirationDate(expDate);
-        
-        boolean result= port.cancelFlight(testBookingNumber, 1500, creditcardInfo);
+        flightdata.CancelFlightQuery cf = new flightdata.CancelFlightQuery();
+        cf.setBookingNumber(testBookingNumber);
+        cf.setCreditcardInfo(creditcardInfo);
+        cf.setFlightPrice(1500);
+
+        boolean result= port.cancelFlight(cf);
         if(result){
             System.out.println(" flight: "+testBookingNumber+" is canceled");
         }  
@@ -175,8 +220,13 @@ public class LameduckJUnitTest {
         creditcardInfo.setName("Anne Strandberg");
         creditcardInfo.setNumber("50408816");
         creditcardInfo.setExpirationDate(expDate);
-        
-        boolean result= port.cancelFlight("1222782266", 1500, creditcardInfo);
+        flightdata.CancelFlightQuery cf = new flightdata.CancelFlightQuery();
+        cf.setBookingNumber("1222782266");
+        cf.setCreditcardInfo(creditcardInfo);
+        cf.setFlightPrice(1500);
+
+        boolean result= port.cancelFlight(cf);
+        //boolean result= port.cancelFlight("1222782266", 1500, creditcardInfo);
        
     }
    @Test(expected=BookFlightFault.class)
@@ -186,5 +236,9 @@ public class LameduckJUnitTest {
     BookFlight("1234571");
      System.out.println("------------end testTwice_booking_withsameBookingNumber():");
     }
+
+    
+
+
     
 }

@@ -7,4 +7,5 @@
     <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
     <system systemId="http://localhost:8080/LameDuck/lameDuckService?xsd=1" uri="wsdl/localhost_8080/LameDuck/lameDuckService.xsd_1.xsd"/>
     <system systemId="http://localhost:8080/HotelReservation/hotelService?xsd=1" uri="wsdl/localhost_8080/HotelReservation/hotelService.xsd_1.xsd"/>
+    <system systemId="http://10.16.168.226:9080/travelGoodApp-sun-http-binding/TravelGoodBPELModule/travelGood.xsd" uri="wsdl/10.16.168.226_9080/travelGoodApp-sun-http-binding/TravelGoodBPELModule/travelGood.xsd"/>
 </catalog>

@@ -1,4 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1 (branches/2.1-6844; 2011-07-29T12:07:24+0000) JAXWS-RI/2.2.5 JAXWS/2.2. --><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:flightData" targetNamespace="urn:flightData" elementFormDefault="qualified">
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1 (branches/2.1-6844; 2011-07-29T12:07:24+0000) JAXWS-RI/2.2.5 JAXWS/2.2. --><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:flightData" xmlns:ns0="urn://types.fastmoney.imm.dtu.dk" targetNamespace="urn:flightData" elementFormDefault="qualified">
+       <xsd:import namespace="urn://types.fastmoney.imm.dtu.dk" schemaLocation="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1"/>
     <xsd:complexType name="flightType">
         <xsd:sequence>
             <xsd:element name="startAirpot" type="xsd:string"/>
@@ -21,4 +22,30 @@
             <xsd:element name="flightInfo" maxOccurs="unbounded" minOccurs="0" type="tns:FlightInfoType"/>
         </xsd:sequence>
     </xsd:complexType>
+    <xsd:complexType name="getFlightQuery">
+        <xsd:sequence>
+            <xsd:element name="startDest" type="xsd:string"/>
+            <xsd:element name="finalDest" type="xsd:string"/>
+            <xsd:element name="date" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="bookFlightQuery">
+        <xsd:sequence>
+            <xsd:element name="bookingNumber" type="xsd:string"/>
+            <xsd:element name="creditcardInfo" type="ns0:creditCardInfoType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="cancelFlightQuery">
+        <xsd:sequence>
+            <xsd:element name="bookingNumber" type="xsd:string"/>
+            <xsd:element name="flightPrice" type="xsd:int"/>
+            <xsd:element name="creditcardInfo" type="ns0:creditCardInfoType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="getFlightQueryType" type="tns:getFlightQuery"/>
+    <xsd:element name="bookFlightQueryType" type="tns:bookFlightQuery"/>
+    <xsd:element name="cancelFlightQueryType" type="tns:cancelFlightQuery"/>
+    <xsd:element name="flightList" type="tns:flightInfoListType"/>
+    <xsd:element name="bookflightResult" type="xsd:boolean"/>
+    <xsd:element name="cancelflightResult" type="xsd:boolean"/>
 </xsd:schema>

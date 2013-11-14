@@ -4,7 +4,6 @@
  */
 package lameduck.ws;
 
-import dk.dtu.imm.fastmoney.BankService;
 import dk.dtu.imm.fastmoney.CreditCardFaultMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,26 +13,22 @@ import javax.jws.WebService;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.ws.WebServiceRef;
 import ws.lameduck.BookFlightFault;
 import ws.lameduck.CancelFlightFault;
 
 /**
  *
- * @author moonlight
+ * @author AhmadReza
  */
-@WebService(serviceName = "lameDuckService", portName = "lameDuckPortTypeBindingPort", endpointInterface = "ws.lameduck.LameDuckPortType", targetNamespace = "http://lameDuck.ws", wsdlLocation = "WEB-INF/wsdl/lameDuckService/lameDuckWSDL.wsdl")
-public class LameDuckService {
-//
-//    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/fastmoney.imm.dtu.dk_8080/BankService.wsdl")
-//    private BankService service;
+@WebService(serviceName = "lameDuckService", portName = "lameDuckPortTypeBindingPort", endpointInterface = "ws.lameduck.LameDuckPortType", targetNamespace = "http://lameDuck.ws", wsdlLocation = "WEB-INF/wsdl/lameduckService/lameDuckWSDL.wsdl")
+public class lameduckService {
     FlightDB fdb = new FlightDB();
     List<flightdata.FlightInfoType> bookedFlights = new ArrayList();
     flightdata.FlightInfoListType matchedFlights; //= new flightdata.FlightInfoListType();
     int GROUP_NUMBER = 2;
-    
-    public flightdata.FlightInfoListType getFlights(java.lang.String startDest, java.lang.String finalDest, javax.xml.datatype.XMLGregorianCalendar date) {
-        matchedFlights = new flightdata.FlightInfoListType();
+
+    public flightdata.FlightInfoListType getFlights(flightdata.GetFlightQuery getFlightQuery) {
+       matchedFlights = new flightdata.FlightInfoListType();
         System.out.println("getFlight() called");
         //TODO implement this method
         List<flightdata.FlightInfoType> fligthInfo = fdb.flightInfoList.getFlightInfo();
@@ -46,10 +41,10 @@ public class LameDuckService {
             // System.out.println("Input: " + date.getYear() + "-" + date.getMonth() + "-" + date.getDay() + " Thisflight: " + year + "-" + month + "-" + day);
             //System.out.println("Size: " +fligthInfo.size());
             //System.out.println("Compare Result: " + date.compare(createDate(day, month, year)));
-            if (date.compare(createDate(day, month, year)) == 2) { //2 == that this date matches a flight date
+            if (getFlightQuery.getDate().compare(createDate(day, month, year)) == 2) { //2 == that this date matches a flight date
 
-                if (flightInfo1.getFlight().getStartAirpot().equalsIgnoreCase(startDest)
-                        && flightInfo1.getFlight().getDestinationAirport().equalsIgnoreCase(finalDest)) {
+                if (flightInfo1.getFlight().getStartAirpot().equalsIgnoreCase(getFlightQuery.getStartDest())
+                        && flightInfo1.getFlight().getDestinationAirport().equalsIgnoreCase(getFlightQuery.getFinalDest())) {
 
                     matchedFlights.getFlightInfo().add(flightInfo1);
                 }
@@ -61,11 +56,11 @@ public class LameDuckService {
         //throw new UnsupportedOperationException("Not implemented yet.");
     }
 
-    public boolean bookFlight(java.lang.String bookingNumber, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcardInfo) throws BookFlightFault {
-        dk.dtu.imm.fastmoney.types.AccountType lameDuckAccount= new dk.dtu.imm.fastmoney.types.AccountType();
+    public boolean bookFlight(flightdata.BookFlightQuery bookFlightQuery) throws BookFlightFault {
+      dk.dtu.imm.fastmoney.types.AccountType lameDuckAccount= new dk.dtu.imm.fastmoney.types.AccountType();
         lameDuckAccount.setName("LameDuck");
         lameDuckAccount.setNumber("50208812");
-        flightdata.FlightInfoType flightInfo=getFlightByBookingNumber(bookingNumber);
+        flightdata.FlightInfoType flightInfo=getFlightByBookingNumber(bookFlightQuery.getBookingNumber());
         if(flightInfo==null){
             throw new BookFlightFault("No such flight found by booking number in BOOKING process.",
                   "No such flight found by booking number in BOOKING process.");
@@ -76,8 +71,8 @@ public class LameDuckService {
         int flight_price= flightInfo.getFlightPrice();
         try {
             //TODO implement this method
-            validateCreditCard(GROUP_NUMBER, creditcardInfo, flight_price);
-            chargeCreditCard(GROUP_NUMBER, creditcardInfo, flight_price,lameDuckAccount);
+            validateCreditCard(GROUP_NUMBER, bookFlightQuery.getCreditcardInfo(), flight_price);
+            chargeCreditCard(GROUP_NUMBER, bookFlightQuery.getCreditcardInfo(), flight_price,lameDuckAccount);
             bookedFlights.add(flightInfo);
             System.out.println("New flight booked, booking number is:  "+bookedFlights.get(0).getBookingNumber());
             
@@ -89,22 +84,22 @@ public class LameDuckService {
         return true;
     }
 
-   public boolean cancelFlight(java.lang.String bookingNumber, int flightPrice, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditcardInfo) throws CancelFlightFault {
+    public boolean cancelFlight(flightdata.CancelFlightQuery cancelFlightQuery) throws CancelFlightFault {
         //TODO implement this method
         dk.dtu.imm.fastmoney.types.AccountType lameDuckAccount= new dk.dtu.imm.fastmoney.types.AccountType();
         lameDuckAccount.setName("LameDuck");
         lameDuckAccount.setNumber("50208812");
         
-        int refundAmount=flightPrice/2;
+        int refundAmount=cancelFlightQuery.getFlightPrice()/2;
         
-        flightdata.FlightInfoType flightInfo=getFlightByBookingNumber_in_booked_flight(bookingNumber);
+        flightdata.FlightInfoType flightInfo=getFlightByBookingNumber_in_booked_flight(cancelFlightQuery.getBookingNumber());
         if(flightInfo==null){
          throw new CancelFlightFault("No such flight found by booking number in CANCEL process.",
                   "No such flight found by booking number in CANCEL process.");
            // return false;
         }
         try{
-        refundCreditCard(GROUP_NUMBER, creditcardInfo, refundAmount, lameDuckAccount);
+        refundCreditCard(GROUP_NUMBER, cancelFlightQuery.getCreditcardInfo(), refundAmount, lameDuckAccount);
         System.out.println("Flight has booking number "+bookedFlights.get(0).getBookingNumber()+" is canceled.");
         bookedFlights.remove(flightInfo);
         //System.out.println("Flight has booking number "+bookedFlights.get(0).getBookingNumber()+" is canceled.");
@@ -115,7 +110,9 @@ public class LameDuckService {
         }
         return true;
     }
-    public boolean flight_isBooked( flightdata.FlightInfoType flightInfo){
+    
+    
+  public boolean flight_isBooked( flightdata.FlightInfoType flightInfo){
        for (int i = 0; i < bookedFlights.size(); i++) {
 
             flightdata.FlightInfoType fund_flightInfo = bookedFlights.get(i);
@@ -159,7 +156,7 @@ public class LameDuckService {
         }
         return thisFlightInfo;
     }
-
+    
     public XMLGregorianCalendar createDate(int day, int month, int year) {
 
         //Demos and Usage of javax.xml.datatype.DatatypeFactory.newXMLGregorianCalendar
@@ -168,7 +165,7 @@ public class LameDuckService {
         try {
             df = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException ex) {
-            Logger.getLogger(LameDuckService.class.getName()).log(Level.SEVERE, null, ex);
+           // Logger.getLogger(LameDuckService.class.getName()).log(Level.SEVERE, null, ex);
         }
         XMLGregorianCalendar date = df.newXMLGregorianCalendar();
         date.setDay(day);
@@ -176,8 +173,8 @@ public class LameDuckService {
         date.setYear(year);
         return date;
     }
-
-    public boolean validateCreditCard(int group, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditCardInfo, int amount) throws CreditCardFaultMessage {
+    
+      public boolean validateCreditCard(int group, dk.dtu.imm.fastmoney.types.CreditCardInfoType creditCardInfo, int amount) throws CreditCardFaultMessage {
         dk.dtu.imm.fastmoney.BankService service = new dk.dtu.imm.fastmoney.BankService();
         dk.dtu.imm.fastmoney.BankPortType port = service.getBankPort();
         return port.validateCreditCard(group, creditCardInfo, amount);
