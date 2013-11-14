@@ -2,44 +2,35 @@
     <types>   
         <xsd:schema xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" targetNamespace="http://dk.dtu.02267.hotelservice/WSDL">
             <xsd:import namespace="urn://hotelReservationTypes" schemaLocation="http://localhost:8080/HotelReservation/hotelService?xsd=1">
-            </xsd:import>
-            <xsd:element name="hotelQuery" type="hrt:hotelQueryType"/>
-            <xsd:element name="hotelQueryResult" type="hrt:hotelArrayType"/>
-            <xsd:element name="hotelBookingWithCreditCard" type="hrt:hotelBookingWithCreditCardType"/>
-            <xsd:element name="hotelBookingFault" type="hrt:hotelFaultType"/>
-            <xsd:element name="hotelCancellation" type="xsd:string"/>
-            <xsd:element name="hotelCancellationFault" type="hrt:hotelFaultType"/>
-            <xsd:element name="hotelBookingResult" type="xsd:boolean"/>
-            <xsd:element name="hotelCancellationResult" type="xsd:boolean"/>
-            <xsd:element name="reset" type="xsd:string"/>            
+            </xsd:import>         
         </xsd:schema>
     </types>
     <message name="getHotelsOperationRequest">
-        <part name="hotelQuery" element="tns:hotelQuery"/>
+        <part name="hotelQuery" element="hrt:hotelQuery"/>
     </message>
     <message name="getHotelsOperationResponse">
-        <part name="hotelArray" element="tns:hotelQueryResult"/>
+        <part name="hotelArray" element="hrt:hotelQueryResult"/>
     </message>
     <message name="bookHotelOperationRequest">
-        <part name="bookingWithCreditCard" element="tns:hotelBookingWithCreditCard"/>
+        <part name="bookingWithCreditCard" element="hrt:hotelBookingWithCreditCard"/>
     </message>
     <message name="bookHotelOperationResponse">
-        <part name="bookingResult" element="tns:hotelBookingResult"/>
+        <part name="bookingResult" element="hrt:hotelBookingResult"/>
     </message>
     <message name="bookHotelOperationFault">
-        <part name="bookingFault" element="tns:hotelBookingFault"/>
+        <part name="bookingFault" element="hrt:hotelBookingFault"/>
     </message>
     <message name="cancelHotelOperationRequest">
-        <part name="bookingCancellation" element="tns:hotelCancellation"/>
+        <part name="bookingCancellation" element="hrt:hotelCancellation"/>
     </message>
     <message name="cancelHotelOperationResponse">
-        <part name="cancellationResult" element="tns:hotelCancellationResult"/>
+        <part name="cancellationResult" element="hrt:hotelCancellationResult"/>
     </message>
     <message name="cancelHotelOperationFault">
-        <part name="cancellationFault" element="tns:hotelCancellationFault"/>
+        <part name="cancellationFault" element="hrt:hotelCancellationFault"/>
     </message>
     <message name="resetOperationRequest">
-        <part name="reset" element="tns:reset"/>
+        <part name="reset" element="hrt:reset"/>
     </message>
     <portType name="hotelServicePortType">
         <operation name="cancelHotelOperation">
