@@ -46,4 +46,14 @@
         </xsd:sequence>
     </xsd:complexType>
     
+    <xsd:element name="hotelQuery" type="tns:hotelQueryType"/>
+    <xsd:element name="hotelQueryResult" type="tns:hotelArrayType"/>
+    <xsd:element name="hotelBookingWithCreditCard" type="tns:hotelBookingWithCreditCardType"/>
+    <xsd:element name="hotelBookingFault" type="tns:hotelFaultType"/>
+    <xsd:element name="hotelCancellation" type="xsd:string"/>
+    <xsd:element name="hotelCancellationFault" type="tns:hotelFaultType"/>
+    <xsd:element name="hotelBookingResult" type="xsd:boolean"/>
+    <xsd:element name="hotelCancellationResult" type="xsd:boolean"/>
+    <xsd:element name="reset" type="xsd:string"/>    
+    
 </xsd:schema>
