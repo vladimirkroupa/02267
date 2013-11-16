@@ -5,15 +5,32 @@ target
 # Package Files #
 *.war
 *.ear
-/HotelReservationClient/dist/
-/LameDuck/dist/
+
+# Project and Dist Files #
 /HotelReservation/dist/
-/LameDuckTest/dist
+/HotelReservation/nbproject/private
+
+/HotelReservationClient/dist/
+/HotelReservationClient/nbproject/private
+
+/LameDuck/dist/
+/LameDuck/nbproject/private/
+
+/LameDuckClient/dist
+/LameDuckClient/nbproject/private/
+
 /TravelGoodSoap/dist/
+
 /TravelGoodBPELModule/nbproject/private/
+
+/travelGoodApp/dist/
 /travelGoodApp/nbproject/private/
 /travelGoodApp/src/jbiServiceUnits/
-/travelGoodApp/dist/
 /travelGoodApp/test/results/
+
+
+/TravelGoodREST/nbproject/private/
+/TravelGoodREST/dist/
+
 /travelGoodTest/nbproject/private/
 /testTravelGood/nbproject/private/
