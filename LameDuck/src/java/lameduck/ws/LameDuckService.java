@@ -21,7 +21,7 @@ import ws.lameduck.CancelFlightFault;
  * @author AhmadReza
  */
 @WebService(serviceName = "lameDuckService", portName = "lameDuckPortTypeBindingPort", endpointInterface = "ws.lameduck.LameDuckPortType", targetNamespace = "http://lameDuck.ws", wsdlLocation = "WEB-INF/wsdl/lameduckService/lameDuckWSDL.wsdl")
-public class lameduckService {
+public class LameduckService {
     FlightDB fdb = new FlightDB();
     List<flightdata.FlightInfoType> bookedFlights = new ArrayList();
     flightdata.FlightInfoListType matchedFlights; //= new flightdata.FlightInfoListType();
@@ -79,7 +79,7 @@ public class lameduckService {
         } catch (CreditCardFaultMessage ex) {
             System.out.println(ex.getFaultInfo().getMessage());
             return false;
-            //Logger.getLogger(lameduckService.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(LameduckService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
@@ -106,7 +106,7 @@ public class lameduckService {
         } catch (CreditCardFaultMessage ex) {
             System.out.println(ex.getFaultInfo().getMessage());
             return false;
-            //Logger.getLogger(lameduckService.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(LameduckService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
