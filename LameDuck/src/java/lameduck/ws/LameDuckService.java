@@ -21,7 +21,7 @@ import ws.lameduck.CancelFlightFault;
  * @author AhmadReza
  */
 @WebService(serviceName = "lameDuckService", portName = "lameDuckPortTypeBindingPort", endpointInterface = "ws.lameduck.LameDuckPortType", targetNamespace = "http://lameDuck.ws", wsdlLocation = "WEB-INF/wsdl/lameduckService/lameDuckWSDL.wsdl")
-public class LameduckService {
+public class LameDuckService {
     FlightDB fdb = new FlightDB();
     List<flightdata.FlightInfoType> bookedFlights = new ArrayList();
     flightdata.FlightInfoListType matchedFlights; //= new flightdata.FlightInfoListType();
