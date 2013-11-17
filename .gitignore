@@ -7,37 +7,34 @@ target
 *.ear
 
 # Project and Dist Files #
-/HotelReservation/dist/
 /HotelReservation/nbproject/private
+/HotelReservation/dist/
 
-/HotelReservationClient/dist/
 /HotelReservationClient/nbproject/private
+/HotelReservationClient/dist/
 
-/LameDuck/dist/
 /LameDuck/nbproject/private/
+/LameDuck/dist/
 
-/LameDuckClient/dist
 /LameDuckClient/nbproject/private/
+/LameDuckClient/dist
 
+/TravelGoodSoap/nbproject/private/
 /TravelGoodSoap/dist/
 
 /TravelGoodBPELModule/nbproject/private/
+/TravelGoodBPELModule/dist/
 
-/travelGoodApp/dist/
-/travelGoodApp/nbproject/private/
-/travelGoodApp/src/jbiServiceUnits/
-/travelGoodApp/test/results/
-
-
-/TravelGoodREST/nbproject/private/
-/TravelGoodREST/dist/
-
-/travelGoodTest/nbproject/private/
-/testTravelGood/nbproject/private/
-/testTravelGood/dist/
 /TravelGoodBPELApp/nbproject/private/
 /TravelGoodBPELApp/test/results/
 /TravelGoodBPELApp/src/jbiServiceUnits/
 /TravelGoodBPELApp/dist/
+
 /TravelGoodBPELClient/nbproject/private/
 /TravelGoodBPELClient/dist/
+
+/TravelGoodREST/nbproject/private/
+/TravelGoodREST/dist/
+
+/TravelGoodRESTClient/nbproject/private/
+/TravelGoodRESTClient/dist
