@@ -11,13 +11,12 @@
     xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
     xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling" xmlns:ns0="urn://travelGoodTypes" xmlns:ns1="urn:flightData">
     <import namespace="urn://travelGood" location="travelGood.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
-    <import namespace="http://dk.dtu.02267.hotelservice/WSDL" location="http://localhost:8080/HotelReservation/hotelService?wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
-    <import namespace="http://enterprise.netbeans.org/bpel/lameDuckServiceWrapper" location="lameDuckServiceWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://dk.dtu.02267.hotelservice/WSDL" location="localhost_8080/HotelReservation/hotelService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <import namespace="http://lameDuck.ws" location="http://localhost:8080/LameDuck/lameDuckService?wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" partnerLinkType="tns:partnerlinktype1" partnerRole="hotelServiceRole"/>
+        <partnerLink name="PartnerLink3" xmlns:tns="http://lameDuck.ws" partnerLinkType="tns:partnerlinktype1" partnerRole="lameDuckServiceRole"/>
         <partnerLink name="PartnerLink1" xmlns:tns="urn://travelGood" partnerLinkType="tns:travelGood" myRole="travelGoodPortRole"/>
-        <partnerLink name="lameDuckPartnerLink" xmlns:tns="http://enterprise.netbeans.org/bpel/lameDuckServiceWrapper" partnerLinkType="tns:lameDuckLinkTypeOne" partnerRole="lameDuckRole"/>
-        <partnerLink name="hotelPartnerLink" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" partnerLinkType="tns:partnerlinktype1" partnerRole="hotelServiceRole"/>
     </partnerLinks>
     <variables>
         <variable name="ListFlightsOperationOut" xmlns:tns="urn://travelGood" messageType="tns:listFlightsResponse"/>
@@ -33,7 +32,7 @@
                 <to variable="GetFlightsIn" part="getFlightQuery"/>
             </copy>
         </assign>
-        <invoke name="Invoke1" partnerLink="lameDuckPartnerLink" operation="getFlights" xmlns:tns="http://lameDuck.ws" portType="tns:lameDuckPortType" inputVariable="GetFlightsIn" outputVariable="GetFlightsOut"/>
+        <invoke name="Invoke1" partnerLink="PartnerLink3" operation="getFlights" xmlns:tns="http://lameDuck.ws" portType="tns:lameDuckPortType" inputVariable="GetFlightsIn" outputVariable="GetFlightsOut"/>
         <assign name="Assign2">
             <copy>
                 <from variable="GetFlightsOut" part="flightsList"/>

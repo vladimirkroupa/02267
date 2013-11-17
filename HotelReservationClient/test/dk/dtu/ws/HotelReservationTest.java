@@ -8,16 +8,11 @@ import dk.dtu.ws.hotelservice.BookHotelOperationFault;
 import dk.dtu.ws.hotelservice.CancelHotelOperationFault;
 import dk.dtu.ws.hotelservice.CreditCardInfoType;
 import dk.dtu.ws.hotelservice.ExpirationDateType;
-import dk.dtu.ws.hotelservice.HotelArrayType;
-import dk.dtu.ws.hotelservice.HotelBookingWithCreditCardType;
-import dk.dtu.ws.hotelservice.HotelQueryType;
-import dk.dtu.ws.hotelservice.HotelType;
-import dk.dtu.ws.hotelservice.ValidateCreditCard;
-import java.util.Calendar;
+import dk.dtu.ws.hotelservice.HotelList;
+import dk.dtu.ws.hotelservice.HotelBookingWithCreditCard;
+import dk.dtu.ws.hotelservice.HotelQuery;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -38,7 +33,7 @@ public class HotelReservationTest {
     
     @Test
     public void testGetHotelOperation() {
-        HotelArrayType result = getHotelsOperation(createHotelQuery());
+        HotelList result = getHotelsOperation(createHotelQuery());
         Assert.assertEquals("00001", result.getHotels().get(0).getBookingNo());
         Assert.assertEquals("00002", result.getHotels().get(1).getBookingNo());
         Assert.assertFalse(result.getHotels().isEmpty());
@@ -47,7 +42,7 @@ public class HotelReservationTest {
     @Test
     public void testBookHotelOperation() throws BookHotelOperationFault {
         getHotelsOperation(createHotelQuery());
-        HotelBookingWithCreditCardType booking = createBooking();
+        HotelBookingWithCreditCard booking = createBooking();
         boolean bookStatus = bookHotelOperation(booking);
         Assert.assertTrue(bookStatus);
     }
@@ -55,7 +50,7 @@ public class HotelReservationTest {
     @Test(expected = BookHotelOperationFault.class)
     public void testBookHotelOperationDuplicate() throws BookHotelOperationFault {
         getHotelsOperation(createHotelQuery());
-        HotelBookingWithCreditCardType booking = createBooking();
+        HotelBookingWithCreditCard booking = createBooking();
         bookHotelOperation(booking);
         bookHotelOperation(booking);
     }
@@ -63,7 +58,7 @@ public class HotelReservationTest {
     @Test
     public void testCancelHotelOperation() throws CancelHotelOperationFault, BookHotelOperationFault {
         getHotelsOperation(createHotelQuery());
-        HotelBookingWithCreditCardType booking = createBooking();
+        HotelBookingWithCreditCard booking = createBooking();
         bookHotelOperation(booking);
         boolean cancelStatus;
         cancelStatus = cancelHotelOperation("00001");
@@ -75,16 +70,16 @@ public class HotelReservationTest {
         cancelHotelOperation("00002");
     }
 
-    private HotelQueryType createHotelQuery() {
-        HotelQueryType query = new HotelQueryType();
+    private HotelQuery createHotelQuery() {
+        HotelQuery query = new HotelQuery();
         query.setArrivalDate(toXMLGregCal(DateUtil.today()));
         query.setCity("Copenhagen");
         query.setDepartureDate(toXMLGregCal(DateUtil.tommorow()));
         return query;
     }
     
-    private HotelBookingWithCreditCardType createBooking() {
-        HotelBookingWithCreditCardType booking = new HotelBookingWithCreditCardType();
+    private HotelBookingWithCreditCard createBooking() {
+        HotelBookingWithCreditCard booking = new HotelBookingWithCreditCard();
         booking.setBookingNumber("00001");
         
         CreditCardInfoType info = new CreditCardInfoType();
@@ -112,7 +107,7 @@ public class HotelReservationTest {
         
     }
 
-    private static boolean bookHotelOperation(HotelBookingWithCreditCardType bookingWithCreditCard) throws BookHotelOperationFault {
+    private static boolean bookHotelOperation(HotelBookingWithCreditCard bookingWithCreditCard) throws BookHotelOperationFault {
         dk.dtu.ws.hotelservice.HotelService service = new dk.dtu.ws.hotelservice.HotelService();
         dk.dtu.ws.hotelservice.HotelServicePortType port = service.getHotelServiceSOAPPort();
         return port.bookHotelOperation(bookingWithCreditCard);
@@ -124,7 +119,7 @@ public class HotelReservationTest {
         return port.cancelHotelOperation(bookingCancellation);
     }
 
-    private static HotelArrayType getHotelsOperation(HotelQueryType hotelQuery) {
+    private static HotelList getHotelsOperation(HotelQuery hotelQuery) {
         dk.dtu.ws.hotelservice.HotelService service = new dk.dtu.ws.hotelservice.HotelService();
         dk.dtu.ws.hotelservice.HotelServicePortType port = service.getHotelServiceSOAPPort();
         return port.getHotelsOperation(hotelQuery);

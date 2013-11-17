@@ -3,23 +3,22 @@
              xmlns="http://schemas.xmlsoap.org/wsdl/"
              xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-             xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" 
+             xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL"
+             xmlns:hrt="urn://hotelReservationTypes"              
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
-             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
-             xmlns:hrt="urn://hotelReservationTypes">
-    <types>   
-        <xsd:schema targetNamespace="http://dk.dtu.02267.hotelservice/WSDL" 
-                    xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL">
-            <xsd:import namespace="urn://hotelReservationTypes" 
-                        schemaLocation="hotelReservation.xsd">
-            </xsd:import>         
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    
+    <types>
+        <xsd:schema targetNamespace="http://dk.dtu.02267.hotelservice/WSDL">
+            <xsd:import namespace="urn://hotelReservationTypes" schemaLocation="hotelReservation.xsd"/>
         </xsd:schema>
     </types>
+        
     <message name="getHotelsOperationRequest">
         <part name="hotelQuery" element="hrt:hotelQuery"/>
     </message>
     <message name="getHotelsOperationResponse">
-        <part name="hotelArray" element="hrt:hotelQueryResult"/>
+        <part name="hotelArray" element="hrt:hotelList"/>
     </message>
     <message name="bookHotelOperationRequest">
         <part name="bookingWithCreditCard" element="hrt:hotelBookingWithCreditCard"/>

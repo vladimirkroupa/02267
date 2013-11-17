@@ -7,5 +7,7 @@
     <system systemId="file:/C:/Users/moonlight/Desktop/lameDuckWS/LameDuck/src/java/flightData.xsd" uri="src/conf/xml-resources/web-services/lameduckService/wsdl/flightData.xsd"/>
     <system systemId="file:/C:/Users/AhmadReza/Desktop/02267-master/02267-master/LameDuck/src/java/lameDuckWSDL.wsdl" uri="src/conf/xml-resources/web-services/lameDuckService/wsdl/lameDuckWSDL.wsdl"/>
     <system systemId="file:/C:/Users/AhmadReza/Desktop/02267-master/02267-master/LameDuck/src/java/flightData.xsd" uri="src/conf/xml-resources/web-services/lameDuckService/wsdl/flightData.xsd"/>
+    <system systemId="file:/D:/OpenESBProjects/02267/LameDuck/src/java/lameDuckWSDL.wsdl" uri="src/conf/xml-resources/web-services/lameDuckService/wsdl/lameDuckWSDL.wsdl"/>
+    <system systemId="file:/D:/OpenESBProjects/02267/LameDuck/src/java/flightData.xsd" uri="src/conf/xml-resources/web-services/lameDuckService/wsdl/flightData.xsd"/>
     <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="src/conf/xml-resources/web-services/lameDuckService/wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
 </catalog>

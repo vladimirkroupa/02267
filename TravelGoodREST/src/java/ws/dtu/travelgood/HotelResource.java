@@ -1,7 +1,7 @@
 package ws.dtu.travelgood;
 
+import hotelreservationtypes.HotelList;
 import hotelreservationtypes.HotelQuery;
-import hotelreservationtypes.HotelQueryResult;
 import hotelservice._02267.dtu.dk.wsdl.HotelService;
 import hotelservice._02267.dtu.dk.wsdl.HotelServicePortType;
 import javax.ws.rs.GET;
@@ -15,12 +15,12 @@ public class HotelResource {
     
     @GET
     @Produces (MediaType.APPLICATION_XML)
-    public HotelQueryResult listHotels(
+    public HotelList listHotels(
             @QueryParam("city") String city, 
             @QueryParam("arrivalDate") String arrivalDate, 
             @QueryParam("departureDate") String departureDate) {        
         HotelQuery hotelQuery = createHotelQuery(city, arrivalDate, departureDate);
-        HotelQueryResult result = getHotelsOperation(hotelQuery);
+        HotelList result = getHotelsOperation(hotelQuery);
         return result;
     }
     
@@ -32,7 +32,7 @@ public class HotelResource {
         return hqt;
     }
     
-    private static HotelQueryResult getHotelsOperation(HotelQuery hotelQuery) {
+    private static HotelList getHotelsOperation(HotelQuery hotelQuery) {
         HotelService service = new HotelService();
         HotelServicePortType port = service.getHotelServiceSOAPPort();
         return port.getHotelsOperation(hotelQuery);

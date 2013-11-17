@@ -4,7 +4,7 @@ import dk.dtu.imm.fastmoney.CreditCardFaultMessage;
 import dk.dtu.ws.hotelservice.domain.NiceView;
 import hotelreservationtypes.HotelBookingWithCreditCard;
 import hotelreservationtypes.HotelQuery;
-import hotelreservationtypes.HotelQueryResult;
+import hotelreservationtypes.HotelList;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
 import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
 import java.util.Date;
@@ -19,7 +19,7 @@ public class HotelReservation {
 
     private NiceView niceView = new NiceView();
 
-    public HotelQueryResult getHotelsOperation(HotelQuery hotelQuery) {
+    public HotelList getHotelsOperation(HotelQuery hotelQuery) {
         Date from = WSTypeConverter.toDate(hotelQuery.getArrivalDate());
         Date to = WSTypeConverter.toDate(hotelQuery.getDepartureDate());
         return niceView.listHotels(hotelQuery.getCity(), from, to);

@@ -1,45 +1,37 @@
-<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1 (branches/2.1-6844; 2011-07-29T12:07:24+0000) JAXWS-RI/2.2.5 JAXWS/2.2. --><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:hrt="urn://hotelReservationTypes" name="hotelservice" targetNamespace="http://dk.dtu.02267.hotelservice/WSDL">
-    <types>   
-        <xsd:schema xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" targetNamespace="http://dk.dtu.02267.hotelservice/WSDL">
-            <xsd:import namespace="urn://hotelReservationTypes" schemaLocation="http://localhost:8080/HotelReservation/hotelService?xsd=1">
-            </xsd:import>
-            <xsd:element name="hotelQuery" type="hrt:hotelQueryType"/>
-            <xsd:element name="hotelQueryResult" type="hrt:hotelArrayType"/>
-            <xsd:element name="hotelBookingWithCreditCard" type="hrt:hotelBookingWithCreditCardType"/>
-            <xsd:element name="hotelBookingFault" type="hrt:hotelFaultType"/>
-            <xsd:element name="hotelCancellation" type="xsd:string"/>
-            <xsd:element name="hotelCancellationFault" type="hrt:hotelFaultType"/>
-            <xsd:element name="hotelBookingResult" type="xsd:boolean"/>
-            <xsd:element name="hotelCancellationResult" type="xsd:boolean"/>
-            <xsd:element name="reset" type="xsd:string"/>            
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.1.1 (branches/2.1-6844; 2011-07-29T12:07:24+0000) JAXWS-RI/2.2.5 JAXWS/2.2. --><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" xmlns:hrt="urn://hotelReservationTypes" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="hotelservice" targetNamespace="http://dk.dtu.02267.hotelservice/WSDL">
+    
+    <types>
+        <xsd:schema targetNamespace="http://dk.dtu.02267.hotelservice/WSDL">
+            <xsd:import namespace="urn://hotelReservationTypes" schemaLocation="http://localhost:8080/HotelReservation/hotelService?xsd=1"/>
         </xsd:schema>
     </types>
+        
     <message name="getHotelsOperationRequest">
-        <part name="hotelQuery" element="tns:hotelQuery"/>
+        <part name="hotelQuery" element="hrt:hotelQuery"/>
     </message>
     <message name="getHotelsOperationResponse">
-        <part name="hotelArray" element="tns:hotelQueryResult"/>
+        <part name="hotelArray" element="hrt:hotelList"/>
     </message>
     <message name="bookHotelOperationRequest">
-        <part name="bookingWithCreditCard" element="tns:hotelBookingWithCreditCard"/>
+        <part name="bookingWithCreditCard" element="hrt:hotelBookingWithCreditCard"/>
     </message>
     <message name="bookHotelOperationResponse">
-        <part name="bookingResult" element="tns:hotelBookingResult"/>
+        <part name="bookingResult" element="hrt:hotelBookingResult"/>
     </message>
     <message name="bookHotelOperationFault">
-        <part name="bookingFault" element="tns:hotelBookingFault"/>
+        <part name="bookingFault" element="hrt:hotelBookingFault"/>
     </message>
     <message name="cancelHotelOperationRequest">
-        <part name="bookingCancellation" element="tns:hotelCancellation"/>
+        <part name="bookingCancellation" element="hrt:hotelCancellation"/>
     </message>
     <message name="cancelHotelOperationResponse">
-        <part name="cancellationResult" element="tns:hotelCancellationResult"/>
+        <part name="cancellationResult" element="hrt:hotelCancellationResult"/>
     </message>
     <message name="cancelHotelOperationFault">
-        <part name="cancellationFault" element="tns:hotelCancellationFault"/>
+        <part name="cancellationFault" element="hrt:hotelCancellationFault"/>
     </message>
     <message name="resetOperationRequest">
-        <part name="reset" element="tns:reset"/>
+        <part name="reset" element="hrt:reset"/>
     </message>
     <portType name="hotelServicePortType">
         <operation name="cancelHotelOperation">
