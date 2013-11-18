@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jax-ws xmlns="http://www.netbeans.org/ns/jax-ws/1">
   <services>
-    <service name="LameDuckService">
+    <service name="lameduckService">
       <implementation-class>lameduck.ws.LameDuckService</implementation-class>
-      <wsdl-url>file:/D:/OpenESBProjects/02267/LameDuck/src/java/lameDuckWSDL.wsdl</wsdl-url>
+      <wsdl-url>file:/C:/Users/AhmadReza/Desktop/02267-master/02267-master/LameDuck/src/java/lameDuckWSDL.wsdl</wsdl-url>
       <local-wsdl-file>lameDuckWSDL.wsdl</local-wsdl-file>
       <service-name>lameDuckService</service-name>
       <port-name>lameDuckPortTypeBindingPort</port-name>
