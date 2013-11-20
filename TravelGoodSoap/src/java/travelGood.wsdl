@@ -17,7 +17,8 @@
         <xsd:schema targetNamespace="urn://travelGood" 
                     xmlns:tns="urn://travelGood">
             <xsd:import namespace="urn://travelGoodTypes"
-                        schemaLocation="travelGood.xsd"></xsd:import>
+                        schemaLocation="travelGood.xsd">
+            </xsd:import>
             <xsd:import namespace="urn://hotelReservationTypes" 
                         schemaLocation="http://localhost:8080/HotelReservation/hotelService?xsd=1"/>
             <xsd:import namespace="urn:flightData" 
@@ -25,24 +26,13 @@
             <xsd:import namespace="urn://types.fastmoney.imm.dtu.dk" 
                         schemaLocation="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1"/>
             
-            <xsd:element name="createItineraryRequest" type="xsd:string"></xsd:element>
-            <xsd:element name="createItineraryResult" type="xsd:string"></xsd:element>
-            <xsd:element name="itineraryItem" type="tgt:itineraryItemType"></xsd:element>
-            <xsd:element name="itineraryItemResult" type="xsd:string"></xsd:element>
-            <xsd:element name="itineraryNo" type="xsd:string"></xsd:element>
-            <xsd:element name="itinerary" type="tgt:itineraryItemStatusType"></xsd:element>
-            <xsd:element name="itineraryNumberWithCCInfo" type="tgt:itineraryNumberWithCCInfoType"></xsd:element>
-            <xsd:element name="bookItineraryResult" type="xsd:boolean"></xsd:element>
-            <xsd:element name="itineraryFault" type="tgt:itineraryFaultType"></xsd:element>
-            <xsd:element name="cancelItineraryResult" type="xsd:boolean"></xsd:element>
-            <xsd:element name="cancelBookingResult" type="xsd:boolean"></xsd:element>
         </xsd:schema>
     </types>
     
     <!-- listHotels messages -->
     
     <message name="listHotelsRequest">
-        <part name="hotelQueryRequest" element="hr:hotelQuery"/>        
+        <part name="hotelQueryRequest" element="tgt:itineraryNo"/>        
     </message>
     
     <message name="listHotelsResponse">
@@ -52,7 +42,7 @@
     <!-- listFlights messages -->
 
     <message name="listFlightsRequest">
-        <part name="flightQuery" element="fd:getFlightQuery"/>
+        <part name="flightQuery" element="tgt:itineraryNo"/>
     </message>
     
     <message name="listFlightsResponse">
@@ -61,84 +51,84 @@
     
     <!-- createItinerary messages -->
     
-   <message name="createItineraryRequest">
-        <part name="part" element="tns:createItineraryRequest"/>
+    <message name="createItineraryRequest">
+        <part name="createItineraryReq" element="tgt:createItineraryRequest"/>
     </message>
     
     <message name="createItineraryResponse">
-        <part name="itineraryNo" element="tns:createItineraryResult"></part>
+        <part name="itineraryNo" element="tgt:itineraryNo"></part>
     </message>
     
     <!-- addHotel messages -->
     
     <message name="addHotelToItineraryRequest">
-        <part name="addHotelRequest" element="tns:itineraryItem"/>
+        <part name="addHotelRequest" element="tgt:itineraryNoWithBookingNo"/>
     </message>
     
     <message name="addHotelToItineraryResponse">
-        <part name="success" element="tns:itineraryItemResult"/>
+        <part name="success" element="tgt:operationSuccessResult"/>
     </message>
     
     <!-- addFlight messages -->
     
     <message name="addFlightToItineraryRequest">
-        <part name="addFlightRequest" element="tns:itineraryItem"/>
+        <part name="addFlightRequest" element="tgt:itineraryNoWithBookingNo"/>
     </message>
     
     <message name="addFlightToItineraryResponse">
-        <part name="success" element="tns:itineraryItemResult"/>
+        <part name="success" element="tgt:operationSuccessResult"/>
     </message>
     
     <!-- getItinerary messages -->
     
     <message name="getItineraryRequest">
-        <part name="itineraryNo" element="tns:itineraryNo"/>
+        <part name="itineraryNo" element="tgt:itineraryNo"/>
     </message>
 
     <message name="getItineraryResponse">
-        <part name="itinerary" element="tns:itinerary"/>
+        <part name="itinerary" element="tgt:itinerary"/>
     </message>    
     
     <!-- bookItinerary messages -->
     
     <message name="bookItineraryRequest">
-        <part name="itineraryNumberWithCCInfo" element="tns:itineraryNumberWithCCInfo"/>
+        <part name="itineraryNoWithCCInfo" element="tgt:itineraryNoWithCCInfo"/>
     </message>
 
     <message name="bookItineraryResponse">
-        <part name="bookItineraryResult" element="tns:bookItineraryResult"/>
+        <part name="bookItineraryResult" element="tgt:operationSuccessResult"/>
     </message>
     
     <message name="bookItineraryFault">
-        <part name="bookingFault" element="tns:itineraryFault"/>
+        <part name="bookingFault" element="tgt:itineraryFault"/>
     </message>
      
     <!-- cancelItinerary messages -->
     
     <message name="cancelItineraryRequest">
-        <part name="itineraryNo" element="tns:itineraryNo"/>
+        <part name="itineraryNo" element="tgt:itineraryNo"/>
     </message>
 
     <message name="cancelItineraryResponse">
-        <part name="cancelItineraryResult" element="tns:cancelItineraryResult"/>
+        <part name="cancelItineraryResult" element="tgt:operationSuccessResult"/>
     </message>
     
     <message name="cancelItineraryFault">
-        <part name="itineraryFault" element="tns:itineraryFault"/>
+        <part name="itineraryFault" element="tgt:itineraryFault"/>
     </message>
     
     <!-- cancelBooking messages -->
     
     <message name="cancelBookingRequest">
-        <part name="itineraryNo" element="tns:itineraryNo"/>
+        <part name="itineraryNo" element="tgt:itineraryNo"/>
     </message>
 
     <message name="cancelBookingResponse">
-        <part name="cancelBookingResult" element="tns:cancelBookingResult"/>
+        <part name="cancelBookingResult" element="tgt:operationSuccessResult"/>
     </message>
     
     <message name="cancelBookingFault">
-        <part name="itineraryFault" element="tns:itineraryFault"/>
+        <part name="itineraryFault" element="tgt:itineraryFault"/>
     </message>    
     
     
@@ -306,8 +296,8 @@
     </service>
     <plnk:partnerLinkType name="travelGood">
         <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
-In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
-A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+        A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
         <plnk:role name="travelGoodPortRole" portType="tns:travelGoodPortType"/>
     </plnk:partnerLinkType>
 </definitions>
