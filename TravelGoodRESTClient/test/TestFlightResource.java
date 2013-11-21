@@ -30,6 +30,7 @@ public class TestFlightResource {
         param.add("startDest","Copenhagen, Denmark");
         param.add("finalDest","London, Heathrow, England");
         String response = webResource.queryParams(param).get(String.class);
+        
         System.out.println(response);
         Assert.assertTrue(response.contains("1234567"));
     }
