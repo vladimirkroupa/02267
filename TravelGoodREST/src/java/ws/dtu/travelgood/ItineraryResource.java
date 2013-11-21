@@ -1,5 +1,6 @@
 package ws.dtu.travelgood;
 
+import com.sun.mail.iap.Response;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.GET;
@@ -17,12 +18,12 @@ import travelgoodtypes.Itinerary;
 @Path("/")
 public class ItineraryResource {
 
-    Map<String,Itinerary> itineraryMap = new HashMap<String,Itinerary>();
-    int itineraryIndex = 1;
+    private Map<String, Itinerary> itineraryMap = new HashMap<String, Itinerary>();
+    private int itineraryIndex = 1;
     
     @POST
     @Path("itineraries")
-    @Produces (MediaType.APPLICATION_XML)
+    @Produces (MediaType.TEXT_PLAIN)
     public String createItinerary() {
         Itinerary itinerary = new Itinerary();
         itinerary.setItineraryNo(""+itineraryIndex);
@@ -35,6 +36,9 @@ public class ItineraryResource {
     @Path("itinerary/{itineraryNo}")
     @Produces (MediaType.APPLICATION_XML)
     public Itinerary getItinerary(@PathParam("itineraryNo") String itineraryNo) {
+        if (! itineraryMap.containsKey(itineraryNo)) {
+            throw new IllegalArgumentException("Itinerary doesn't exist.");
+        }
         return itineraryMap.get(itineraryNo);
     }
     
