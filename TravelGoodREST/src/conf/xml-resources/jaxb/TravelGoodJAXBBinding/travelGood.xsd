@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn://travelGoodTypes"
+            xmlns:tns="urn://travelGoodTypes"
+            xmlns:hr="urn://hotelReservationTypes"
+            xmlns:fd="urn:flightData"
+            xmlns:bnk="urn://types.fastmoney.imm.dtu.dk"
+            elementFormDefault="qualified">
+
+    <xsd:import namespace="urn://hotelReservationTypes" 
+                schemaLocation="hotelReservation.xsd"/>
+    <xsd:import namespace="urn:flightData" 
+                schemaLocation="flightData.xsd"/>
+    <xsd:import namespace="urn://types.fastmoney.imm.dtu.dk" 
+                schemaLocation="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1"/>
+
+    <xsd:element name="createItineraryRequest" type="xsd:string"></xsd:element>
+    <xsd:element name="itineraryNo" type="xsd:string"></xsd:element>
+            
+    <xsd:element name="itineraryNoWithBookingNo">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="itineraryNo" type="xsd:string"></xsd:element>
+                <xsd:element name="bookingNo" type="xsd:string"></xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>            
+    </xsd:element>
+            
+    <xsd:simpleType name="statusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="unconfirmed"/>
+            <xsd:enumeration value="confirmed"/>
+            <xsd:enumeration value="cancelled"/>            
+            <xsd:enumeration value="partiallyCancelled"/>      
+            <!--partiallyCancelled only used for itinerary, not for hotel and flights-->      
+        </xsd:restriction>
+    </xsd:simpleType>      
+        
+    <xsd:complexType name="flightBooking">
+        <xsd:sequence>
+            <xsd:element name="flightBooking" type="fd:FlightInfoType"></xsd:element>
+            <xsd:element name="flightBookingStatus" type="tns:statusType"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+        
+    <xsd:complexType name="hotelBooking">
+        <xsd:sequence>
+            <xsd:element name="hotelBooking" type="hr:hotelType"></xsd:element>
+            <xsd:element name="hotelBookingStatus" type="tns:statusType"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+                            
+    <xsd:element name ="itinerary">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="itineraryNo" type="xsd:string"></xsd:element>
+                <xsd:element name="itineraryStatus" type="tns:statusType"></xsd:element>            
+                <xsd:element name="flightBookingList" maxOccurs="unbounded" minOccurs="0" type="tns:flightBooking"></xsd:element>
+                <xsd:element name="hotelBookingList" maxOccurs="unbounded" minOccurs="0" type="tns:hotelBooking"></xsd:element>         
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>   
+            
+    <xsd:element name="itineraryNoWithCCInfo">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="itineraryNo" type="xsd:string"/>
+                <xsd:element name="ccInfo" type="bnk:creditCardInfoType"/>
+            </xsd:sequence>
+        </xsd:complexType>                    
+    </xsd:element>            
+                
+                
+    <xsd:simpleType name="operationSuccessType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="success"/>
+            <xsd:enumeration value="failed"/>
+            <xsd:enumeration value="partialSuccess"/>            
+            <!--partiallyCancelled only used for itinerary, not for hotel and flights-->      
+        </xsd:restriction>
+    </xsd:simpleType>                     
+    <xsd:element name="operationSuccessResult" type="tns:operationSuccessType"></xsd:element>
+            
+    <xsd:element name="itineraryFault" >
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="errorMessage" type="xsd:string"></xsd:element>
+                <xsd:element name="errorDetail" type="xsd:string"></xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>                          
+    </xsd:element>
+                                                                                                                                                            
+</xsd:schema>

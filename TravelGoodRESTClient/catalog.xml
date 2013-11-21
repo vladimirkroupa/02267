@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/D:/OpenESBProjects/02267/HotelReservation/src/java/hotelReservation.xsd" uri="test/hotelReservation.xsd"/>
+    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="test/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
+</catalog>
