@@ -6,6 +6,7 @@
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import hotelreservationtypes.HotelList;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import org.junit.Assert;
@@ -29,9 +30,9 @@ public class TestHotelResource {
         param.add("city","Copenhagen");
         param.add("arrivalDate","2013-12-10");
         param.add("departureDate","2013-12-22");
-        String response = webResource.queryParams(param).get(String.class);
-        System.out.println(response);
-        Assert.assertTrue(response.contains("Royal Hotel"));
+        HotelList response = webResource.queryParams(param).get(HotelList.class);
+        System.out.println(response.getHotels().get(0).getHotelName());
+        //Assert.assertTrue(response.contains("Royal Hotel"));
 
     }
 }

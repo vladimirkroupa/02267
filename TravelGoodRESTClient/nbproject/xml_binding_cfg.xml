@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='TravelGoodRESTClient' version='1.0'>
+	<schema type='-xmlschema' package='' name='hotelBinding'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/hotelBinding/localhost_8080/HotelReservation/hotelService.xsd_1.xsd' origLocation='http://localhost:8080/HotelReservation/hotelService?xsd=1' origLocationType='url'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+	<schema type='-xmlschema' package='' name='flightBinding'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/flightBinding/localhost_8080/LameDuck/lameDuckService.xsd_1.xsd' origLocation='http://localhost:8080/LameDuck/lameDuckService?xsd=1' origLocationType='url'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+</schemas>

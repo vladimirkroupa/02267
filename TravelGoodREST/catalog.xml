@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
     <system systemId="http://localhost:8080/HotelReservation/hotelService?wsdl" uri="src/conf/xml-resources/web-service-references/hotelService/wsdl/localhost_8080/HotelReservation/hotelService.wsdl"/>
-    <system systemId="http://localhost:8080/HotelReservation/hotelService?xsd=1" uri="src/conf/xml-resources/web-service-references/hotelService/wsdl/localhost_8080/HotelReservation/hotelService.xsd_1.xsd"/>
     <system systemId="http://localhost:8080/LameDuck/lameDuckService?wsdl" uri="src/conf/xml-resources/web-service-references/lameDuckService/wsdl/localhost_8080/LameDuck/lameDuckService.wsdl"/>
-    <system systemId="http://localhost:8080/LameDuck/lameDuckService?xsd=1" uri="src/conf/xml-resources/web-service-references/lameDuckService/wsdl/localhost_8080/LameDuck/lameDuckService.xsd_1.xsd"/>
-    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="src/conf/xml-resources/web-service-references/lameDuckService/wsdl/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
+    <system systemId="file:/D:/OpenESBProjects/02267/TravelGoodREST/../TravelGoodBPELModule/src/travelGood.wsdl" uri="src/conf/xml-resources/jaxb/TravelGoodWSDLBinding/travelGood.wsdl"/>
+    <system systemId="file:/D:/OpenESBProjects/02267/TravelGoodBPELModule/src/travelGood.xsd" uri="src/conf/xml-resources/jaxb/TravelGoodWSDLBinding/travelGood.xsd"/>
+    <system systemId="http://localhost:8080/HotelReservation/hotelService?xsd=1" uri="src/conf/xml-resources/jaxb/TravelGoodWSDLBinding/localhost_8080/HotelReservation/hotelService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/LameDuck/lameDuckService?xsd=1" uri="src/conf/xml-resources/jaxb/TravelGoodWSDLBinding/localhost_8080/LameDuck/lameDuckService.xsd_1.xsd"/>
+    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="src/conf/xml-resources/jaxb/TravelGoodWSDLBinding/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
 </catalog>
