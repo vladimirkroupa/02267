@@ -11,7 +11,7 @@
     xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
     xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling" xmlns:ns0="urn://travelGoodTypes" xmlns:ns1="urn:flightData">
     <import namespace="urn://travelGood" location="travelGood.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
-    <import namespace="http://dk.dtu.02267.hotelservice/WSDL" location="localhost_8080/HotelReservation/hotelService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://dk.dtu.02267.hotelservice/WSDL" location="http://localhost:8080/HotelReservation/hotelService?wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <import namespace="http://lameDuck.ws" location="http://localhost:8080/LameDuck/lameDuckService?wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <partnerLinks>
         <partnerLink name="PartnerLink2" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" partnerLinkType="tns:partnerlinktype1" partnerRole="hotelServiceRole"/>

@@ -18,8 +18,8 @@
     </target>
     <target name="wsimport-client-service" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/service"/>
-        <property name="wsdl-service" location="xml-resources/web-service-references/service/wsdl/localhost_9080/service.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/service" destdir="${build.generated.dir}/jax-wsCache/service" wsdl="${wsdl-service}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="http://localhost:9080/service?wsdl" xnocompile="true" xendorsed="true">
+        <property name="wsdl-service" location="xml-resources/web-service-references/service/wsdl/localhost_9080/TravelGood/service.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/service" destdir="${build.generated.dir}/jax-wsCache/service" wsdl="${wsdl-service}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="http://localhost:9080/TravelGood/service?wsdl" xnocompile="true" xendorsed="true">
             <depends file="${wsdl-service}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/service"/>
         </wsimport>

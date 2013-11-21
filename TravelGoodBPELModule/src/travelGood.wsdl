@@ -6,12 +6,11 @@
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="urn://travelGood" 
-    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
-    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
     xmlns:tgt="urn://travelGoodTypes"
     xmlns:hr="urn://hotelReservationTypes"
     xmlns:fd="urn:flightData"
-    xmlns:bnk="urn://types.fastmoney.imm.dtu.dk">
+    xmlns:bnk="urn://types.fastmoney.imm.dtu.dk" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     
     <types>
         <xsd:schema targetNamespace="urn://travelGood" 
@@ -32,7 +31,7 @@
     <!-- listHotels messages -->
     
     <message name="listHotelsRequest">
-        <part name="hotelQueryRequest" element="tgt:itineraryNo"/>        
+        <part name="hotelQueryRequest" element="hr:hotelQuery"/>        
     </message>
     
     <message name="listHotelsResponse">
@@ -42,7 +41,7 @@
     <!-- listFlights messages -->
 
     <message name="listFlightsRequest">
-        <part name="flightQuery" element="tgt:itineraryNo"/>
+        <part name="flightQuery" element="fd:getFlightQuery"/>
     </message>
     
     <message name="listFlightsResponse">
@@ -182,10 +181,8 @@
         </operation>
                 
     </portType>
-    
-    <binding name="travelGoodSoapBinding" type="tns:travelGoodPortType">
+    <binding name="travelGoodPortTypeBinding" type="tns:travelGoodPortType">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-        
         <operation name="listHotelsOperation">
             <soap:operation/>
             <input name="listHotelsOperationInput">
@@ -195,7 +192,6 @@
                 <soap:body use="literal"/>
             </output>
         </operation>
-        
         <operation name="listFlightsOperation">
             <soap:operation/>
             <input name="listFlightsOperationInput">
@@ -205,7 +201,6 @@
                 <soap:body use="literal"/>
             </output>
         </operation>
-        
         <operation name="createItineraryOperation">
             <soap:operation/>
             <input name="createItineraryOperationInput">
@@ -215,7 +210,6 @@
                 <soap:body use="literal"/>
             </output>
         </operation>
-        
         <operation name="addHotelToItineraryOperation">
             <soap:operation/>
             <input name="addHotelToItineraryOperationInput">
@@ -225,7 +219,6 @@
                 <soap:body use="literal"/>
             </output>
         </operation>
-        
         <operation name="addFlightToItineraryOperation">
             <soap:operation/>
             <input name="addFlightToItineraryOperationInput">
@@ -235,7 +228,6 @@
                 <soap:body use="literal"/>
             </output>
         </operation>
-        
         <operation name="getItineraryOperation">
             <soap:operation/>
             <input name="getItineraryOperationInput">
@@ -245,7 +237,6 @@
                 <soap:body use="literal"/>
             </output>
         </operation>
-        
         <operation name="bookItineraryOperation">
             <soap:operation/>
             <input name="bookItineraryOperationInput">
@@ -258,7 +249,6 @@
                 <soap:fault name="bookItineraryOperationFault" use="literal"/>
             </fault>
         </operation>
-        
         <operation name="cancelItineraryOperation">
             <soap:operation/>
             <input name="cancelItineraryOperationInput">
@@ -271,7 +261,6 @@
                 <soap:fault name="cancelItineraryOperationFault" use="literal"/>
             </fault>
         </operation>
-        
         <operation name="cancelBookingOperation">
             <soap:operation/>
             <input name="cancelBookingOperationInput">
@@ -284,14 +273,10 @@
                 <soap:fault name="cancelBookingOperationFault" use="literal"/>
             </fault>
         </operation>
-        
     </binding>
     <service name="travelGoodService">
-        <port name="travelGoodPortType" binding="tns:travelGoodSoapBinding">
-            <soap:address location="http://localhost:${HttpDefaultPort}/travelGoodService/travelGoodPortType"/>
-        </port>
-        <port name="travelGoodPortTypeBindingPort" binding="tns:travelGoodSoapBinding">
-            <soap:address location="http://localhost:${HttpDefaultPort}/service"/>
+        <port name="travelGoodPortTypeBindingPort" binding="tns:travelGoodPortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/TravelGood/service"/>
         </port>
     </service>
     <plnk:partnerLinkType name="travelGood">
