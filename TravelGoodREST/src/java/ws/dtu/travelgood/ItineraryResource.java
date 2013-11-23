@@ -13,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import travelgoodtypes.Itinerary;
 import travelgoodtypes.StatusType;
 import java.util.logging.Logger;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import travelgoodtypes.FlightBooking;
 
 
@@ -23,19 +25,20 @@ import travelgoodtypes.FlightBooking;
 @Path("/")
 public class ItineraryResource {
 
-    static Map<String,Itinerary> itineraryMap = new HashMap<String,Itinerary>();
-    static int itineraryIndex = 1;
     private Logger log = Logger.getLogger(ItineraryResource.class.getName());
-
+    
+    private static Map<String,Itinerary> itineraryMap = new HashMap<String,Itinerary>();
+    private static int itineraryNo = 1;
     
     @POST
     @Path("itineraries")
     @Produces (MediaType.TEXT_PLAIN)
     public String createItinerary() {
         Itinerary itinerary = new Itinerary();
-        itinerary.setItineraryNo(""+itineraryIndex);
+        itinerary.setItineraryNo(String.valueOf(itineraryNo));
         itinerary.setItineraryStatus(StatusType.UNCONFIRMED);
-        FlightBooking f= new FlightBooking();
+        
+        FlightBooking f = new FlightBooking();
         
         FlightInfoType fInfo = new FlightInfoType();
 
@@ -52,7 +55,7 @@ public class ItineraryResource {
         f.setFlightBooking(fInfo);
         f.setFlightBookingStatus(StatusType.CONFIRMED);
         //itinerary.getFlightBookingList().add();
-        itineraryIndex++;
+        itineraryNo++;
         itineraryMap.put(itinerary.getItineraryNo(),itinerary);
         return itinerary.getItineraryNo();
     }
@@ -61,11 +64,12 @@ public class ItineraryResource {
     @Path("itinerary/{itineraryNo}")
     @Produces (MediaType.APPLICATION_XML)
     public Itinerary getItinerary(@PathParam("itineraryNo") String itineraryNo) {
-        
+        if (! itineraryMap.containsKey(itineraryNo)) {
+            // return HTTP 400
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
         Itinerary itinerary = itineraryMap.get(itineraryNo);
         return itinerary;
-
     }
-    
     
 }
