@@ -20,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import travelgoodtypes.FlightBooking;
+import travelgoodtypes.HotelBooking;
 
 /**
  *
@@ -66,22 +67,30 @@ public class ItineraryResource {
     @POST
     @Path("itinerary/{itineraryNo}")
     @Produces(MediaType.APPLICATION_XML)
-    public Itinerary addHotel(
+    public Response addHotel(
             @PathParam("itineraryNo") String itineraryNo,
             @QueryParam("hotelBookingNo") String hotelBookingNo) {
 
         validateItineraryNo(itineraryNo);
-        Itinerary itinerary = itineraryMap.get(itineraryNo);
-        //itinerary.getHotelBookingList().
+                
+        HotelType hotelBooking = findOfferedBooking(hotelBookingNo);        
+        if (hotelBooking == null) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
         
-        return null;
+        Itinerary itinerary = itineraryMap.get(itineraryNo);
+        HotelBooking hb = new HotelBooking();
+        hb.setHotelBookingStatus(StatusType.UNCONFIRMED);
+        hb.setHotelBooking(hotelBooking);
+        itinerary.getHotelBookingList().add(hb);        
+        System.out.println(itineraryMap.get(itineraryNo));
+
+        return Response.ok().build();
     }
 
-//    private void saveOfferedBookings(HotelList bookings) {
-//        for (HotelType booking : bookings.getHotels()) {
-//            HotelBookingOffers.addOfferedBooking(booking);
-//        }
-//    }
+    private HotelType findOfferedBooking(String bookingNo) {
+        return HotelBookingOffers.findOfferedBooking(bookingNo);
+    }
     
     @GET
     @Path("itinerary/{itineraryNo}")
@@ -103,9 +112,4 @@ public class ItineraryResource {
         return String.valueOf(itineraryNo++);
     }
 
-    private static boolean bookHotelOperation(hotelreservationtypes.HotelBookingWithCreditCard bookingWithCreditCard) throws BookHotelOperationFault {
-        hotelservice._02267.dtu.dk.wsdl.HotelService service = new hotelservice._02267.dtu.dk.wsdl.HotelService();
-        hotelservice._02267.dtu.dk.wsdl.HotelServicePortType port = service.getHotelServiceSOAPPort();
-        return port.bookHotelOperation(bookingWithCreditCard);
-    }
 }
