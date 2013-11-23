@@ -5,7 +5,10 @@
 package ws.dtu.travelgood;
 
 import flightdata.FlightInfoList;
+import flightdata.FlightInfoType;
 import flightdata.GetFlightQuery;
+import java.util.ArrayList;
+import java.util.Iterator;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
@@ -21,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 public class FlightResource {
 
     
-    String dateFormat = "yyyy-MM-dd";
+    String dateFormat = "yyyy-MM-dd";    
     
     @GET
     @Produces(MediaType.APPLICATION_XML)
@@ -35,6 +38,14 @@ public class FlightResource {
         flightQuery.setStartDest(startDest);
         flightQuery.setFinalDest(finalDest);
         FlightInfoList flightInfoList = getFlights(flightQuery) ;
+        
+        ArrayList flightList = (ArrayList) flightInfoList.getFlightInfo();
+        Iterator iter = flightList.iterator();
+        while(iter.hasNext()){
+            FlightInfoType flight = (FlightInfoType) iter.next();
+            FlightBookingData.addOfferedBooking(flight);
+        }
+        
         return flightInfoList;
     }
 
