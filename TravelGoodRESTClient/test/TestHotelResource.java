@@ -32,6 +32,8 @@ public class TestHotelResource {
         param.add("departureDate","2013-12-22");
         HotelList response = webResource.queryParams(param).get(HotelList.class);
         System.out.println(response.getHotels().get(0).getHotelName());
+        
+        
         //Assert.assertTrue(response.contains("Royal Hotel"));
 
     }
