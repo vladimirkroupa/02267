@@ -36,6 +36,7 @@ public class TestHotelResource {
         
         System.out.println(response.getHotels().get(1).getHotelName());
         
+        
         Assert.assertEquals(expectedHotel1().getHotelName(), response.getHotels().get(0).getHotelName());
         Assert.assertEquals(expectedHotel1().getAddress().getCity(), response.getHotels().get(0).getAddress().getCity());
         Assert.assertEquals(expectedHotel1().getAddress().getCountry(), response.getHotels().get(0).getAddress().getCountry());
@@ -45,6 +46,7 @@ public class TestHotelResource {
         Assert.assertEquals(expectedHotel1().getPrice(), response.getHotels().get(0).getPrice(), 0.00001);
         Assert.assertEquals(expectedHotel1().getHotelServiceName(), response.getHotels().get(0).getHotelServiceName());
         Assert.assertEquals(expectedHotel1().isCcGuaranteeReq(), response.getHotels().get(0).isCcGuaranteeReq());
+        
     }
     
     private HotelType expectedHotel1() {

@@ -32,6 +32,9 @@ public class TestItineraryResource {
         webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/itinerary/" + itineraryNo);
         Itinerary itinerary = webResource.get(Itinerary.class);
 
+        System.out.println(itinerary.getItineraryNo());
+        System.out.println(itinerary.getItineraryStatus());
+        
         assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
         assertNotNull(itinerary.getItineraryNo());
     }

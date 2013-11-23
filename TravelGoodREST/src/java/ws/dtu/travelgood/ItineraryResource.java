@@ -1,7 +1,11 @@
 package ws.dtu.travelgood;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import flightdata.FlightInfoType;
 import flightdata.FlightType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.GET;
@@ -13,6 +17,10 @@ import javax.ws.rs.core.MediaType;
 import travelgoodtypes.Itinerary;
 import travelgoodtypes.StatusType;
 import java.util.logging.Logger;
+import javax.ws.rs.PUT;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import travelgoodtypes.FlightBooking;
 
 
@@ -64,8 +72,44 @@ public class ItineraryResource {
         
         Itinerary itinerary = itineraryMap.get(itineraryNo);
         return itinerary;
-
     }
     
+    @PUT
+    @Path("itinerary/{itineraryNo}")
+    @Produces (MediaType.APPLICATION_XML)    
+    public Response addFlight(@PathParam("itineraryNo") String itineraryNo, @QueryParam("flightBookingNo") String flightBookingNo){
+        Itinerary itinerary = itineraryMap.get(itineraryNo);
+        
+        //check in the flightBooking if they already exist
+        boolean bookingAlreadyExist = false;
+        ArrayList flightBookingList = (ArrayList) itinerary.getFlightBookingList();
+        for (Object o : flightBookingList){
+            FlightBooking booking = (FlightBooking) o;
+            FlightInfoType fInfo = booking.getFlightBooking();
+            if(fInfo.getBookingNumber().equals(flightBookingNo)){
+                bookingAlreadyExist = true;
+                break;
+            }
+        }
+        
+        if(!bookingAlreadyExist){
+            FlightBooking booking = new FlightBooking();
+            
+            Client client = new Client();
+            WebResource webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/flights");
+            webResource.accept(MediaType.APPLICATION_XML);
+            MultivaluedMap param = new MultivaluedMapImpl();
+            param.add("date","2013-09-18");
+            param.add("startDest","Copenhagen, Denmark");
+            param.add("finalDest","London, Heathrow, England");
+            
+            
+            booking.setFlightBooking(null);
+            booking.setFlightBookingStatus(StatusType.UNCONFIRMED);
+            itinerary.getFlightBookingList().add(null);
+        }
+        
+        return Response.ok().entity(itinerary).build();
+    } 
     
 }
