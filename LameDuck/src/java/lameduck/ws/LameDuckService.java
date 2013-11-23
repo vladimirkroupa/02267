@@ -26,7 +26,11 @@ import ws.lameduck.CancelFlightFault;
  *
  * @author AhmadReza
  */
-@WebService(serviceName = "lameDuckService", portName = "lameDuckPortTypeBindingPort", endpointInterface = "ws.lameduck.LameDuckPortType", targetNamespace = "http://lameDuck.ws", wsdlLocation = "WEB-INF/wsdl/lameduckService/lameDuckWSDL.wsdl")
+@WebService(serviceName = "lameDuckService", 
+        portName = "lameDuckPortTypeBindingPort", 
+        endpointInterface = "ws.lameduck.LameDuckPortType", 
+        targetNamespace = "http://lameDuck.ws", 
+        wsdlLocation = "WEB-INF/wsdl/lameDuckService/lameDuckWSDL.wsdl")
 public class LameDuckService {
 
     FlightDB fdb = new FlightDB();

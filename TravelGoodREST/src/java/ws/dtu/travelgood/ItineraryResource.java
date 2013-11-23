@@ -30,7 +30,7 @@ public class ItineraryResource {
     
     @POST
     @Path("itineraries")
-    @Produces (MediaType.APPLICATION_XML)
+    @Produces (MediaType.TEXT_PLAIN)
     public String createItinerary() {
         Itinerary itinerary = new Itinerary();
         itinerary.setItineraryNo(""+itineraryIndex);

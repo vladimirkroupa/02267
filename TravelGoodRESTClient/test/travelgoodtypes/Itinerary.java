@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
     "flightBookingList",
     "hotelBookingList"
 })
-@XmlRootElement(name = "itinerary")
+@XmlRootElement(name="itinerary", namespace="urn://travelGoodTypes")
 public class Itinerary {
 
     @XmlElement(required = true)
@@ -155,4 +155,7 @@ public class Itinerary {
         return this.hotelBookingList;
     }
 
+    public String toString(){
+        return itineraryNo+";"+itineraryStatus+";"+flightBookingList+";"+hotelBookingList;
+    }    
 }
