@@ -9,7 +9,9 @@ import hotelreservationtypes.HotelType;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -70,7 +72,6 @@ public class ItineraryResource {
 
     @PUT
     @Path("itinerary/{itineraryNo}")
-    @Produces(MediaType.APPLICATION_XML)
     public Response addHotel(
             @PathParam("itineraryNo") String itineraryNo,
             @QueryParam("hotelBookingNo") String hotelBookingNo) {
@@ -98,35 +99,35 @@ public class ItineraryResource {
     
     @PUT
     @Path("itinerary/{itineraryNo}")
-    @Produces (MediaType.APPLICATION_XML)    
-    public Response addFlight(@PathParam("itineraryNo") String itineraryNo, @QueryParam("flightBookingNo") String flightBookingNo){
+    @Produces(MediaType.APPLICATION_XML)
+    public Response addFlight(@PathParam("itineraryNo") String itineraryNo, @QueryParam("flightBookingNo") String flightBookingNo) {
+        validateItineraryNo(itineraryNo);
+
         Itinerary itinerary = itineraryMap.get(itineraryNo);
-        
+
         //check in the flightBooking if they already exist
         boolean bookingAlreadyExist = false;
-        ArrayList flightBookingList = (ArrayList) itinerary.getFlightBookingList();
-        for (Object o : flightBookingList){
-            FlightBooking booking = (FlightBooking) o;
+        for (FlightBooking booking : itinerary.getFlightBookingList()) {
             FlightInfoType fInfo = booking.getFlightBooking();
-            if(fInfo.getBookingNumber().equals(flightBookingNo)){
+            if (fInfo.getBookingNumber().equals(flightBookingNo)) {
                 bookingAlreadyExist = true;
                 break;
             }
         }
-        
-        if(!bookingAlreadyExist){            
+
+        if (!bookingAlreadyExist) {
             FlightInfoType flight = FlightBookingData.findOfferedBooking(flightBookingNo);
-            
-            if(flight!=null){
+
+            if (flight != null) {
                 FlightBooking booking = new FlightBooking();
                 booking.setFlightBooking(flight);
                 booking.setFlightBookingStatus(StatusType.UNCONFIRMED);
                 itinerary.getFlightBookingList().add(booking);
             }
         }
-        return Response.ok().entity(itinerary).build();
-    }     
-    
+        return Response.ok().build();
+    }
+
     @GET
     @Path("itinerary/{itineraryNo}")
     @Produces(MediaType.APPLICATION_XML)
@@ -136,6 +137,20 @@ public class ItineraryResource {
         return itinerary;
     }
 
+    @DELETE
+    @Path("itinerary/{itineraryNo}")
+    public Response cancelItinerary(@PathParam("itineraryNo") String itineraryNo) {
+        validateItineraryNo(itineraryNo);
+        Itinerary itinerary = itineraryMap.get(itineraryNo);
+        if (! itinerary.getItineraryStatus().equals(StatusType.UNCONFIRMED)) {
+            // return HTTP 400
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+        itineraryMap.remove(itineraryNo);
+        return Response.ok().build();
+    }
+    
+    
     private void validateItineraryNo(String itineraryNo) {
         if (! itineraryMap.containsKey(itineraryNo)) {
             // return HTTP 400
