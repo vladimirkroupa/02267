@@ -23,9 +23,6 @@ import javax.ws.rs.core.MediaType;
 @Path("flights")
 public class FlightResource {
 
-    
-    String dateFormat = "yyyy-MM-dd";    
-    
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public FlightInfoList listFlights(

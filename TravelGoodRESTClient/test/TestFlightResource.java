@@ -17,9 +17,6 @@ import org.junit.Test;
  */
 public class TestFlightResource {
     
-    public TestFlightResource() {
-    }
-    
     @Test
     public void testGetFlights(){
         Client client = new Client();
