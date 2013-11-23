@@ -1,18 +1,16 @@
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import hotelreservationtypes.HotelList;
+import junit.framework.Assert;
 import org.junit.Test;
 import travelgoodtypes.Itinerary;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import travelgoodtypes.StatusType;
 
 /**
  *
- * @author Henry Lie
+ * @author Batman bin Suparman
  */
 public class TestItineraryResource {
     
@@ -22,23 +20,19 @@ public class TestItineraryResource {
     @Test
     public void testCreateItineary(){
         Client client = new Client();
-        WebResource webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/itineraries");
+        WebResource webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/itineraries");        
         String itineraryNo = webResource.post(String.class);
-        System.out.println(itineraryNo);
+        assertNotNull(itineraryNo);
         
         webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/itineraries");
-        itineraryNo = webResource.post(String.class);
-        System.out.println(itineraryNo);
-        
-        webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/itinerary/"+itineraryNo);
+        String itineraryNo2 = webResource.post(String.class);
+        assertNotNull(itineraryNo2);
+        assertThat(itineraryNo, not(equalTo(itineraryNo2)));
+
+        webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/itinerary/" + itineraryNo);
         Itinerary itinerary = webResource.get(Itinerary.class);
 
-        System.out.println(itinerary);        
-        String itineraryString = webResource.get(String.class);
-
-        System.out.println(itineraryString);        
-        //System.out.println(itinerary.getItineraryStatus());
-
-        
+        assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
+        assertNotNull(itinerary.getItineraryNo());
     }
 }
