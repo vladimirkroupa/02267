@@ -35,11 +35,10 @@ public class ItineraryResource {
     @Produces (MediaType.TEXT_PLAIN)
     public String createItinerary() {
         Itinerary itinerary = new Itinerary();
-        itinerary.setItineraryNo(String.valueOf(itineraryNo));
+        itinerary.setItineraryNo(nextItineraryNo());
         itinerary.setItineraryStatus(StatusType.UNCONFIRMED);
         
         FlightBooking f = new FlightBooking();
-        
         FlightInfoType fInfo = new FlightInfoType();
 
         FlightType flight = new FlightType();
@@ -55,11 +54,16 @@ public class ItineraryResource {
         f.setFlightBooking(fInfo);
         f.setFlightBookingStatus(StatusType.CONFIRMED);
         //itinerary.getFlightBookingList().add();
-        itineraryNo++;
-        itineraryMap.put(itinerary.getItineraryNo(),itinerary);
+        
+        itineraryMap.put(itinerary.getItineraryNo(), itinerary);
+        
         return itinerary.getItineraryNo();
     }
- 
+    
+    private String nextItineraryNo() {
+        return String.valueOf(itineraryNo++);
+    }
+    
     @GET
     @Path("itinerary/{itineraryNo}")
     @Produces (MediaType.APPLICATION_XML)
