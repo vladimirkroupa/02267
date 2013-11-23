@@ -68,7 +68,7 @@ public class ItineraryResource {
         return itinerary.getItineraryNo();
     }
 
-    @POST
+    @PUT
     @Path("itinerary/{itineraryNo}")
     @Produces(MediaType.APPLICATION_XML)
     public Response addHotel(
