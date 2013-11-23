@@ -4,29 +4,29 @@
         <endpoint endpoint-name="lameDuckPortTypeBindingPort" interface-name="ns1:lameDuckPortType" name="endpoint1" service-name="ns1:lameDuckService"/>
         <endpoint endpoint-name="hotelServiceSOAPPort" interface-name="ns2:hotelServicePortType" name="endpoint2" service-name="ns2:hotelService"/>
         <endpoint endpoint-name="travelGoodPortTypeBindingPort" interface-name="ns3:travelGoodPortType" name="endpoint3" service-name="ns3:travelGoodService"/>
-        <endpoint display-name="PartnerLink1" endpoint-name="travelGoodPortRole_myRole" file-path="travelGoodBPELModule.bpel" interface-name="ns3:travelGoodPortType" name="endpoint4" process-name="travelGoodBPELModule" service-name="ns4:PartnerLink1"/>
-        <endpoint display-name="PartnerLink2" endpoint-name="hotelServiceRole_partnerRole" file-path="travelGoodBPELModule.bpel" interface-name="ns2:hotelServicePortType" name="endpoint5" process-name="travelGoodBPELModule" service-name="ns4:PartnerLink2"/>
-        <endpoint display-name="PartnerLink3" endpoint-name="lameDuckServiceRole_partnerRole" file-path="travelGoodBPELModule.bpel" interface-name="ns1:lameDuckPortType" name="endpoint6" process-name="travelGoodBPELModule" service-name="ns4:PartnerLink3"/>
+        <endpoint display-name="travelGoodLink" endpoint-name="travelGoodPortRole_myRole" file-path="travelGoodBPELModule.bpel" interface-name="ns3:travelGoodPortType" name="endpoint4" process-name="travelGoodBPELModule" service-name="ns4:travelGoodLink"/>
+        <endpoint display-name="HotelLink" endpoint-name="hotelServiceRole_partnerRole" file-path="travelGoodBPELModule.bpel" interface-name="ns2:hotelServicePortType" name="endpoint5" process-name="travelGoodBPELModule" service-name="ns4:HotelLink"/>
+        <endpoint display-name="flightLink" endpoint-name="lameDuckServiceRole_partnerRole" file-path="travelGoodBPELModule.bpel" interface-name="ns1:lameDuckPortType" name="endpoint6" process-name="travelGoodBPELModule" service-name="ns4:flightLink"/>
     </endpoints>
     <service-units>
-        <service-engine-service-unit artifacts-zip="TravelGoodBPELModule.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="TravelGoodBPELApp-TravelGoodBPELModule" unit-name="TravelGoodBPELModule" unknown="false" x="124" y="99">
+        <service-engine-service-unit artifacts-zip="TravelGoodBPELModule.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="TravelGoodBPELApp-TravelGoodBPELModule" unit-name="TravelGoodBPELModule" unknown="false" x="124" y="101">
             <provides endpoint="endpoint4"/>
             <consumes endpoint="endpoint5"/>
             <consumes endpoint="endpoint6"/>
         </service-engine-service-unit>
         <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="TravelGoodBPELApp-sun-http-binding" unit-name="sun-http-binding">
             <ports>
-                <port x="0" y="-1">
+                <port x="67" y="201">
                     <link xlink:href="../jbiServiceUnits/META-INF/TravelGoodBPELModule/src/_references/_relative/nbproject/private/retriever/localhost_8080/HotelReservation/hotelService.wsdl#xpointer(/definitions/service[@name='hotelService']/port[@name='hotelServiceSOAPPort'])" xlink:type="simple"/>
                     <consumes endpoint="endpoint2"/>
                     <provides endpoint="endpoint2"/>
                 </port>
-                <port x="0" y="-1">
+                <port x="67" y="121">
                     <link xlink:href="../jbiServiceUnits/META-INF/TravelGoodBPELModule/src/_references/_relative/nbproject/private/retriever/localhost_8080/LameDuck/lameDuckService.wsdl#xpointer(/definitions/service[@name='lameDuckService']/port[@name='lameDuckPortTypeBindingPort'])" xlink:type="simple"/>
                     <consumes endpoint="endpoint1"/>
                     <provides endpoint="endpoint1"/>
                 </port>
-                <port x="67" y="118">
+                <port x="67" y="41">
                     <link xlink:href="../jbiServiceUnits/TravelGoodBPELModule/travelGood.wsdl#xpointer(/definitions/service[@name='travelGoodService']/port[@name='travelGoodPortTypeBindingPort'])" xlink:type="simple"/>
                     <consumes endpoint="endpoint3"/>
                     <provides endpoint="endpoint3"/>

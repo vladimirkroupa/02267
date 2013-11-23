@@ -9,36 +9,116 @@
     xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
     xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2"
     xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
-    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling" xmlns:ns0="urn://travelGoodTypes" xmlns:ns1="urn:flightData">
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling" xmlns:ns0="urn://travelGoodTypes" xmlns:ns1="urn:flightData" xmlns:ns2="urn://travelGood" xmlns:ns3="urn://hotelReservationTypes">
     <import namespace="urn://travelGood" location="travelGood.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <import namespace="http://dk.dtu.02267.hotelservice/WSDL" location="http://localhost:8080/HotelReservation/hotelService?wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <import namespace="http://lameDuck.ws" location="http://localhost:8080/LameDuck/lameDuckService?wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <partnerLinks>
-        <partnerLink name="PartnerLink2" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" partnerLinkType="tns:partnerlinktype1" partnerRole="hotelServiceRole"/>
-        <partnerLink name="PartnerLink3" xmlns:tns="http://lameDuck.ws" partnerLinkType="tns:partnerlinktype1" partnerRole="lameDuckServiceRole"/>
-        <partnerLink name="PartnerLink1" xmlns:tns="urn://travelGood" partnerLinkType="tns:travelGood" myRole="travelGoodPortRole"/>
+        <partnerLink name="travelGoodLink" partnerLinkType="ns2:travelGood" myRole="travelGoodPortRole"/>
+        <partnerLink name="HotelLink" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" partnerLinkType="tns:partnerlinktype1" partnerRole="hotelServiceRole"/>
+        <partnerLink name="flightLink" xmlns:tns="http://lameDuck.ws" partnerLinkType="tns:partnerlinktype1" partnerRole="lameDuckServiceRole"/>
     </partnerLinks>
     <variables>
+        <variable name="CancelItineraryOperationOut" messageType="ns2:cancelItineraryResponse"/>
+        <variable name="CancelItineraryOperationIn" messageType="ns2:cancelItineraryRequest"/>
+        <variable name="planPhase" type="xs:boolean"/>
+        <variable name="CreateItineraryOperationOut" messageType="ns2:createItineraryResponse"/>
+        <variable name="CreateItineraryOperationIn" messageType="ns2:createItineraryRequest"/>
+        <variable name="ListHotelsOperationOut" messageType="ns2:listHotelsResponse"/>
+        <variable name="GetHotelsOperationOut" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" messageType="tns:getHotelsOperationResponse"/>
+        <variable name="GetHotelsOperationIn" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" messageType="tns:getHotelsOperationRequest"/>
+        <variable name="ListHotelsOperationIn" xmlns:tns="urn://travelGood" messageType="tns:listHotelsRequest"/>
         <variable name="ListFlightsOperationOut" xmlns:tns="urn://travelGood" messageType="tns:listFlightsResponse"/>
+        <variable name="ListFlightsOperationIn" xmlns:tns="urn://travelGood" messageType="tns:listFlightsRequest"/>
         <variable name="GetFlightsOut" xmlns:tns="http://lameDuck.ws" messageType="tns:getFlightsResponse"/>
         <variable name="GetFlightsIn" xmlns:tns="http://lameDuck.ws" messageType="tns:getFlightsRequest"/>
-        <variable name="ListFlightsOperationIn" xmlns:tns="urn://travelGood" messageType="tns:listFlightsRequest"/>
     </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns2:itineraryNo"/>
+    </correlationSets>
     <sequence>
-        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="listFlightsOperation" xmlns:tns="urn://travelGood" portType="tns:travelGoodPortType" variable="ListFlightsOperationIn"/>
-        <assign name="Assign3">
+        <receive name="Receive1" createInstance="yes" partnerLink="travelGoodLink" operation="createItineraryOperation" portType="ns2:travelGoodPortType" variable="CreateItineraryOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign5">
             <copy>
-                <from variable="ListFlightsOperationIn" part="flightQuery"/>
-                <to variable="GetFlightsIn" part="getFlightQuery"/>
+                <from variable="CreateItineraryOperationIn" part="itineraryNo"/>
+                <to variable="CreateItineraryOperationOut" part="itineraryNo"/>
             </copy>
         </assign>
-        <invoke name="Invoke1" partnerLink="PartnerLink3" operation="getFlights" xmlns:tns="http://lameDuck.ws" portType="tns:lameDuckPortType" inputVariable="GetFlightsIn" outputVariable="GetFlightsOut"/>
-        <assign name="Assign2">
+        <reply name="Reply3" partnerLink="travelGoodLink" operation="createItineraryOperation" portType="ns2:travelGoodPortType" variable="CreateItineraryOperationOut"/>
+        <assign name="Assign6">
             <copy>
-                <from variable="GetFlightsOut" part="flightsList"/>
-                <to variable="ListFlightsOperationOut" part="flightList"/>
+                <from>true()</from>
+                <to variable="planPhase"/>
             </copy>
         </assign>
-        <reply name="Reply1" partnerLink="PartnerLink1" operation="listFlightsOperation" xmlns:tns="urn://travelGood" portType="tns:travelGoodPortType" variable="ListFlightsOperationOut"/>
+        <while name="planPhase">
+            <condition>$planPhase</condition>
+            <pick name="Pick1" xmlns:tns="http://lameDuck.ws">
+                <onMessage partnerLink="travelGoodLink" operation="listHotelsOperation" portType="ns2:travelGoodPortType" variable="ListHotelsOperationIn">
+                        <correlations>
+                                <correlation set="CorrelationSet1" initiate="no"/>
+                            </correlations>
+                            <sequence name="Sequence1">
+                                <assign name="Assign1">
+                                        <copy>
+                                                <from>$ListHotelsOperationIn.hotelQueryRequest/ns3:hotelQuery</from>
+                                                    <to variable="GetHotelsOperationIn" part="hotelQuery"/>
+                                            </copy>
+                                    </assign>
+                                    <invoke name="Invoke1" partnerLink="HotelLink" operation="getHotelsOperation" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" portType="tns:hotelServicePortType" inputVariable="GetHotelsOperationIn" outputVariable="GetHotelsOperationOut"/>
+                                    <assign name="Assign3">
+                                        <copy>
+                                                <from variable="GetHotelsOperationOut" part="hotelArray"/>
+                                                    <to variable="ListHotelsOperationOut" part="hotelArray"/>
+                                            </copy>
+                                    </assign>
+                                    <reply name="Reply1" partnerLink="travelGoodLink" operation="listHotelsOperation" portType="ns2:travelGoodPortType" variable="ListHotelsOperationOut"/>
+                            </sequence>
+                    </onMessage>
+                    <onMessage partnerLink="travelGoodLink" operation="listFlightsOperation" portType="ns2:travelGoodPortType" variable="ListFlightsOperationIn">
+                        <correlations>
+                                <correlation set="CorrelationSet1" initiate="no"/>
+                            </correlations>
+                            <sequence name="Sequence2">
+                                <assign name="Assign2">
+                                        <copy>
+                                                <from>$ListFlightsOperationIn.flightQuery/ns1:getFlightQuery</from>
+                                                    <to variable="GetFlightsIn" part="getFlightQuery"/>
+                                            </copy>
+                                    </assign>
+                                    <invoke name="Invoke2" partnerLink="flightLink" operation="getFlights" xmlns:tns="http://lameDuck.ws" portType="tns:lameDuckPortType" inputVariable="GetFlightsIn" outputVariable="GetFlightsOut"/>
+                                    <assign name="Assign4">
+                                        <copy>
+                                                <from variable="GetFlightsOut" part="flightsList"/>
+                                                    <to variable="ListFlightsOperationOut" part="flightList"/>
+                                            </copy>
+                                    </assign>
+                                    <reply name="Reply2" partnerLink="travelGoodLink" operation="listFlightsOperation" portType="ns2:travelGoodPortType" variable="ListFlightsOperationOut"/>
+                            </sequence>
+                    </onMessage>
+                <onMessage partnerLink="travelGoodLink" operation="cancelItineraryOperation" portType="ns2:travelGoodPortType" variable="CancelItineraryOperationIn">
+                    <correlations>
+                        <correlation set="CorrelationSet1" initiate="no"/>
+                    </correlations>
+                    <sequence name="Sequence3">
+                        <assign name="Assign7">
+                            <copy>
+                                    <from>false()</from>
+                                        <to variable="planPhase"/>
+                                </copy>
+                            <copy>
+                                <from>'itinerary canceled'</from>
+                                <to variable="CancelItineraryOperationOut" part="cancelItineraryResult"/>
+                            </copy>
+                        </assign>
+                        <reply name="Reply4" partnerLink="travelGoodLink" operation="cancelItineraryOperation" portType="ns2:travelGoodPortType" variable="CancelItineraryOperationOut"/>
+                    </sequence>
+                </onMessage>
+            </pick>
+        </while>
     </sequence>
 </process>
