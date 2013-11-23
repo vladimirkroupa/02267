@@ -127,6 +127,10 @@ public class TestItineraryResource {
         webResource = client.resource(ITINERARY + itineraryNo);
         ClientResponse res = webResource.delete(ClientResponse.class);
         assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+        
+        webResource = client.resource(ITINERARY + itineraryNo);
+        res = webResource.get(ClientResponse.class);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
     }
     
 }
