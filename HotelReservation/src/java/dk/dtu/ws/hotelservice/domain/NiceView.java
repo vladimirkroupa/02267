@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NiceView {
 
@@ -26,7 +28,6 @@ public class NiceView {
     private final HotelRepository hotels;
     private final Map<String, Booking> offeredBookings = new HashMap<String, Booking>();
     private final Map<String, Booking> confirmedBookings = new HashMap<String, Booking>();
-    private final BankServiceClient bank = new BankServiceClient();
 
     public NiceView() {
         hotels = new HotelRepository(StaticHotelSource.hotels());
@@ -122,18 +123,17 @@ public class NiceView {
         CreditCardFaultType ccFault = null;
         int intAmount = new BigDecimal(amount).intValue();
         try {
-            valid = bank.validateCreditCard(GROUP_NUMBER, cc, intAmount);
+            valid = BankServiceClient.validateCreditCard(GROUP_NUMBER, cc, intAmount);
         } catch (CreditCardFaultMessage ex) {
             ccFault = ex.getFaultInfo();
             valid = false;
         }
         if (!valid) {
             String faultMsg = ccFault != null ? ccFault.getMessage() : "Card information are not valid.";
-            BookHotelOperationFault bookingFault = createBookingFault("Could not process credit card.", faultMsg);
+            BookHotelOperationFault bookingFault = createBookingFault("Could not validate credit card.", faultMsg);
             throw bookingFault;
         }
         return true;
-
     }
 
     private BookHotelOperationFault createBookingFault(String message, String detail) {
