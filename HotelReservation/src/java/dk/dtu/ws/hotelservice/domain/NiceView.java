@@ -52,33 +52,30 @@ public class NiceView {
     }
 
     public boolean bookHotel(String bookingNo, CreditCardInfoType cc) throws BookHotelOperationFault {
-        if (validateBooking(bookingNo)) {
-            Booking booking = offeredBookings.get(bookingNo);
+        validateBooking(bookingNo);
+                
+        Booking booking = offeredBookings.get(bookingNo);
 
-            if (booking.ccAuthRequired()) {
-                validateCreditCard(booking.getPrice(), cc);
-            }
-
-            offeredBookings.remove(bookingNo);
-            confirmedBookings.put(bookingNo, booking);
-            try {
-                booking.book();
-            } catch (OverbookingException ex) {
-                throw createBookingFault("Hotel overbooked.", "" + bookingNo);
-            }
-
-            return true;
+        if (booking.ccAuthRequired()) {
+            validateCreditCard(booking.getPrice(), cc);
         }
-        return false;
+
+        offeredBookings.remove(bookingNo);
+        confirmedBookings.put(bookingNo, booking);
+        try {
+            booking.book();
+        } catch (OverbookingException ex) {
+            throw createBookingFault("Hotel overbooked.", "" + bookingNo);
+        }
+
+        return true;
     }
 
     public boolean cancelBooking(String bookingNo) throws CancelHotelOperationFault {
-        if (validateBookingCancellation(bookingNo)) {                      
-            Booking booking = confirmedBookings.get(bookingNo);
-            confirmedBookings.remove(bookingNo);
-            return booking.cancel();
-        }
-        return false;
+        validateBookingCancellation(bookingNo);
+        Booking booking = confirmedBookings.get(bookingNo);
+        confirmedBookings.remove(bookingNo);
+        return booking.cancel();
     }
     
     public void reset() {
@@ -93,24 +90,24 @@ public class NiceView {
         return booking;
     }
 
-    private boolean validateBooking(String bookingNo) throws BookHotelOperationFault {
+    private void validateBooking(String bookingNo) throws BookHotelOperationFault {
         if (confirmedBookings.containsKey(bookingNo)) {
             BookHotelOperationFault fault = createBookingFault("Booking already exists.", "Booking number: " + bookingNo);
             throw fault;
         }
-        if (!offeredBookings.containsKey(bookingNo)) {
-            BookHotelOperationFault fault = createBookingFault("Invalid booking number specified", "Booking number: " + bookingNo);
+        System.out.println(bookingNo);
+        if (! offeredBookings.containsKey(bookingNo)) {
+            BookHotelOperationFault fault = createBookingFault("Invalid booking number specified.", "Booking number: " + bookingNo);
             throw fault;
         }
-        return true;
     }
 
-    private boolean validateBookingCancellation(String bookingNo) throws CancelHotelOperationFault {
+    private void validateBookingCancellation(String bookingNo) throws CancelHotelOperationFault {
         boolean offered = offeredBookings.containsKey(bookingNo);
         boolean confirmed = confirmedBookings.containsKey(bookingNo);
 
         if (!confirmed && !offered) {
-            throw createCancellationFault("Invalid booking number specified", "Booking number: " + bookingNo);
+            throw createCancellationFault("Invalid booking number specified.", "Booking number: " + bookingNo);
         }
         if (offered && !confirmed) {
             throw createCancellationFault("Attempt to cancel unconfirmed booking.", "Booking number: " + bookingNo);
@@ -118,7 +115,6 @@ public class NiceView {
         if (offered && confirmed) {
             throw new IllegalStateException("Invalid booking state.");
         }
-        return true;
     }
 
     private boolean validateCreditCard(double amount, CreditCardInfoType cc) throws BookHotelOperationFault {
