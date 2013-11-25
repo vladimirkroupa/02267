@@ -84,4 +84,5 @@
     <!--DECLARATION OF ELEMENTS FOR FAULT-->    
     <xsd:element name="bookFlightFailure" type="tns:flightFaultType"></xsd:element>
     <xsd:element name="cancelFlightFailure" type="tns:flightFaultType"></xsd:element>
+            
 </xsd:schema>

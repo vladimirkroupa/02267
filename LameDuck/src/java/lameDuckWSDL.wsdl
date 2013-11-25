@@ -8,9 +8,8 @@
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
              xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
     <types>
-        <xsd:schema targetNamespace="http://lameDuck.ws" xmlns:ns2="urn://types.fastmoney.imm.dtu.dk">
+        <xsd:schema targetNamespace="http://lameDuck.ws">
             <xsd:import namespace="urn:flightData" schemaLocation="flightData.xsd"/>
-            <xsd:import namespace="urn://types.fastmoney.imm.dtu.dk"/>
         </xsd:schema>
     </types>
     <message name="getFlightsRequest">
