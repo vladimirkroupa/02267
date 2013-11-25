@@ -3,10 +3,12 @@ package ws.dtu.travelgood;
 import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import dk.dtu.imm.fastmoney.types.ExpirationDateType;
 import flightdata.BookFlightQuery;
+import flightdata.CancelFlightQuery;
 import flightdata.FlightInfoType;
 import hotelreservationtypes.HotelBookingWithCreditCard;
 import hotelreservationtypes.HotelType;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
+import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -27,6 +29,7 @@ import javax.ws.rs.core.Response;
 import travelgoodtypes.FlightBooking;
 import travelgoodtypes.HotelBooking;
 import ws.lameduck.BookFlightFault;
+import ws.lameduck.CancelFlightFault;
 
 /**
  *
@@ -216,6 +219,47 @@ public class ItineraryResource {
         return Response.ok().build();
     }
     
+    @POST
+    @Path("itinerary/{itineraryNo}/cancelBooking")    
+    public Response cancelBooking(@PathParam("itineraryNo") String itineraryNo) {
+        CreditCardInfoType creditCard = itineraryNoToCreditCardMap.get(itineraryNo);
+        Itinerary itinerary = itineraryMap.get(itineraryNo);
+        for(FlightBooking booking: itinerary.getFlightBookingList()){
+            if(booking.getFlightBookingStatus()==StatusType.CONFIRMED){
+                FlightInfoType flight = booking.getFlightBooking();
+                CancelFlightQuery query = new CancelFlightQuery();
+                query.setBookingNumber(flight.getBookingNumber());
+                query.setCreditcardInfo(creditCard);
+                query.setFlightPrice(flight.getFlightPrice());
+                try {
+                    boolean cancelStatus = cancelFlight(query);
+                    if(cancelStatus){
+                        booking.setFlightBookingStatus(StatusType.CANCELLED);
+                    }
+                } catch (CancelFlightFault ex) {
+                    Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        for(HotelBooking booking: itinerary.getHotelBookingList()){
+            if(booking.getHotelBookingStatus()==StatusType.CONFIRMED){
+                HotelType hotel = booking.getHotelBooking();
+                try {
+                    boolean cancelStatus = cancelHotelOperation(hotel.getBookingNo());
+                    if(cancelStatus){
+                       booking.setHotelBookingStatus(StatusType.CANCELLED); 
+                    }
+                } catch (CancelHotelOperationFault ex) {
+                    Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }        
+        itinerary.setItineraryStatus(StatusType.CANCELLED);
+        
+        
+        return Response.ok().build();
+    }    
+    
     
     private void validateItineraryNo(String itineraryNo) {
         if (! itineraryMap.containsKey(itineraryNo)) {
@@ -238,6 +282,18 @@ public class ItineraryResource {
         ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
         ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
         return port.bookFlight(bookFlightQuery);
+    }
+
+    private static boolean cancelFlight(flightdata.CancelFlightQuery cancelFlightQuery) throws CancelFlightFault {
+        ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
+        ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
+        return port.cancelFlight(cancelFlightQuery);
+    }
+
+    private static boolean cancelHotelOperation(java.lang.String bookingCancellation) throws CancelHotelOperationFault {
+        hotelservice._02267.dtu.dk.wsdl.HotelService service = new hotelservice._02267.dtu.dk.wsdl.HotelService();
+        hotelservice._02267.dtu.dk.wsdl.HotelServicePortType port = service.getHotelServiceSOAPPort();
+        return port.cancelHotelOperation(bookingCancellation);
     }
 
 }
