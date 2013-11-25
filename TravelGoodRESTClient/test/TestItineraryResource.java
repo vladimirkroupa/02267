@@ -18,8 +18,6 @@ import testutil.ResponseWrapper;
  */
 public class TestItineraryResource {
 
-    
-
     private final ItineraryResourceClient client;
 
     public TestItineraryResource() {
