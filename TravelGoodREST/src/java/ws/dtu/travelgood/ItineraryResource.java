@@ -1,5 +1,6 @@
 package ws.dtu.travelgood;
 
+import com.google.common.base.Preconditions;
 import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import dk.dtu.imm.fastmoney.types.ExpirationDateType;
 import flightdata.BookFlightQuery;
@@ -60,10 +61,18 @@ public class ItineraryResource {
     @POST
     @Path("itinerary/{itineraryNo}/book")    
     public Response bookItinerary(@PathParam("itineraryNo") String itineraryNo, 
-        @QueryParam("expMonth") int expMonth,
-        @QueryParam("expYear") int expYear,
+        @QueryParam("expMonth") Integer expMonth,
+        @QueryParam("expYear") Integer expYear,
         @QueryParam("ccName") String ccName,
         @QueryParam("ccNumber") String ccNumber){
+
+        
+        Preconditions.checkNotNull(ccName, "Card holder name must not be null.");
+        Preconditions.checkNotNull(ccNumber, "Card number must not be null.");
+        Preconditions.checkNotNull(expYear, "Card expiration year must not be null");
+        Preconditions.checkNotNull(expMonth, "Card expiration month must not be null");
+        
+        validateItineraryNo(itineraryNo);
         
         Itinerary itinerary = itineraryMap.get(itineraryNo);
         CreditCardInfoType cc = toCreditCardInfoType(ccName, ccNumber, expMonth, expYear);
