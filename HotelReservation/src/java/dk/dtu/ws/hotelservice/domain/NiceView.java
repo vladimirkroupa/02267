@@ -82,6 +82,7 @@ public class NiceView {
         this.offeredBookings.clear();
         this.confirmedBookings.clear();
         BookingNumberSequence.reset();
+        hotels.cancelAllBookings();
     }
 
     private Booking createBookingOffer(Date checkIn, Date checkOut, Hotel hotel) {
