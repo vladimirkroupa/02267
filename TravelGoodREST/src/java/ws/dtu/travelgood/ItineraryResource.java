@@ -60,10 +60,10 @@ public class ItineraryResource {
     @POST
     @Path("itinerary/{itineraryNo}/book")    
     public Response bookItinerary(@PathParam("itineraryNo") String itineraryNo, 
+        @QueryParam("ccName") String ccName,    
+        @QueryParam("ccNumber") String ccNumber,
         @QueryParam("expMonth") Integer expMonth,
-        @QueryParam("expYear") Integer expYear,
-        @QueryParam("ccName") String ccName,
-        @QueryParam("ccNumber") String ccNumber) {
+        @QueryParam("expYear") Integer expYear) {
 
         
         if (ccName == null) {
@@ -72,11 +72,11 @@ public class ItineraryResource {
         if (ccNumber == null) {
             throw new WebApplicationException(new IllegalArgumentException("Card number must not be null."), Response.Status.BAD_REQUEST);
         }
-        if (expYear == null) {
-            throw new WebApplicationException(new IllegalArgumentException("Card expiration year must not be null"), Response.Status.BAD_REQUEST);
-        }
         if (expMonth == null) {
             throw new WebApplicationException(new IllegalArgumentException("Card expiration month must not be null"), Response.Status.BAD_REQUEST);
+        }                
+        if (expYear == null) {
+            throw new WebApplicationException(new IllegalArgumentException("Card expiration year must not be null"), Response.Status.BAD_REQUEST);
         }        
         
         validateItineraryNo(itineraryNo);
