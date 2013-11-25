@@ -64,10 +64,10 @@ public class ItineraryResource {
         @QueryParam("expMonth") Integer expMonth,
         @QueryParam("expYear") Integer expYear,
         @QueryParam("ccName") String ccName,
-        @QueryParam("ccNumber") String ccNumber){
+        @QueryParam("ccNumber") String ccNumber) {
 
         
-        if (ccName == null)
+        if (ccName == null) {
             throw new WebApplicationException(new IllegalArgumentException("Card holder name must not be null."), Response.Status.BAD_REQUEST);
         }
         if (ccNumber == null) {
