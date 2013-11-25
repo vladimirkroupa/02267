@@ -109,7 +109,7 @@ public class TestItineraryResource {
         String itineraryNo = client.createItinerary().entity();
 
         // add first hotel
-        HotelList hotelList = client.listHotels("Copenhagen", "2013-09-17", "2013-09-18").entity();
+        HotelList hotelList = client.listHotels("Copenhagen", "2013-09-17", "2013-09-18").entity();        
         String firstHotelBookingNo = hotelList.getHotels().get(0).getBookingNo();
         client.addHotel(itineraryNo, firstHotelBookingNo);
         
@@ -185,5 +185,34 @@ public class TestItineraryResource {
             assertEquals(StatusType.CONFIRMED, hotel.getHotelBookingStatus());
         }
     }
+    
+    @Test
+    public void testBookItineraryHotelBookingFailure() {
+        // create itinerary
+        String itineraryNo = client.createItinerary().entity();
+
+        // add hotel
+        HotelList hotelList = client.listHotels("Copenhagen", "2013-09-17", "2013-09-19").entity();
+        String bookingNo = hotelList.getHotels().get(0).getBookingNo();
+        client.addHotel(itineraryNo, bookingNo);
+        
+        // add flight
+        client.listFlights("2013-09-18", "CPH", "LHR");
+        client.addFlight(itineraryNo, "1234567");
+        
+        // book itinerary
+        ClientResponse res = client.bookItinerary(itineraryNo, "Bech Camilla", "50408822", "7", "9");         
+        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+        
+        // check that booking status is cancelled
+        Itinerary itinerary = client.getItinerary(itineraryNo).entity();
+        assertEquals(StatusType.CANCELLED, itinerary.getItineraryStatus());
+        for (FlightBooking flight : itinerary.getFlightBookingList()) {
+            assertEquals(StatusType.CANCELLED, flight.getFlightBookingStatus());
+        }
+        for (HotelBooking hotel : itinerary.getHotelBookingList()) {
+            assertEquals(StatusType.CANCELLED, hotel.getHotelBookingStatus());
+        }
+    }    
         
 }

@@ -10,6 +10,7 @@ import hotelreservationtypes.HotelType;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
 import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -98,41 +99,48 @@ public class ItineraryResource {
         //store the customers credit card so that it can be used for cancellation
         itineraryNoToCreditCardMap.put(itineraryNo, cc);
 
-        for (FlightBooking booking : itinerary.getFlightBookingList()) {
+        boolean flightsBooked = bookFlight(itinerary.getFlightBookingList(), cc);
+        boolean hotelsBooked = bookHotels(itinerary.getHotelBookingList(), cc);
+
+        if (flightsBooked && hotelsBooked) {
+            itinerary.setItineraryStatus(StatusType.CONFIRMED);
+            return Response.ok().build();
+        } else {
+            //TODO: cancel all previous
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+    }
+    
+    private boolean bookFlight(List<FlightBooking> flights, CreditCardInfoType ccInfo) {
+        for (FlightBooking booking : flights) {
             BookFlightQuery query = new BookFlightQuery();
             query.setBookingNumber(booking.getFlightBooking().getBookingNumber());
-            query.setCreditcardInfo(cc);
+            query.setCreditcardInfo(ccInfo);
             try {
-                boolean success = bookFlight(query);
-                System.out.println("flight: " + success);
-                if (success) {
-                    booking.setFlightBookingStatus(StatusType.CONFIRMED);
-                }
+                bookFlight(query);
+                booking.setFlightBookingStatus(StatusType.CONFIRMED);
             } catch (BookFlightFault ex) {
-                Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, "Fault from bookFlight operation", ex);
-                // TODO
+                Logger.getLogger(ItineraryResource.class.getName()).log(Level.INFO, "Fault from bookFlight operation", ex);
+                return false;
             }
         }
-
-        for (HotelBooking booking : itinerary.getHotelBookingList()) {
+        return true;
+    }
+    
+    private boolean bookHotels(List<HotelBooking> hotels, CreditCardInfoType ccInfo) {
+        for (HotelBooking booking : hotels) {
             HotelBookingWithCreditCard query = new HotelBookingWithCreditCard();
             query.setBookingNumber(booking.getHotelBooking().getBookingNo());
-            query.setCreditCardInfo(cc);
+            query.setCreditCardInfo(ccInfo);
             try {
-                boolean success = bookHotelOperation(query);
-                System.out.println("hotel: " + success);
-                if (success) {
-                    booking.setHotelBookingStatus(StatusType.CONFIRMED);
-                }
+                bookHotelOperation(query);
+                booking.setHotelBookingStatus(StatusType.CONFIRMED);
             } catch (BookHotelOperationFault ex) {
-                Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, "Fault from bookHotel operation", ex);
-                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+                Logger.getLogger(ItineraryResource.class.getName()).log(Level.INFO, "Fault from bookHotel operation", ex);
+                return false;
             }
         }
-
-        itinerary.setItineraryStatus(StatusType.CONFIRMED);
-
-        return Response.ok().build();
+        return true;
     }
 
     private CreditCardInfoType toCreditCardInfoType(String ccName, String ccNumber, int expMonth, int expYear) {
