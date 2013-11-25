@@ -1,6 +1,9 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package lameduck.ws;
 
-import common.DateUtils;
 import dk.dtu.imm.fastmoney.CreditCardFaultMessage;
 import dk.dtu.imm.fastmoney.types.AccountType;
 import dk.dtu.imm.fastmoney.types.CreditCardFaultType;
@@ -13,6 +16,8 @@ import flightdata.GetFlightQuery;
 import java.util.ArrayList;
 import java.util.List;
 import javax.jws.WebService;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import ws.lameduck.BookFlightFault;
 import ws.lameduck.CancelFlightFault;
@@ -21,70 +26,78 @@ import ws.lameduck.CancelFlightFault;
  *
  * @author AhmadReza
  */
-@WebService(serviceName = "lameDuckService", 
-        portName = "lameDuckPortTypeBindingPort", 
-        endpointInterface = "ws.lameduck.LameDuckPortType", 
-        targetNamespace = "http://lameDuck.ws", 
-        wsdlLocation = "WEB-INF/wsdl/lameDuckService/lameDuckWSDL.wsdl")
+@WebService(serviceName = "lameDuckService", portName = "lameDuckPortTypeBindingPort", endpointInterface = "ws.lameduck.LameDuckPortType", targetNamespace = "http://lameDuck.ws", wsdlLocation = "WEB-INF/wsdl/lameduckService/lameDuckWSDL.wsdl")
 public class LameDuckService {
 
-    private FlightDB fdb = new FlightDB();
-    private List<FlightInfoType> bookedFlights = new ArrayList();
-    static final int GROUP_NUMBER = 2;
-    static final String LAMEDUCK_ACCOUNT_NO = "50208812";
+    FlightDB fdb = new FlightDB();
+    List<FlightInfoType> bookedFlights = new ArrayList();
+    FlightInfoList matchedFlights; //= new FlightInfoListType();
+    int GROUP_NUMBER = 2;
 
     public FlightInfoList getFlights(GetFlightQuery getFlightQuery) {
-        FlightInfoList matchedFlights = new FlightInfoList();
-        
-        for (FlightInfoType flightInfo : fdb.flightInfoList.getFlightInfo()) {
-            int day = flightInfo.getFlight().getDatetimeLift().getDay();
-            int month = flightInfo.getFlight().getDatetimeLift().getMonth();
-            int year = flightInfo.getFlight().getDatetimeLift().getYear();
-            XMLGregorianCalendar flightDate = DateUtils.toXmlGregCal(day, month, year);
-            
-            boolean datesSame = getFlightQuery.getDate().toGregorianCalendar().equals(flightDate.toGregorianCalendar());
-            boolean startAirSame = flightInfo.getFlight().getStartAirpot().equals(getFlightQuery.getStartDest());
-            boolean destAirSame = flightInfo.getFlight().getDestinationAirport().equals(getFlightQuery.getFinalDest());
-            
-            if (datesSame && startAirSame && destAirSame) {
-                matchedFlights.getFlightInfo().add(flightInfo);
+        matchedFlights = new FlightInfoList();
+        System.out.println("getFlight() called");
+        //TODO implement this method
+        List<FlightInfoType> fligthInfo = fdb.flightInfoList.getFlightInfo();
+        for (int i = 0; i < fligthInfo.size(); i++) {
+
+            FlightInfoType flightInfo1 = fligthInfo.get(i);
+            int day = flightInfo1.getFlight().getDatetimeLift().getDay();
+            int month = flightInfo1.getFlight().getDatetimeLift().getMonth();
+            int year = flightInfo1.getFlight().getDatetimeLift().getYear();
+            // System.out.println("Input: " + date.getYear() + "-" + date.getMonth() + "-" + date.getDay() + " Thisflight: " + year + "-" + month + "-" + day);
+            //System.out.println("Size: " +fligthInfo.size());
+            //System.out.println("Compare Result: " + date.compare(createDate(day, month, year)));
+            if (getFlightQuery.getDate().compare(createDate(day, month, year)) == 2) { //2 == that this date matches a flight date
+
+                if (flightInfo1.getFlight().getStartAirpot().equalsIgnoreCase(getFlightQuery.getStartDest())
+                        && flightInfo1.getFlight().getDestinationAirport().equalsIgnoreCase(getFlightQuery.getFinalDest())) {
+
+                    matchedFlights.getFlightInfo().add(flightInfo1);
+                }
+            } else {
+                System.out.println("NO FLIGHT FOUND for date,start and dest");
             }
         }
         return matchedFlights;
+        //throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     public boolean bookFlight(BookFlightQuery bookFlightQuery) throws BookFlightFault {
         AccountType lameDuckAccount = new AccountType();
         lameDuckAccount.setName("LameDuck");
-        lameDuckAccount.setNumber(LAMEDUCK_ACCOUNT_NO);
-        
+        lameDuckAccount.setNumber("50208812");
         String bookingNumber = bookFlightQuery.getBookingNumber();
-        
         FlightInfoType flightInfo = getFlightByBookingNumber(bookingNumber);
+        
         if (flightInfo == null) {
             throw createBookingFault("No flight found", "Booking no:" + bookingNumber);
-        } else if (isFlightBooked(flightInfo)) {
+        } else if (flight_isBooked(flightInfo)) {
             throw createBookingFault("Flight already booked", "Booking no:" + bookingNumber);
         }
         
-        int flightPrice = flightInfo.getFlightPrice();
+        int flight_price = flightInfo.getFlightPrice();
         try {
-            validateCreditCard(GROUP_NUMBER, bookFlightQuery.getCreditcardInfo(), flightPrice);
-            chargeCreditCard(GROUP_NUMBER, bookFlightQuery.getCreditcardInfo(), flightPrice, lameDuckAccount);
+            //TODO implement this method
+            validateCreditCard(GROUP_NUMBER, bookFlightQuery.getCreditcardInfo(), flight_price);
+            chargeCreditCard(GROUP_NUMBER, bookFlightQuery.getCreditcardInfo(), flight_price, lameDuckAccount);
             bookedFlights.add(flightInfo);
             System.out.println("New flight booked, booking number is:  " + bookedFlights.get(0).getBookingNumber());
+
         } catch (CreditCardFaultMessage ex) {
             CreditCardFaultType fault = ex.getFaultInfo();
             if (fault != null) {
-                throw createBookingFault("Could not process credit card" + fault.getMessage(), fault.getMessage());
+                throw createBookingFault("Could not process credit card", fault.getMessage());
             } else {
                 throw createBookingFault("Could not process credit card", "Credit card information are invalid");
             }
+            //Logger.getLogger(LameduckService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
 
     public boolean cancelFlight(CancelFlightQuery cancelFlightQuery) throws CancelFlightFault {
+        //TODO implement this method
         AccountType lameDuckAccount = new AccountType();
         lameDuckAccount.setName("LameDuck");
         lameDuckAccount.setNumber("50208812");
@@ -93,14 +106,16 @@ public class LameDuckService {
         
         String bookingNumber = cancelFlightQuery.getBookingNumber();
 
-        FlightInfoType flightInfo = findBookedFlight(cancelFlightQuery.getBookingNumber());
+        FlightInfoType flightInfo = getFlightByBookingNumber_in_booked_flight(cancelFlightQuery.getBookingNumber());
         if (flightInfo == null) {
             throw createCancellationFault("No flight found", "Booking no:" + bookingNumber);
+            // return false;
         }
         try {
             refundCreditCard(GROUP_NUMBER, cancelFlightQuery.getCreditcardInfo(), refundAmount, lameDuckAccount);
             System.out.println("Flight has booking number " + bookedFlights.get(0).getBookingNumber() + " is canceled.");
             bookedFlights.remove(flightInfo);
+            //System.out.println("Flight has booking number "+bookedFlights.get(0).getBookingNumber()+" is canceled.");
         } catch (CreditCardFaultMessage ex) {
             CreditCardFaultType fault = ex.getFaultInfo();
             if (fault != null) {
@@ -116,10 +131,12 @@ public class LameDuckService {
         bookedFlights.clear();
     }
 
-    public boolean isFlightBooked(FlightInfoType flightInfo) {
-        String flightBookingNo = flightInfo.getBookingNumber();
-        for (FlightInfoType bookedFlight : bookedFlights) {
-            if (flightBookingNo.equals(bookedFlight.getBookingNumber())) {
+    public boolean flight_isBooked(FlightInfoType flightInfo) {
+        for (int i = 0; i < bookedFlights.size(); i++) {
+
+            FlightInfoType fund_flightInfo = bookedFlights.get(i);
+
+            if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(flightInfo.getBookingNumber())) {
                 return true;
             }
         }
@@ -141,13 +158,39 @@ public class LameDuckService {
         return thisFlightInfo;
     }
 
-    public FlightInfoType findBookedFlight(String bookingNumber) {
-        for (FlightInfoType bookedFlight : bookedFlights) {
-            if (bookedFlight.getBookingNumber().equals(bookingNumber)) {
-                return bookedFlight;
+    public FlightInfoType getFlightByBookingNumber_in_booked_flight(String bookingNumber) {
+        FlightInfoType thisFlightInfo = null;
+        // System.out.println("size of booked flight "+bookedFlights.size());
+        if (bookedFlights.size() > 0) {
+            for (int i = 0; i < bookedFlights.size(); i++) {
+
+                FlightInfoType fund_flightInfo = bookedFlights.get(i);
+
+                if (fund_flightInfo.getBookingNumber().equalsIgnoreCase(bookingNumber)) {
+                    thisFlightInfo = fund_flightInfo;
+                } else {
+                    thisFlightInfo = null;
+                }
             }
         }
-        return null;        
+        return thisFlightInfo;
+    }
+
+    public XMLGregorianCalendar createDate(int day, int month, int year) {
+
+        //Demos and Usage of javax.xml.datatype.DatatypeFactory.newXMLGregorianCalendar
+        //(int year,int month,int day,int hour,int minute,int second,int millisecond,int timezone)
+        DatatypeFactory df = null;
+        try {
+            df = DatatypeFactory.newInstance();
+        } catch (DatatypeConfigurationException ex) {
+            // Logger.getLogger(LameDuckService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        XMLGregorianCalendar date = df.newXMLGregorianCalendar();
+        date.setDay(day);
+        date.setMonth(month);
+        date.setYear(year);
+        return date;
     }
 
     private BookFlightFault createBookingFault(String message, String detail) {
