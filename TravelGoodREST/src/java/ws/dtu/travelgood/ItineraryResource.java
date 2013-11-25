@@ -37,17 +37,17 @@ import ws.lameduck.CancelFlightFault;
  */
 @Path("/")
 public class ItineraryResource {
-    
+
     private static Map<String, Itinerary> itineraryMap;
     private static int itineraryNo;
     private static Map<String, CreditCardInfoType> itineraryNoToCreditCardMap;
-    
+
     static {
         itineraryNo = 1;
         itineraryMap = new HashMap<String, Itinerary>();
         itineraryNoToCreditCardMap = new HashMap<String, CreditCardInfoType>();
     }
-
+       
     @POST
     @Path("itineraries")
     @Produces(MediaType.TEXT_PLAIN)
@@ -55,20 +55,29 @@ public class ItineraryResource {
         Itinerary itinerary = new Itinerary();
         itinerary.setItineraryNo(nextItineraryNo());
         itinerary.setItineraryStatus(StatusType.UNCONFIRMED);
-       
+
         itineraryMap.put(itinerary.getItineraryNo(), itinerary);
         return itinerary.getItineraryNo();
     }
     
+    @GET
+    @Path("itinerary/{itineraryNo}")
+    @Produces(MediaType.APPLICATION_XML)
+    public Itinerary getItinerary(@PathParam("itineraryNo") String itineraryNo) {
+        validateItineraryNo(itineraryNo);
+        Itinerary itinerary = itineraryMap.get(itineraryNo);
+        return itinerary;
+    }
+    
     @POST
-    @Path("itinerary/{itineraryNo}/book")    
-    public Response bookItinerary(@PathParam("itineraryNo") String itineraryNo, 
-        @QueryParam("ccName") String ccName,    
-        @QueryParam("ccNumber") String ccNumber,
-        @QueryParam("expMonth") Integer expMonth,
-        @QueryParam("expYear") Integer expYear) {
+    @Path("itinerary/{itineraryNo}/book")
+    public Response bookItinerary(@PathParam("itineraryNo") String itineraryNo,
+            @QueryParam("ccName") String ccName,
+            @QueryParam("ccNumber") String ccNumber,
+            @QueryParam("expMonth") Integer expMonth,
+            @QueryParam("expYear") Integer expYear) {
 
-        
+
         if (ccName == null) {
             throw new WebApplicationException(new IllegalArgumentException("Card holder name must not be null."), Response.Status.BAD_REQUEST);
         }
@@ -77,19 +86,19 @@ public class ItineraryResource {
         }
         if (expMonth == null) {
             throw new WebApplicationException(new IllegalArgumentException("Card expiration month must not be null"), Response.Status.BAD_REQUEST);
-        }                
+        }
         if (expYear == null) {
             throw new WebApplicationException(new IllegalArgumentException("Card expiration year must not be null"), Response.Status.BAD_REQUEST);
-        }        
-        
+        }
+
         validateItineraryNo(itineraryNo);
-        
+
         Itinerary itinerary = itineraryMap.get(itineraryNo);
         CreditCardInfoType cc = toCreditCardInfoType(ccName, ccNumber, expMonth, expYear);
-        
+
         //store the customers credit card so that it can be used for cancellation
         itineraryNoToCreditCardMap.put(itineraryNo, cc);
-        
+
         for (FlightBooking booking : itinerary.getFlightBookingList()) {
             BookFlightQuery query = new BookFlightQuery();
             query.setBookingNumber(itineraryNo);
@@ -104,7 +113,7 @@ public class ItineraryResource {
                 //todo: handle exceptions
             }
         }
-        
+
         for (HotelBooking booking : itinerary.getHotelBookingList()) {
             HotelBookingWithCreditCard query = new HotelBookingWithCreditCard();
             query.setBookingNumber(itineraryNo);
@@ -113,31 +122,29 @@ public class ItineraryResource {
                 boolean success = bookHotelOperation(query);
                 if (success) {
                     booking.setHotelBookingStatus(StatusType.CONFIRMED);
-                }                
+                }
             } catch (BookHotelOperationFault ex) {
                 Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
                 //todo: handle exceptions
             }
-        }    
-        
+        }
+
         itinerary.setItineraryStatus(StatusType.CONFIRMED);
-        
+
         return Response.ok().build();
     }
 
     private CreditCardInfoType toCreditCardInfoType(String ccName, String ccNumber, int expMonth, int expYear) {
         CreditCardInfoType cc = new CreditCardInfoType();
-        ExpirationDateType dt= new ExpirationDateType();
+        ExpirationDateType dt = new ExpirationDateType();
         cc.setName(ccName);
         dt.setMonth(expMonth);
         dt.setYear(expYear);
         cc.setExpirationDate(dt);
-        cc.setNumber(ccNumber);    
+        cc.setNumber(ccNumber);
         return cc;
     }
-            
-            
-    
+
     @PUT
     @Path("itinerary/{itineraryNo}/hotel/{hotelBookingNo}")
     @Produces(MediaType.APPLICATION_XML)
@@ -146,18 +153,19 @@ public class ItineraryResource {
             @PathParam("hotelBookingNo") String hotelBookingNo) {
 
         validateItineraryNo(itineraryNo);
-                
-        HotelType hotelBooking = findOfferedBooking(hotelBookingNo);        
+
+        HotelType hotelBooking = findOfferedBooking(hotelBookingNo);
         if (hotelBooking == null) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
         
         Itinerary itinerary = itineraryMap.get(itineraryNo);
+        
         HotelBooking hb = new HotelBooking();
         hb.setHotelBookingStatus(StatusType.UNCONFIRMED);
         hb.setHotelBooking(hotelBooking);
-        itinerary.getHotelBookingList().add(hb);        
-        System.out.println(itineraryMap.get(itineraryNo));
+        
+        itinerary.getHotelBookingList().add(hb);
 
         return Response.ok().build();
     }
@@ -165,7 +173,7 @@ public class ItineraryResource {
     private HotelType findOfferedBooking(String bookingNo) {
         return HotelBookingOffers.findOfferedBooking(bookingNo);
     }
-    
+
     @PUT
     @Path("itinerary/{itineraryNo}/flight/{flightBookingNo}")
     @Produces(MediaType.APPLICATION_XML)
@@ -197,35 +205,26 @@ public class ItineraryResource {
         return Response.ok().build();
     }
 
-    @GET
-    @Path("itinerary/{itineraryNo}")
-    @Produces(MediaType.APPLICATION_XML)
-    public Itinerary getItinerary(@PathParam("itineraryNo") String itineraryNo) {
-        validateItineraryNo(itineraryNo);
-        Itinerary itinerary = itineraryMap.get(itineraryNo);
-        return itinerary;
-    }
-
     @DELETE
     @Path("itinerary/{itineraryNo}")
     public Response cancelItinerary(@PathParam("itineraryNo") String itineraryNo) {
         validateItineraryNo(itineraryNo);
         Itinerary itinerary = itineraryMap.get(itineraryNo);
-        if (! itinerary.getItineraryStatus().equals(StatusType.UNCONFIRMED)) {
+        if (!itinerary.getItineraryStatus().equals(StatusType.UNCONFIRMED)) {
             // return HTTP 400
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
         itineraryMap.remove(itineraryNo);
         return Response.ok().build();
     }
-    
+
     @POST
-    @Path("itinerary/{itineraryNo}/cancelBooking")    
+    @Path("itinerary/{itineraryNo}/cancelBooking")
     public Response cancelBooking(@PathParam("itineraryNo") String itineraryNo) {
         CreditCardInfoType creditCard = itineraryNoToCreditCardMap.get(itineraryNo);
         Itinerary itinerary = itineraryMap.get(itineraryNo);
-        for(FlightBooking booking: itinerary.getFlightBookingList()){
-            if(booking.getFlightBookingStatus()==StatusType.CONFIRMED){
+        for (FlightBooking booking : itinerary.getFlightBookingList()) {
+            if (booking.getFlightBookingStatus() == StatusType.CONFIRMED) {
                 FlightInfoType flight = booking.getFlightBooking();
                 CancelFlightQuery query = new CancelFlightQuery();
                 query.setBookingNumber(flight.getBookingNumber());
@@ -233,7 +232,7 @@ public class ItineraryResource {
                 query.setFlightPrice(flight.getFlightPrice());
                 try {
                     boolean cancelStatus = cancelFlight(query);
-                    if(cancelStatus){
+                    if (cancelStatus) {
                         booking.setFlightBookingStatus(StatusType.CANCELLED);
                     }
                 } catch (CancelFlightFault ex) {
@@ -241,33 +240,32 @@ public class ItineraryResource {
                 }
             }
         }
-        for(HotelBooking booking: itinerary.getHotelBookingList()){
-            if(booking.getHotelBookingStatus()==StatusType.CONFIRMED){
+        for (HotelBooking booking : itinerary.getHotelBookingList()) {
+            if (booking.getHotelBookingStatus() == StatusType.CONFIRMED) {
                 HotelType hotel = booking.getHotelBooking();
                 try {
                     boolean cancelStatus = cancelHotelOperation(hotel.getBookingNo());
-                    if(cancelStatus){
-                       booking.setHotelBookingStatus(StatusType.CANCELLED); 
+                    if (cancelStatus) {
+                        booking.setHotelBookingStatus(StatusType.CANCELLED);
                     }
                 } catch (CancelHotelOperationFault ex) {
                     Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }        
+        }
         itinerary.setItineraryStatus(StatusType.CANCELLED);
-        
-        
+
+
         return Response.ok().build();
-    }    
-    
-    
+    }
+
     private void validateItineraryNo(String itineraryNo) {
-        if (! itineraryMap.containsKey(itineraryNo)) {
+        if (!itineraryMap.containsKey(itineraryNo)) {
             // return HTTP 400
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
-    
+
     private String nextItineraryNo() {
         return String.valueOf(itineraryNo++);
     }
@@ -295,5 +293,4 @@ public class ItineraryResource {
         hotelservice._02267.dtu.dk.wsdl.HotelServicePortType port = service.getHotelServiceSOAPPort();
         return port.cancelHotelOperation(bookingCancellation);
     }
-
 }
