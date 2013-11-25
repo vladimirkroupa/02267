@@ -23,7 +23,6 @@ public class TestFlightResource {
         param.add("finalDest","LHR");
         String response = webResource.queryParams(param).get(String.class);
         
-        System.out.println(response);
         Assert.assertTrue(response.contains("1234567"));
     }
 }

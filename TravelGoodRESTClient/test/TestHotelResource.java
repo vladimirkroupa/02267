@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import org.junit.Assert;
 import org.junit.Test;
+import testutil.ItineraryResourceClient;
 
 /**
  *
@@ -15,19 +16,11 @@ import org.junit.Test;
  */
 public class TestHotelResource {
     
-    public TestHotelResource() {
-    }
+    private final ItineraryResourceClient client = new ItineraryResourceClient();
     
     @Test
     public void testGetHotels(){
-        Client client = new Client();
-        WebResource webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/hotels");
-        webResource.accept(MediaType.APPLICATION_XML);
-        MultivaluedMap param = new MultivaluedMapImpl();
-        param.add("city","Copenhagen");
-        param.add("arrivalDate","2013-12-10");
-        param.add("departureDate","2013-12-22");
-        HotelList response = webResource.queryParams(param).get(HotelList.class);
+        HotelList response = client.listHotels("Copenhagen", "2013-12-10", "2013-12-22").entity();
         
         Assert.assertEquals(expectedHotel1().getHotelName(), response.getHotels().get(0).getHotelName());
         Assert.assertEquals(expectedHotel1().getAddress().getCity(), response.getHotels().get(0).getAddress().getCity());
@@ -38,6 +31,16 @@ public class TestHotelResource {
         Assert.assertEquals(expectedHotel1().getPrice(), response.getHotels().get(0).getPrice(), 0.00001);
         Assert.assertEquals(expectedHotel1().getHotelServiceName(), response.getHotels().get(0).getHotelServiceName());
         Assert.assertEquals(expectedHotel1().isCcGuaranteeReq(), response.getHotels().get(0).isCcGuaranteeReq());
+        
+        Assert.assertEquals(expectedHotel2().getHotelName(), response.getHotels().get(1).getHotelName());
+        Assert.assertEquals(expectedHotel2().getAddress().getCity(), response.getHotels().get(1).getAddress().getCity());
+        Assert.assertEquals(expectedHotel2().getAddress().getCountry(), response.getHotels().get(1).getAddress().getCountry());
+        Assert.assertEquals(expectedHotel2().getAddress().getHouseNo(), response.getHotels().get(1).getAddress().getHouseNo());
+        Assert.assertEquals(expectedHotel2().getAddress().getStreet(), response.getHotels().get(1).getAddress().getStreet());
+        Assert.assertEquals(expectedHotel2().getAddress().getZip(), response.getHotels().get(1).getAddress().getZip());
+        Assert.assertEquals(expectedHotel2().getPrice(), response.getHotels().get(1).getPrice(), 0.00001);
+        Assert.assertEquals(expectedHotel2().getHotelServiceName(), response.getHotels().get(1).getHotelServiceName());
+        Assert.assertEquals(expectedHotel2().isCcGuaranteeReq(), response.getHotels().get(1).isCcGuaranteeReq());        
         
     }
     
@@ -69,7 +72,7 @@ public class TestHotelResource {
         address.setZip("2200");
         ht.setAddress(address);
         //ht.setBookingNo("00013");
-        ht.setPrice(240.0f);
+        ht.setPrice(600.0f);
         ht.setCcGuaranteeReq(true);
         ht.setHotelServiceName("NiceView");
         return ht;
