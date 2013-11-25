@@ -10,7 +10,7 @@
     xmlns:tgt="urn://travelGoodTypes"
     xmlns:hr="urn://hotelReservationTypes"
     xmlns:fd="urn:flightData"
-    xmlns:bnk="urn://types.fastmoney.imm.dtu.dk" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    xmlns:bnk="urn://types.fastmoney.imm.dtu.dk" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
     
     <types>
         <xsd:schema targetNamespace="urn://travelGood" 
@@ -24,14 +24,33 @@
                         schemaLocation="http://localhost:8080/LameDuck/lameDuckService?xsd=1"/>
             <xsd:import namespace="urn://types.fastmoney.imm.dtu.dk" 
                         schemaLocation="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1"/>
-            
+            <xsd:element name="x_flightQuery">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element ref="fd:getFlightQuery"/>
+                        <xsd:element name="itineraryNo" type="tgt:itineraryNoType"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="x_hotelQuery">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element ref="hr:hotelQuery"/>
+                        <xsd:element name="itineraryNo" type="tgt:itineraryNoType"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="x_createQuery" type="tgt:itineraryNoType"></xsd:element>
+            <xsd:element name="x_createReply" type="tgt:itineraryNoType"></xsd:element>
+            <xsd:element name="x_cancelItineraryQuery" type="tgt:itineraryNoType"></xsd:element>
+            <xsd:element name="x_cancelItineraryResult" type="xsd:string"></xsd:element>
         </xsd:schema>
     </types>
     
     <!-- listHotels messages -->
     
     <message name="listHotelsRequest">
-        <part name="hotelQueryRequest" element="hr:hotelQuery"/>        
+        <part name="hotelQueryRequest" element="tns:x_hotelQuery"/>        
     </message>
     
     <message name="listHotelsResponse">
@@ -41,7 +60,7 @@
     <!-- listFlights messages -->
 
     <message name="listFlightsRequest">
-        <part name="flightQuery" element="fd:getFlightQuery"/>
+        <part name="flightQuery" element="tns:x_flightQuery"/>
     </message>
     
     <message name="listFlightsResponse">
@@ -51,11 +70,11 @@
     <!-- createItinerary messages -->
     
     <message name="createItineraryRequest">
-        <part name="createItineraryReq" element="tgt:createItineraryRequest"/>
+        <part name="itineraryNo" element="tns:x_createQuery"/>
     </message>
     
     <message name="createItineraryResponse">
-        <part name="itineraryNo" element="tgt:itineraryNo"></part>
+        <part name="itineraryNo" element="tns:x_createReply"></part>
     </message>
     
     <!-- addHotel messages -->
@@ -105,11 +124,11 @@
     <!-- cancelItinerary messages -->
     
     <message name="cancelItineraryRequest">
-        <part name="itineraryNo" element="tgt:itineraryNo"/>
+        <part name="itineraryNo" element="tns:x_cancelItineraryQuery"/>
     </message>
 
     <message name="cancelItineraryResponse">
-        <part name="cancelItineraryResult" element="tgt:operationSuccessResult"/>
+        <part name="cancelItineraryResult" element="tns:x_cancelItineraryResult"/>
     </message>
     
     <message name="cancelItineraryFault">
@@ -285,4 +304,13 @@
         A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
         <plnk:role name="travelGoodPortRole" portType="tns:travelGoodPortType"/>
     </plnk:partnerLinkType>
+    <vprop:property name="itineraryNo" type="tgt:itineraryNoType"/>
+    <vprop:propertyAlias propertyName="tns:itineraryNo" messageType="tns:listHotelsRequest" part="hotelQueryRequest">
+        <vprop:query>itineraryNo</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:itineraryNo" messageType="tns:listFlightsRequest" part="flightQuery">
+        <vprop:query>itineraryNo</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:itineraryNo" messageType="tns:createItineraryRequest" part="itineraryNo"/>
+    <vprop:propertyAlias propertyName="tns:itineraryNo" messageType="tns:cancelItineraryRequest" part="itineraryNo"/>
 </definitions>
