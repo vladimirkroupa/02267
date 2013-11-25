@@ -6,6 +6,7 @@ import org.junit.Test;
 import travelgoodtypes.Itinerary;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import org.junit.Ignore;
 import testutil.ItineraryResourceClient;
 import travelgoodtypes.FlightBooking;
 import travelgoodtypes.HotelBooking;
@@ -53,7 +54,7 @@ public class TestItineraryResource {
         String itineraryNo = client.createItinerary().entity();
 
         // list flights
-        ResponseWrapper respWrapper = client.listFlights("2013-09-18", "Copenhagen, Denmark", "London, Heathrow, England");
+        ResponseWrapper respWrapper = client.listFlights("2013-09-18", "CPH", "LHR");
         assertEquals(Response.Status.OK.getStatusCode(), respWrapper.status());
 
         // add flight
@@ -108,7 +109,7 @@ public class TestItineraryResource {
         client.addHotel(itineraryNo, firstHotelBookingNo);
         
         // add flight
-        client.listFlights("2013-09-18", "Copenhagen, Denmark", "London, Heathrow, England");
+        client.listFlights("2013-09-18", "CPH", "LHR");
         client.addFlight(itineraryNo, "1234567");
         
         // add second hotel
