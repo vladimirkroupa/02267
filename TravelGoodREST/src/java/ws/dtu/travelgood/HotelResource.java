@@ -1,5 +1,6 @@
 package ws.dtu.travelgood;
 
+import common.DateUtils;
 import hotelreservationtypes.HotelList;
 import hotelreservationtypes.HotelQuery;
 import hotelreservationtypes.HotelType;
@@ -36,8 +37,8 @@ public class HotelResource {
     private HotelQuery createHotelQuery(String city, String arrivalDate, String departureDate) {
         HotelQuery hqt = new HotelQuery();
         hqt.setCity(city);
-        hqt.setArrivalDate(WSTypeConverter.toGregorianCalendar(arrivalDate));
-        hqt.setDepartureDate(WSTypeConverter.toGregorianCalendar(departureDate));
+        hqt.setArrivalDate(DateUtils.toXmlGregCal(arrivalDate));
+        hqt.setDepartureDate(DateUtils.toXmlGregCal(departureDate));
         return hqt;
     }
     
