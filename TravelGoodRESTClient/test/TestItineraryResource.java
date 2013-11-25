@@ -1,17 +1,16 @@
-
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import hotelreservationtypes.HotelList;
 import hotelreservationtypes.HotelType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.junit.Test;
 import travelgoodtypes.Itinerary;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import testutil.ItineraryResourceClient;
+import travelgoodtypes.FlightBooking;
+import travelgoodtypes.HotelBooking;
 import travelgoodtypes.StatusType;
+import testutil.ResponseWrapper;
 
 /**
  *
@@ -19,222 +18,168 @@ import travelgoodtypes.StatusType;
  */
 public class TestItineraryResource {
 
-    private static final String ITINERARIES = "http://localhost:8080/TravelGoodREST/webresources/itineraries";
-    private static final String ITINERARY = "http://localhost:8080/TravelGoodREST/webresources/itinerary/";
+    
+
+    private final ItineraryResourceClient client;
 
     public TestItineraryResource() {
+        this.client = new ItineraryResourceClient();
     }
-
+    
     @Test
     public void testCreateItineary() {
-        Client client = new Client();
-        WebResource webResource = client.resource(ITINERARIES);
-        String itineraryNo = webResource.post(String.class);
-        assertNotNull(itineraryNo);
+        // create first itinerary
+        ResponseWrapper<String> itineraryNoResp = client.createItinerary();
+        assertEquals(Response.Status.OK.getStatusCode(), itineraryNoResp.status());
+        String itineraryNo = itineraryNoResp.entity();
 
-        webResource = client.resource(ITINERARIES);
-        String itineraryNo2 = webResource.post(String.class);
-        assertNotNull(itineraryNo2);
+        // create second itinerary
+        itineraryNoResp = client.createItinerary();
+        assertEquals(Response.Status.OK.getStatusCode(), itineraryNoResp.status());
+        String itineraryNo2 = itineraryNoResp.entity();
+
+        // itinerary numbers must not be same
         assertThat(itineraryNo, not(equalTo(itineraryNo2)));
 
-        webResource = client.resource(ITINERARY + itineraryNo);
-        Itinerary itinerary = webResource.get(Itinerary.class);
+        // get itinerary
+        ResponseWrapper<Itinerary> itineraryResp = client.getItinerary(itineraryNo);
+        Itinerary itinerary = itineraryResp.entity();
 
-        assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
         assertNotNull(itinerary.getItineraryNo());
+        assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());        
     }
 
     @Test
     public void testAddFlightToItinerary() {
-        Client client = new Client();
-        WebResource webResource = client.resource(ITINERARIES);
-        String itineraryNo = webResource.post(String.class);
-        assertNotNull(itineraryNo);
+        // create itinerary
+        String itineraryNo = client.createItinerary().entity();
 
-        webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/flights");
-        MultivaluedMap param = new MultivaluedMapImpl();
-        param.add("date", "2013-09-18");
-        param.add("startDest", "Copenhagen, Denmark");
-        param.add("finalDest", "London, Heathrow, England");
-        ClientResponse res = webResource.queryParams(param).get(ClientResponse.class);
-        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+        // list flights
+        ResponseWrapper respWrapper = client.listFlights("2013-09-18", "Copenhagen, Denmark", "London, Heathrow, England");
+        assertEquals(Response.Status.OK.getStatusCode(), respWrapper.status());
 
-        webResource = client.resource(ITINERARY + itineraryNo + "/flight/1234567");
-        res = webResource.put(ClientResponse.class);
-        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+        // add flight
+        ClientResponse resp = client.addFlight(itineraryNo, "1234567");
+        assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
 
-        webResource = client.resource(ITINERARY + itineraryNo);
-        Itinerary itinerary = webResource.get(Itinerary.class);
+        // get itinerary
+        Itinerary itinerary = client.getItinerary(itineraryNo).entity();
         
         assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
         assertEquals(itineraryNo, itinerary.getItineraryNo());
-        assertTrue(itinerary.getFlightBookingList().size() > 0);
+        assertTrue(itinerary.getFlightBookingList().size() == 1);
+        for (FlightBooking flight : itinerary.getFlightBookingList()) {
+            assertEquals(StatusType.UNCONFIRMED, flight.getFlightBookingStatus());
+        }
     }
 
-    private HotelList listHotels(Client client) {
-        WebResource webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/hotels");
-        MultivaluedMap param = new MultivaluedMapImpl();
-        param.add("city", "Copenhagen");
-        param.add("arrivalDate", "2013-12-10");
-        param.add("departureDate", "2013-12-22");
-        HotelList response = webResource.queryParams(param).get(HotelList.class);
-        return response;
-    }
-    
-    //private 
-    
     @Test
     public void testAddHotelToItinerary() {
-        Client client = new Client();
-        WebResource webResource = client.resource(ITINERARIES);
-        String itineraryNo = webResource.post(String.class);
-        assertNotNull(itineraryNo);
+        // create itinerary
+        String itineraryNo = client.createItinerary().entity();
 
-        HotelList response = listHotels(client);
-        String firstHotelBookingNo = response.getHotels().get(0).getBookingNo();
-
-        webResource = client.resource(ITINERARY + itineraryNo + "/hotel/" + firstHotelBookingNo);
-        webResource.put(String.class);
-
-        webResource = client.resource(ITINERARY + itineraryNo);
-        ClientResponse res = webResource.get(ClientResponse.class);
-        Itinerary itinerary = res.getEntity(Itinerary.class);
+        // list hotels
+        ResponseWrapper<HotelList> respWrapper = client.listHotels("Copenhagen", "2013-12-10", "2013-12-22");
+        assertEquals(Response.Status.OK.getStatusCode(), respWrapper.status());
+        HotelList response = respWrapper.entity();
         
-        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+        // add hotel
+        String firstHotelBookingNo = response.getHotels().get(0).getBookingNo();
+        ClientResponse resp = client.addHotel(itineraryNo, firstHotelBookingNo);
+        assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
+
+        // get itinerary 
+        Itinerary itinerary = client.getItinerary(itineraryNo).entity();
         
         assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
         assertEquals(itineraryNo, itinerary.getItineraryNo());
-        assertTrue(itinerary.getHotelBookingList().size() > 0);
+        assertTrue(itinerary.getHotelBookingList().size() == 1);
+        for (FlightBooking flight : itinerary.getFlightBookingList()) {
+            assertEquals(StatusType.UNCONFIRMED, flight.getFlightBookingStatus());
+        }
     }
     
     @Test
     public void testAddBoth() {
-        Client client = new Client();
-        WebResource webResource = client.resource(ITINERARIES);
-        String itineraryNo = webResource.post(String.class);
-        assertNotNull(itineraryNo);
+        // create itinerary
+        String itineraryNo = client.createItinerary().entity();
 
-        // add hotel
-            
-        HotelList response = listHotels(client);
-        String firstHotelBookingNo = response.getHotels().get(0).getBookingNo();
-
-        webResource = client.resource(ITINERARY + itineraryNo + "/hotel/" + firstHotelBookingNo);
-        webResource.put(String.class);     
+        // add first hotel
+        HotelList hotelList = client.listHotels("Copenhagen", "2013-09-17", "2013-09-18").entity();
+        String firstHotelBookingNo = hotelList.getHotels().get(0).getBookingNo();
+        client.addHotel(itineraryNo, firstHotelBookingNo);
         
         // add flight
+        client.listFlights("2013-09-18", "Copenhagen, Denmark", "London, Heathrow, England");
+        client.addFlight(itineraryNo, "1234567");
         
-        webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/flights");
-        MultivaluedMap param = new MultivaluedMapImpl();
-        param.add("date", "2013-09-18");
-        param.add("startDest", "Copenhagen, Denmark");
-        param.add("finalDest", "London, Heathrow, England");
-        webResource.queryParams(param).get(ClientResponse.class);
-
-        webResource = client.resource(ITINERARY + itineraryNo + "/flight/1234567");
-        ClientResponse res = webResource.put(ClientResponse.class);
-        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
-
         // add second hotel
-        
-        response = listHotels(client);
-        String secondHotelBookingNo = response.getHotels().get(1).getBookingNo();
+        HotelList hotelList2 = client.listHotels("Herlev", "2013-09-18", "2013-09-20").entity();
+        String secondHotelBookingNo = hotelList2.getHotels().get(0).getBookingNo();
+        client.addHotel(itineraryNo, secondHotelBookingNo);
 
-        webResource = client.resource(ITINERARY + itineraryNo + "/hotel/" + secondHotelBookingNo);
-        webResource.put(String.class);
-        
-        // check itinerary
-        
-        webResource = client.resource(ITINERARY + itineraryNo);
-        res = webResource.get(ClientResponse.class);
-        Itinerary itinerary = res.getEntity(Itinerary.class);
+        // get itinerary 
+        Itinerary itinerary = client.getItinerary(itineraryNo).entity();
         
         assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
         assertTrue(itinerary.getHotelBookingList().size() == 2);
         assertTrue(itinerary.getFlightBookingList().size() == 1);
+        for (FlightBooking flight : itinerary.getFlightBookingList()) {
+            assertEquals(StatusType.UNCONFIRMED, flight.getFlightBookingStatus());
+        }
+        for (HotelBooking hotel : itinerary.getHotelBookingList()) {
+            assertEquals(StatusType.UNCONFIRMED, hotel.getHotelBookingStatus());
+        }                                
     }
     
     @Test
-    public void testCancelItinerary() {
-        Client client = new Client();
-        WebResource webResource = client.resource(ITINERARIES);
-        String itineraryNo = webResource.post(String.class);
-        assertNotNull(itineraryNo);
-
-        webResource = client.resource(ITINERARIES);
-        String itineraryNo2 = webResource.post(String.class);
-        assertNotNull(itineraryNo2);
-        assertThat(itineraryNo, not(equalTo(itineraryNo2)));
-
-        webResource = client.resource(ITINERARY + itineraryNo);
-        Itinerary itinerary = webResource.get(Itinerary.class);
-
-        assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
+    public void testCancelEmptyItinerary() {
+        // create itinerary
+        String itineraryNo = client.createItinerary().entity();
+        
+        // get itinerary 
+        Itinerary itinerary = client.getItinerary(itineraryNo).entity();
+        
         assertNotNull(itinerary.getItineraryNo());
+        assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
         
-        // cancel
+        // cancel itinerary
+        client.cancelItinerary(itineraryNo);
         
-        webResource = client.resource(ITINERARY + itineraryNo);
-        ClientResponse res = webResource.delete(ClientResponse.class);
-        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+        // get itinerary again
+        ResponseWrapper<Itinerary> itineraryResp = client.getItinerary(itineraryNo);
         
-        webResource = client.resource(ITINERARY + itineraryNo);
-        res = webResource.get(ClientResponse.class);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), itineraryResp.status());
     }
     
     @Test
-    public void testBookItinerary() {
-        Client client = new Client();
-        WebResource webResource = client.resource(ITINERARIES);
-        String itineraryNo = webResource.post(String.class);
+    public void testBookItineraryAllSucceed() {
+        // create itinerary
+        String itineraryNo = client.createItinerary().entity();
 
         // add hotels
-        
-        HotelList response = listHotels(client);
-        
-        for (HotelType ht : response.getHotels()) {
-            String bookingNo = ht.getBookingNo();
-            webResource = client.resource(ITINERARY + itineraryNo + "/hotel/" + bookingNo);
-            
-            webResource.put(String.class);
+        HotelList hotelList = client.listHotels("Copenhagen", "2013-09-17", "2013-09-18").entity();
+        for (HotelType hotel : hotelList.getHotels()) {
+            client.addHotel(itineraryNo, hotel.getBookingNo());
         }
 
         // add flight
+        client.listFlights("2013-09-18", "Copenhagen, Denmark", "London, Heathrow, England");
+        client.addFlight(itineraryNo, "1234567");
         
-        webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/flights");
-        MultivaluedMap param = new MultivaluedMapImpl();
-        param.add("date", "2013-09-18");
-        param.add("startDest", "Copenhagen, Denmark");
-        param.add("finalDest", "London, Heathrow, England");
-        webResource.queryParams(param).get(ClientResponse.class);
-
-        webResource = client.resource(ITINERARY + itineraryNo + "/flight/1234567");
-        webResource.put(ClientResponse.class);
-        
-        // test
-        
-        webResource = client.resource(ITINERARY + itineraryNo);
-        Itinerary itinerary = webResource.get(Itinerary.class);
-        assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
-        assertNotNull(itinerary.getItineraryNo());
-        assertTrue(itinerary.getFlightBookingList().size() > 0);
-        assertTrue(itinerary.getHotelBookingList().size() > 0);
-        
-        // book
-        
-        webResource = client.resource(ITINERARY + itineraryNo + "/book");
-        ClientResponse res = webResource.post(ClientResponse.class);
+        // book itinerary
+        ClientResponse res = client.bookItinerary(itineraryNo, "Anne Strandberg", "50408816", "5", "9");
         assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
         
-        // check booking status
-        
-        webResource = client.resource(ITINERARY + itineraryNo);
-        res = webResource.get(ClientResponse.class);
-        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
-        
-        itinerary = res.getEntity(Itinerary.class);
+        // check that booking status is confirmed
+        Itinerary itinerary = client.getItinerary(itineraryNo).entity();
         assertEquals(StatusType.CONFIRMED, itinerary.getItineraryStatus());
+        for (FlightBooking flight : itinerary.getFlightBookingList()) {
+            assertEquals(StatusType.CONFIRMED, flight.getFlightBookingStatus());
+        }
+        for (HotelBooking hotel : itinerary.getHotelBookingList()) {
+            assertEquals(StatusType.CONFIRMED, hotel.getHotelBookingStatus());
+        }
     }
-    
+        
 }
