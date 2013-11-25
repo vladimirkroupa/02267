@@ -5,8 +5,6 @@ import dk.dtu.ws.hotelservice.domain.Booking;
 import dk.dtu.ws.hotelservice.domain.NiceView;
 import hotelreservationtypes.AddressType;
 import hotelreservationtypes.HotelType;
-import java.util.Date;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 public class WSTypeConverter {
 
@@ -28,9 +26,5 @@ public class WSTypeConverter {
         result.setHouseNo(address.getHouseNo());
         result.setZip(address.getZip());
         return result;
-    }
-    
-    public static Date toDate(XMLGregorianCalendar xgc) {
-        return xgc.toGregorianCalendar().getTime();
     }
 }

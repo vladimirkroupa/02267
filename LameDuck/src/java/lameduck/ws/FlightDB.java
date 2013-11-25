@@ -1,10 +1,9 @@
 package lameduck.ws;
 
+import common.DateUtils;
 import flightdata.FlightInfoList;
 import flightdata.FlightInfoType;
 import flightdata.FlightType;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -106,23 +105,12 @@ public class FlightDB {
     }
 
     /**
-     * @param date date in format YYYY-MM-DD
-     * @param time in format HH:MM
+     * @param date date in format yyyy-MM-dd
+     * @param time in format hh:mm
      * @return {@XMLGregorianCalendar} instance with everything set to zero except year, month, day, hours and minutes
      */
     public final XMLGregorianCalendar date(String date, String time) {
-
-        final String FORMAT = "%sT%s:00.000+00:00";
-        String dateTime = String.format(FORMAT, date, time);
-
-        DatatypeFactory df = null;
-        try {
-            df = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException ex) {
-            throw new RuntimeException(ex);
-        }
-        XMLGregorianCalendar xmlGregCal = df.newXMLGregorianCalendar(dateTime);
-        return xmlGregCal;
+        return DateUtils.toXmlGregCal(date, time);
     }
 
 }

@@ -4,6 +4,7 @@
  */
 package dk.dtu.ws;
 
+import common.DateUtils;
 import dk.dtu.ws.hotelservice.BookHotelOperationFault;
 import dk.dtu.ws.hotelservice.CancelHotelOperationFault;
 import dk.dtu.ws.hotelservice.CreditCardInfoType;
@@ -95,16 +96,7 @@ public class HotelReservationTest {
     }
     
     private XMLGregorianCalendar toXMLGregCal(Date date) {
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.setTime(date);
-
-        try {
-            DatatypeFactory dtf = DatatypeFactory.newInstance();
-            return dtf.newXMLGregorianCalendar(cal);
-        } catch (DatatypeConfigurationException e) {
-            throw new IllegalStateException(e);
-        }
-        
+        return DateUtils.toXMLGregCal(date);
     }
 
     private static boolean bookHotelOperation(HotelBookingWithCreditCard bookingWithCreditCard) throws BookHotelOperationFault {

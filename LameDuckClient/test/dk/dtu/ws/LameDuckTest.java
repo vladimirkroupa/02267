@@ -4,6 +4,7 @@
  */
 package dk.dtu.ws;
 
+import common.DateUtils;
 import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import dk.dtu.imm.fastmoney.types.ExpirationDateType;
 import flightdata.BookFlightQuery;
@@ -177,28 +178,10 @@ public class LameDuckTest {
     /**
      *
      * @param date in yyyy-MM-dd format
-     * @return
+     * @return 
      */
     public static XMLGregorianCalendar toGregorianCalendar(String aDate) {
-        try {
-            return _toGregorianCalendar(aDate);
-        } catch (ParseException pe) {
-            throw new IllegalArgumentException(pe);
-        } catch (DatatypeConfigurationException ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
-    private static XMLGregorianCalendar _toGregorianCalendar(String aDate) throws ParseException, DatatypeConfigurationException {
-        Date date = toDate(aDate);
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(date);
-        return DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-    }
-
-    private static Date toDate(String date) throws ParseException {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        return df.parse(date);
+        return DateUtils.toXmlGregCal(aDate);
     }
 
     private static boolean bookFlight(flightdata.BookFlightQuery bookFlightQuery) throws BookFlightFault {

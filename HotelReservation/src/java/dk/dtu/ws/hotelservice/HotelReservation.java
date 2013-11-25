@@ -1,5 +1,6 @@
 package dk.dtu.ws.hotelservice;
 
+import common.DateUtils;
 import dk.dtu.imm.fastmoney.CreditCardFaultMessage;
 import dk.dtu.ws.hotelservice.domain.NiceView;
 import hotelreservationtypes.HotelBookingWithCreditCard;
@@ -20,8 +21,8 @@ public class HotelReservation {
     private NiceView niceView = new NiceView();
 
     public HotelList getHotelsOperation(HotelQuery hotelQuery) {
-        Date from = WSTypeConverter.toDate(hotelQuery.getArrivalDate());
-        Date to = WSTypeConverter.toDate(hotelQuery.getDepartureDate());
+        Date from = DateUtils.toDate(hotelQuery.getArrivalDate());
+        Date to = DateUtils.toDate(hotelQuery.getDepartureDate());
         return niceView.listHotels(hotelQuery.getCity(), from, to);
     }
 

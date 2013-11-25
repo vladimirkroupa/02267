@@ -1,5 +1,6 @@
 package lameduck.ws;
 
+import common.DateUtils;
 import dk.dtu.imm.fastmoney.CreditCardFaultMessage;
 import dk.dtu.imm.fastmoney.types.AccountType;
 import dk.dtu.imm.fastmoney.types.CreditCardFaultType;
@@ -11,12 +12,7 @@ import flightdata.FlightInfoType;
 import flightdata.GetFlightQuery;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.jws.WebService;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import ws.lameduck.BookFlightFault;
 import ws.lameduck.CancelFlightFault;
@@ -44,7 +40,7 @@ public class LameDuckService {
             int day = flightInfo.getFlight().getDatetimeLift().getDay();
             int month = flightInfo.getFlight().getDatetimeLift().getMonth();
             int year = flightInfo.getFlight().getDatetimeLift().getYear();
-            XMLGregorianCalendar flightDate = createDate(day, month, year);
+            XMLGregorianCalendar flightDate = DateUtils.toXmlGregCal(day, month, year);
             
             boolean datesSame = getFlightQuery.getDate().toGregorianCalendar().equals(flightDate.toGregorianCalendar());
             boolean startAirSame = flightInfo.getFlight().getStartAirpot().equals(getFlightQuery.getStartDest());
@@ -152,20 +148,6 @@ public class LameDuckService {
             }
         }
         return null;        
-    }
-
-    public XMLGregorianCalendar createDate(int day, int month, int year) {
-        DatatypeFactory df = null;
-        try {
-            df = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException ex) {
-            throw new RuntimeException(ex);
-        }
-        XMLGregorianCalendar date = df.newXMLGregorianCalendar();
-        date.setDay(day);
-        date.setMonth(month);
-        date.setYear(year);
-        return date;
     }
 
     private BookFlightFault createBookingFault(String message, String detail) {
