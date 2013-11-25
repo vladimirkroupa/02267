@@ -67,10 +67,18 @@ public class ItineraryResource {
         @QueryParam("ccNumber") String ccNumber){
 
         
-        Preconditions.checkNotNull(ccName, "Card holder name must not be null.");
-        Preconditions.checkNotNull(ccNumber, "Card number must not be null.");
-        Preconditions.checkNotNull(expYear, "Card expiration year must not be null");
-        Preconditions.checkNotNull(expMonth, "Card expiration month must not be null");
+        if (ccName == null)
+            throw new WebApplicationException(new IllegalArgumentException("Card holder name must not be null."), Response.Status.BAD_REQUEST);
+        }
+        if (ccNumber == null) {
+            throw new WebApplicationException(new IllegalArgumentException("Card number must not be null."), Response.Status.BAD_REQUEST);
+        }
+        if (expYear == null) {
+            throw new WebApplicationException(new IllegalArgumentException("Card expiration year must not be null"), Response.Status.BAD_REQUEST);
+        }
+        if (expMonth == null) {
+            throw new WebApplicationException(new IllegalArgumentException("Card expiration month must not be null"), Response.Status.BAD_REQUEST);
+        }        
         
         validateItineraryNo(itineraryNo);
         
