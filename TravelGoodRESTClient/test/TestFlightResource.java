@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
@@ -24,8 +19,8 @@ public class TestFlightResource {
         webResource.accept(MediaType.APPLICATION_XML);
         MultivaluedMap param = new MultivaluedMapImpl();
         param.add("date","2013-09-18");
-        param.add("startDest","Copenhagen, Denmark");
-        param.add("finalDest","London, Heathrow, England");
+        param.add("startDest","CPH");
+        param.add("finalDest","LHR");
         String response = webResource.queryParams(param).get(String.class);
         
         System.out.println(response);

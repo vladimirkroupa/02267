@@ -6,7 +6,6 @@ import org.junit.Test;
 import travelgoodtypes.Itinerary;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
-import org.junit.Ignore;
 import testutil.ItineraryResourceClient;
 import travelgoodtypes.FlightBooking;
 import travelgoodtypes.HotelBooking;
@@ -114,7 +113,7 @@ public class TestItineraryResource {
         
         // add second hotel
         HotelList hotelList2 = client.listHotels("Herlev", "2013-09-18", "2013-09-20").entity();
-        String secondHotelBookingNo = hotelList2.getHotels().get(0).getBookingNo();
+        String secondHotelBookingNo = hotelList2.getHotels().get(1).getBookingNo();
         client.addHotel(itineraryNo, secondHotelBookingNo);
 
         // get itinerary 
@@ -159,11 +158,19 @@ public class TestItineraryResource {
         // add hotels
         HotelList hotelList = client.listHotels("Copenhagen", "2013-09-17", "2013-09-18").entity();
         for (HotelType hotel : hotelList.getHotels()) {
+            System.out.println(hotel.getBookingNo());
             client.addHotel(itineraryNo, hotel.getBookingNo());
+        }
+        
+        //tmp
+        Itinerary itinerary2 = client.getItinerary(itineraryNo).entity();
+        System.out.println(itinerary2.getHotelBookingList().size());
+        for (HotelBooking h : itinerary2.getHotelBookingList()) {
+            System.out.println(h.getHotelBooking().getBookingNo());
         }
 
         // add flight
-        client.listFlights("2013-09-18", "Copenhagen, Denmark", "London, Heathrow, England");
+        client.listFlights("2013-09-18", "CPH", "LHR");
         client.addFlight(itineraryNo, "1234567");
         
         // book itinerary
