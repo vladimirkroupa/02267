@@ -42,7 +42,7 @@ public class LameDuckTest {
     @Test
     public void testGetFlightsSingleFlight() {
         GetFlightQuery getFlightQuery = new GetFlightQuery();
-        getFlightQuery.setDate(toGregorianCalendar("2013-09-18"));
+        getFlightQuery.setDate(DateUtils.toXmlGregCal("2013-09-18"));
         getFlightQuery.setStartDest("CPH");
         getFlightQuery.setFinalDest("LHR");
 
@@ -54,7 +54,7 @@ public class LameDuckTest {
     @Test
     public void testGetFlightsMultipleFlights() {
         GetFlightQuery getFlightQuery = new GetFlightQuery();
-        getFlightQuery.setDate(toGregorianCalendar("2013-12-06"));
+        getFlightQuery.setDate(DateUtils.toXmlGregCal("2013-12-06"));
         getFlightQuery.setStartDest("CPH");
         getFlightQuery.setFinalDest("OSL");
 
@@ -173,15 +173,6 @@ public class LameDuckTest {
         expDate.setYear(9);
         creditcardInfo.setExpirationDate(expDate);
         return creditcardInfo;
-    }
-
-    /**
-     *
-     * @param date in yyyy-MM-dd format
-     * @return 
-     */
-    public static XMLGregorianCalendar toGregorianCalendar(String aDate) {
-        return DateUtils.toXmlGregCal(aDate);
     }
 
     private static boolean bookFlight(flightdata.BookFlightQuery bookFlightQuery) throws BookFlightFault {
