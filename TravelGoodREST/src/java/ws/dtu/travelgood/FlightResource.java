@@ -1,5 +1,6 @@
 package ws.dtu.travelgood;
 
+import common.DateUtils;
 import flightdata.FlightInfoList;
 import flightdata.FlightInfoType;
 import flightdata.GetFlightQuery;
@@ -25,7 +26,7 @@ public class FlightResource {
             @QueryParam("finalDest") String finalDest){
 
         GetFlightQuery flightQuery = new GetFlightQuery();
-        flightQuery.setDate(WSTypeConverter.toGregorianCalendar(flightDate));
+        flightQuery.setDate(DateUtils.toXmlGregCal(flightDate));
         flightQuery.setStartDest(startDest);
         flightQuery.setFinalDest(finalDest);
         
