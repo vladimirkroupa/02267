@@ -3,8 +3,6 @@ package ws.dtu.travelgood;
 import flightdata.FlightInfoList;
 import flightdata.FlightInfoType;
 import flightdata.GetFlightQuery;
-import java.util.ArrayList;
-import java.util.Iterator;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
@@ -30,18 +28,14 @@ public class FlightResource {
         flightQuery.setDate(WSTypeConverter.toGregorianCalendar(flightDate));
         flightQuery.setStartDest(startDest);
         flightQuery.setFinalDest(finalDest);
-        FlightInfoList flightInfoList = getFlights(flightQuery) ;
         
-        ArrayList flightList = (ArrayList) flightInfoList.getFlightInfo();
-        Iterator iter = flightList.iterator();
-        while(iter.hasNext()){
-            FlightInfoType flight = (FlightInfoType) iter.next();
+        FlightInfoList flightInfoList = getFlights(flightQuery) ;
+        for (FlightInfoType flight : flightInfoList.getFlightInfo()) {
             FlightBookingData.addOfferedBooking(flight);
         }
         
         return flightInfoList;
     }
-
 
     private static FlightInfoList getFlights(flightdata.GetFlightQuery getFlightQuery) {
         ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
