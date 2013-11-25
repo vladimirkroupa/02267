@@ -21,10 +21,11 @@ public class WSTypeConverter {
     
     public static AddressType toAddressType(Address address) {
         AddressType result = new AddressType();
-        result.setCity(address.getCity());
-        result.setCountry(address.getCountry());
+        result.setStreet(address.getStreet());
         result.setHouseNo(address.getHouseNo());
+        result.setCity(address.getCity());
         result.setZip(address.getZip());
+        result.setCountry(address.getCountry());        
         return result;
     }
 }

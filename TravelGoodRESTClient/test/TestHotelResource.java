@@ -29,9 +29,6 @@ public class TestHotelResource {
         param.add("departureDate","2013-12-22");
         HotelList response = webResource.queryParams(param).get(HotelList.class);
         
-        System.out.println(response.getHotels().get(1).getHotelName());
-        
-        
         Assert.assertEquals(expectedHotel1().getHotelName(), response.getHotels().get(0).getHotelName());
         Assert.assertEquals(expectedHotel1().getAddress().getCity(), response.getHotels().get(0).getAddress().getCity());
         Assert.assertEquals(expectedHotel1().getAddress().getCountry(), response.getHotels().get(0).getAddress().getCountry());

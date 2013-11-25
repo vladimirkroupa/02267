@@ -94,8 +94,7 @@ public class NiceView {
         if (confirmedBookings.containsKey(bookingNo)) {
             BookHotelOperationFault fault = createBookingFault("Booking already exists.", "Booking number: " + bookingNo);
             throw fault;
-        }
-        System.out.println(bookingNo);
+        }        
         if (! offeredBookings.containsKey(bookingNo)) {
             BookHotelOperationFault fault = createBookingFault("Invalid booking number specified.", "Booking number: " + bookingNo);
             throw fault;
