@@ -77,7 +77,6 @@ public class ItineraryResource {
             @QueryParam("expMonth") Integer expMonth,
             @QueryParam("expYear") Integer expYear) {
 
-
         if (ccName == null) {
             throw new WebApplicationException(new IllegalArgumentException("Card holder name must not be null."), Response.Status.BAD_REQUEST);
         }
@@ -101,31 +100,33 @@ public class ItineraryResource {
 
         for (FlightBooking booking : itinerary.getFlightBookingList()) {
             BookFlightQuery query = new BookFlightQuery();
-            query.setBookingNumber(itineraryNo);
+            query.setBookingNumber(booking.getFlightBooking().getBookingNumber());
             query.setCreditcardInfo(cc);
             try {
                 boolean success = bookFlight(query);
+                System.out.println("flight: " + success);
                 if (success) {
                     booking.setFlightBookingStatus(StatusType.CONFIRMED);
                 }
             } catch (BookFlightFault ex) {
-                Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
-                //todo: handle exceptions
+                Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, "Fault from bookFlight operation", ex);
+                // TODO
             }
         }
 
         for (HotelBooking booking : itinerary.getHotelBookingList()) {
             HotelBookingWithCreditCard query = new HotelBookingWithCreditCard();
-            query.setBookingNumber(itineraryNo);
+            query.setBookingNumber(booking.getHotelBooking().getBookingNo());
             query.setCreditCardInfo(cc);
             try {
                 boolean success = bookHotelOperation(query);
+                System.out.println("hotel: " + success);
                 if (success) {
                     booking.setHotelBookingStatus(StatusType.CONFIRMED);
                 }
             } catch (BookHotelOperationFault ex) {
-                Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
-                //todo: handle exceptions
+                Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, "Fault from bookHotel operation", ex);
+                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }
         }
 
@@ -259,6 +260,19 @@ public class ItineraryResource {
         return Response.ok().build();
     }
 
+    @DELETE
+    public void reset() {
+        HotelBookingOffers.reset();
+        FlightBookingData.reset();
+        
+        itineraryMap.clear();
+        itineraryNoToCreditCardMap.clear();
+        itineraryNo = 1;
+        
+        resetNiceView("");
+        resetLameDuck("");
+    }
+    
     private void validateItineraryNo(String itineraryNo) {
         if (!itineraryMap.containsKey(itineraryNo)) {
             // return HTTP 400
@@ -293,4 +307,17 @@ public class ItineraryResource {
         hotelservice._02267.dtu.dk.wsdl.HotelServicePortType port = service.getHotelServiceSOAPPort();
         return port.cancelHotelOperation(bookingCancellation);
     }
+
+    private static void resetNiceView(java.lang.String reset) {
+        hotelservice._02267.dtu.dk.wsdl.HotelService service = new hotelservice._02267.dtu.dk.wsdl.HotelService();
+        hotelservice._02267.dtu.dk.wsdl.HotelServicePortType port = service.getHotelServiceSOAPPort();
+        port.resetOperation(reset);
+    }
+
+    private static void resetLameDuck(java.lang.String resetQuery) {
+        ws.lameduck.LameDuckService service = new ws.lameduck.LameDuckService();
+        ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
+        port.reset(resetQuery);
+    }
+    
 }
