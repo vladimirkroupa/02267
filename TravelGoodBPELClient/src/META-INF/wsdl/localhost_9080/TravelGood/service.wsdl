@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions name="travelGood" targetNamespace="urn://travelGood" xmlns:hr="urn://hotelReservationTypes" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn://travelGood" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tgt="urn://travelGoodTypes" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:bnk="urn://types.fastmoney.imm.dtu.dk" xmlns:fd="urn:flightData">
+<definitions name="travelGood" targetNamespace="urn://travelGood" xmlns:hr="urn://hotelReservationTypes" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn://travelGood" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" xmlns:tgt="urn://travelGoodTypes" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:bnk="urn://types.fastmoney.imm.dtu.dk" xmlns:fd="urn:flightData">
   <types>
     <xsd:schema targetNamespace="urn://travelGood" xmlns:tns="urn://travelGood">
-            <xsd:import namespace="urn://travelGoodTypes" schemaLocation="http://HenryLie-PC:9080/TravelGoodBPELApp-sun-http-binding/TravelGoodBPELModule/travelGood.xsd">
+            <xsd:import namespace="urn://travelGoodTypes" schemaLocation="http://10.16.173.211:9080/TravelGoodBPELApp-sun-http-binding/TravelGoodBPELModule/travelGood.xsd">
             </xsd:import>
             <xsd:import namespace="urn://hotelReservationTypes" schemaLocation="http://localhost:8080/HotelReservation/hotelService?xsd=1"/>
             <xsd:import namespace="urn:flightData" schemaLocation="http://localhost:8080/LameDuck/lameDuckService?xsd=1"/>
             <xsd:import namespace="urn://types.fastmoney.imm.dtu.dk" schemaLocation="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1"/>
-            
+            <xsd:element name="x_flightQuery">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element ref="fd:getFlightQuery"/>
+                        <xsd:element name="itineraryNo" type="tgt:itineraryNoType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="x_hotelQuery">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element ref="hr:hotelQuery"/>
+                        <xsd:element name="itineraryNo" type="tgt:itineraryNoType"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="x_createQuery" type="tgt:itineraryNoType"/>
+            <xsd:element name="x_createReply" type="tgt:itineraryNoType"/>
+            <xsd:element name="x_cancelItineraryQuery" type="tgt:itineraryNoType"/>
+            <xsd:element name="x_cancelItineraryResult" type="xsd:string"/>
         </xsd:schema>
   </types>
   <message name="cancelBookingFault">
@@ -39,7 +58,7 @@
     </part>
   </message>
   <message name="createItineraryResponse">
-    <part name="itineraryNo" element="tgt:itineraryNo">
+    <part name="itineraryNo" element="tns:x_createReply">
     </part>
   </message>
   <message name="addFlightToItineraryRequest">
@@ -51,7 +70,7 @@
     </part>
   </message>
   <message name="cancelItineraryResponse">
-    <part name="cancelItineraryResult" element="tgt:operationSuccessResult">
+    <part name="cancelItineraryResult" element="tns:x_cancelItineraryResult">
     </part>
   </message>
   <message name="listFlightsResponse">
@@ -67,15 +86,15 @@
     </part>
   </message>
   <message name="listFlightsRequest">
-    <part name="flightQuery" element="fd:getFlightQuery">
+    <part name="flightQuery" element="tns:x_flightQuery">
     </part>
   </message>
   <message name="cancelItineraryRequest">
-    <part name="itineraryNo" element="tgt:itineraryNo">
+    <part name="itineraryNo" element="tns:x_cancelItineraryQuery">
     </part>
   </message>
   <message name="listHotelsRequest">
-    <part name="hotelQueryRequest" element="hr:hotelQuery">
+    <part name="hotelQueryRequest" element="tns:x_hotelQuery">
     </part>
   </message>
   <message name="getItineraryRequest">
@@ -83,7 +102,7 @@
     </part>
   </message>
   <message name="createItineraryRequest">
-    <part name="createItineraryReq" element="tgt:createItineraryRequest">
+    <part name="itineraryNo" element="tns:x_createQuery">
     </part>
   </message>
   <message name="bookItineraryFault">
@@ -251,7 +270,7 @@
   </binding>
   <service name="travelGoodService">
     <port name="travelGoodPortTypeBindingPort" binding="tns:travelGoodPortTypeBinding">
-      <soap:address location="http://HenryLie-PC:9080/TravelGood/service"/>
+      <soap:address location="http://10.16.173.211:9080/TravelGood/service"/>
     </port>
   </service>
     <plnk:partnerLinkType name="travelGood">
@@ -260,4 +279,13 @@
         A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
         <plnk:role name="travelGoodPortRole" portType="tns:travelGoodPortType"/>
     </plnk:partnerLinkType>
+    <vprop:property name="itineraryNo" type="tgt:itineraryNoType"/>
+    <vprop:propertyAlias messageType="tns:listHotelsRequest" part="hotelQueryRequest" propertyName="tns:itineraryNo">
+        <vprop:query>itineraryNo</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias messageType="tns:listFlightsRequest" part="flightQuery" propertyName="tns:itineraryNo">
+        <vprop:query>itineraryNo</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias messageType="tns:createItineraryRequest" part="itineraryNo" propertyName="tns:itineraryNo"/>
+    <vprop:propertyAlias messageType="tns:cancelItineraryRequest" part="itineraryNo" propertyName="tns:itineraryNo"/>
 </definitions>
