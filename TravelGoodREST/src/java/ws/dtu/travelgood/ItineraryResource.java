@@ -1,6 +1,5 @@
 package ws.dtu.travelgood;
 
-import com.google.common.base.Preconditions;
 import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import dk.dtu.imm.fastmoney.types.ExpirationDateType;
 import flightdata.BookFlightQuery;
