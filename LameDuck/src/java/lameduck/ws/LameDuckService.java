@@ -99,7 +99,7 @@ public class LameDuckService {
         }
         try {
             refundCreditCard(GROUP_NUMBER, cancelFlightQuery.getCreditcardInfo(), refundAmount, lameDuckAccount);
-            System.out.println("Flight has booking number " + bookedFlights.get(0).getBookingNumber() + " is canceled.");
+            System.out.println("Flight with booking number " + bookedFlights.get(0).getBookingNumber() + " has been canceled.");
             bookedFlights.remove(flightInfo);
         } catch (CreditCardFaultMessage ex) {
             CreditCardFaultType fault = ex.getFaultInfo();
