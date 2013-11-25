@@ -19,5 +19,9 @@ public class HotelBookingOffers {
     public static HotelType findOfferedBooking(String bookingNo) {
         return bookings.get(bookingNo);
     }
+    
+    public static void reset() {
+        bookings.clear();
+    }
             
 }

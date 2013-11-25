@@ -80,5 +80,9 @@ public class ItineraryResourceClient {
         ClientResponse res = webResource.delete(ClientResponse.class);
         return res;
     }
+
+    public void reset() {
+        WebResource webResource = client.resource("http://localhost:8080/TravelGoodREST/webresources/");        webResource.delete();
+    }
     
 }
