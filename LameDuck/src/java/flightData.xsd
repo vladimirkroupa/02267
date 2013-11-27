@@ -25,6 +25,7 @@
             <xsd:element name="flightPrice" type="xsd:int"></xsd:element>
             <xsd:element name="airlineReservationServiceName" type="xsd:string"></xsd:element>
             <xsd:element name="flight" type="tns:flightType"></xsd:element>
+            <xsd:element name="cancellable" type="xsd:boolean"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
     

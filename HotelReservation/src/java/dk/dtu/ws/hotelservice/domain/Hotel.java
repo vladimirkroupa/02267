@@ -15,13 +15,15 @@ public class Hotel {
     private final double pricePerNight;
     private final int rooms;
     private final List<Interval> bookings;
+    private final boolean cancellable;
 
-    public Hotel(String name, Address address, int rooms, double pricePerNight) {
+    public Hotel(String name, Address address, int rooms, double pricePerNight, boolean cancellable) {
         this.name = name;
         this.address = address;
         this.rooms = rooms;
         this.pricePerNight = pricePerNight;
         this.bookings = new ArrayList<Interval>();
+        this.cancellable = cancellable;
     }
 
     public String getName() {
@@ -48,6 +50,10 @@ public class Hotel {
     public double getPriceForStay(Interval stay) {
         int days = Days.daysIn(stay).getDays();
         return days * pricePerNight;
+    }
+    
+    public boolean getCancellable(){
+        return cancellable;
     }
 
     public void bookHotel(Date checkIn, Date checkOut) throws OverbookingException {
@@ -97,7 +103,9 @@ public class Hotel {
     
     @Override
     public String toString() {
-        return "Hotel{" + "name=" + name + ", address=" + address + ", pricePerNight=" + pricePerNight + ", rooms=" + rooms + ", bookings=" + bookings + '}';
+        return "Hotel{" + "name=" + name + ", address=" + address + 
+               ", pricePerNight=" + pricePerNight + ", rooms=" + rooms + 
+               ", bookings=" + bookings +",cancellable="+cancellable+"}";
     }
 
     @Override
@@ -107,7 +115,7 @@ public class Hotel {
         hash = 37 * hash + (this.address != null ? this.address.hashCode() : 0);
         hash = 37 * hash + (int) (Double.doubleToLongBits(this.pricePerNight) ^ (Double.doubleToLongBits(this.pricePerNight) >>> 32));
         hash = 37 * hash + this.rooms;
-        hash = 37 * hash + (this.bookings != null ? this.bookings.hashCode() : 0);
+        hash = 37 * hash + (this.bookings != null ? this.bookings.hashCode() : 0);        
         return hash;
     }
 

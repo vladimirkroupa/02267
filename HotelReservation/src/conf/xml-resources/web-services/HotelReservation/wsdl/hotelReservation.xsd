@@ -19,6 +19,7 @@
             <xsd:element name="price" type="xsd:float"></xsd:element>
             <xsd:element name="ccGuaranteeReq" type="xsd:boolean"></xsd:element>
             <xsd:element name="hotelServiceName" type="xsd:string"></xsd:element>
+            <xsd:element name="cancellable" type="xsd:boolean"></xsd:element>                        
         </xsd:sequence>
     </xsd:complexType>
 

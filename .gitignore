@@ -11,3 +11,4 @@ genfiles.properties
 # Project and Dist Files #
 */dist
 */nbproject/private
+/TravelGoodBPELApp/src/jbiServiceUnits/

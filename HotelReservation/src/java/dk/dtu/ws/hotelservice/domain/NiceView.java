@@ -103,7 +103,7 @@ public class NiceView {
         }
     }
 
-    private void validateBookingCancellation(String bookingNo) throws CancelHotelOperationFault {
+    private void validateBookingCancellation(String bookingNo) throws CancelHotelOperationFault {      
         boolean offered = offeredBookings.containsKey(bookingNo);
         boolean confirmed = confirmedBookings.containsKey(bookingNo);
 
@@ -115,6 +115,13 @@ public class NiceView {
         }
         if (offered && confirmed) {
             throw new IllegalStateException("Invalid booking state.");
+        }
+        if(confirmed){
+            Booking booking = confirmedBookings.get(bookingNo);
+            boolean isHotelCancellable = booking.getHotel().getCancellable();
+            if(!isHotelCancellable){
+                throw createCancellationFault("Hotel has a nonCancellable policy", "Booking number: " + bookingNo);            
+            }        
         }
     }
 

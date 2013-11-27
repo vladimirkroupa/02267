@@ -43,25 +43,25 @@
         <delete dir="${build.generated.sources.dir}/jax-ws/dk/dtu/imm/fastmoney"/>
         <delete dir="${build.generated.dir}/jax-wsCache/BankService"/>
     </target>
-    <target name="wsimport-service-lameDuckService" depends="wsimport-init">
-        <mkdir dir="${build.generated.dir}/jax-wsCache/service/lameDuckService"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/service/lameDuckService" destdir="${build.generated.dir}/jax-wsCache/service/lameDuckService" wsdl="${basedir}/${conf-dir}xml-resources/web-services/lameDuckService/wsdl/lameDuckWSDL.wsdl" catalog="catalog.xml" extension="true" verbose="true" xnocompile="true" xendorsed="true" target="2.1">
-            <depends file="${basedir}/${conf-dir}xml-resources/web-services/lameDuckService/wsdl/lameDuckWSDL.wsdl"/>
-            <produces dir="${build.generated.dir}/jax-wsCache/service/lameDuckService"/>
+    <target name="wsimport-service-lameduckService" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/service/lameduckService"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/service/lameduckService" destdir="${build.generated.dir}/jax-wsCache/service/lameduckService" wsdl="${basedir}/${conf-dir}xml-resources/web-services/lameduckService/wsdl/lameDuckWSDL.wsdl" catalog="catalog.xml" extension="true" verbose="true" xnocompile="true" xendorsed="true" target="2.1">
+            <depends file="${basedir}/${conf-dir}xml-resources/web-services/lameduckService/wsdl/lameDuckWSDL.wsdl"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/service/lameduckService"/>
         </wsimport>
         <copy todir="${build.generated.sources.dir}/jax-ws">
-            <fileset dir="${build.generated.dir}/jax-wsCache/service/lameDuckService">
+            <fileset dir="${build.generated.dir}/jax-wsCache/service/lameduckService">
                 <include name="**/*.java"/>
             </fileset>
         </copy>
-        <copy todir="${build.web.dir}/WEB-INF/wsdl/lameDuckService">
-            <fileset dir="${basedir}/${conf-dir}xml-resources/web-services/lameDuckService/wsdl/"/>
+        <copy todir="${build.web.dir}/WEB-INF/wsdl/lameduckService">
+            <fileset dir="${basedir}/${conf-dir}xml-resources/web-services/lameduckService/wsdl/"/>
         </copy>
     </target>
-    <target name="wsimport-service-clean-lameDuckService" depends="-init-project">
-        <delete dir="${build.generated.sources.dir}/jax-ws/ws/lameDuck"/>
-        <delete dir="${build.generated.dir}/jax-wsCache/service/lameDuckService"/>
+    <target name="wsimport-service-clean-lameduckService" depends="-init-project">
+        <delete dir="${build.generated.sources.dir}/jax-ws/ws/lameduck"/>
+        <delete dir="${build.generated.dir}/jax-wsCache/service/lameduckService"/>
     </target>
     <target name="wsimport-client-generate" depends="wsimport-client-BankService"/>
-    <target name="wsimport-service-generate" depends="wsimport-service-lameDuckService"/>
+    <target name="wsimport-service-generate" depends="wsimport-service-lameduckService"/>
 </project>

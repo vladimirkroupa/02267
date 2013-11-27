@@ -12,10 +12,8 @@ import dk.dtu.ws.hotelservice.ExpirationDateType;
 import dk.dtu.ws.hotelservice.HotelList;
 import dk.dtu.ws.hotelservice.HotelBookingWithCreditCard;
 import dk.dtu.ws.hotelservice.HotelQuery;
+import dk.dtu.ws.hotelservice.HotelType;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,7 +41,7 @@ public class HotelReservationTest {
     @Test
     public void testBookHotelOperation() throws BookHotelOperationFault {
         getHotelsOperation(createHotelQuery());
-        HotelBookingWithCreditCard booking = createBooking();
+        HotelBookingWithCreditCard booking = createBooking("00001");
         boolean bookStatus = bookHotelOperation(booking);
         Assert.assertTrue(bookStatus);
     }
@@ -51,25 +49,56 @@ public class HotelReservationTest {
     @Test(expected = BookHotelOperationFault.class)
     public void testBookHotelOperationDuplicate() throws BookHotelOperationFault {
         getHotelsOperation(createHotelQuery());
-        HotelBookingWithCreditCard booking = createBooking();
+        HotelBookingWithCreditCard booking = createBooking("00001");
         bookHotelOperation(booking);
         bookHotelOperation(booking);
     }
         
     @Test
     public void testCancelHotelOperation() throws CancelHotelOperationFault, BookHotelOperationFault {
-        getHotelsOperation(createHotelQuery());
-        HotelBookingWithCreditCard booking = createBooking();
+        HotelList hotelList = getHotelsOperation(createHotelQuery());
+        
+        String bookingNoThatCanBeCancelled = "00001";
+        for(HotelType h: hotelList.getHotels()){
+            if(h.isCancellable()){
+                bookingNoThatCanBeCancelled = h.getBookingNo();
+                break;
+            }
+        }
+        
+        HotelBookingWithCreditCard booking = createBooking(bookingNoThatCanBeCancelled); 
         bookHotelOperation(booking);
+        
         boolean cancelStatus;
-        cancelStatus = cancelHotelOperation("00001");
+        cancelStatus = cancelHotelOperation(bookingNoThatCanBeCancelled);
         Assert.assertTrue(cancelStatus);            
     }
 
     @Test(expected = CancelHotelOperationFault.class)
     public void testCancelHotelOperationNonExistingBooking() throws CancelHotelOperationFault {
-        cancelHotelOperation("00002");
+        cancelHotelOperation("99999");
     }
+    
+    @Test(expected = CancelHotelOperationFault.class)
+    public void testCancelHotelOperationNonCancellableHotel() throws CancelHotelOperationFault, BookHotelOperationFault {
+        HotelList hotelList = getHotelsOperation(createHotelQueryNonCancellable());
+        
+        String bookingNoThatCannotBeCancelled = "00001";
+        for(HotelType h: hotelList.getHotels()){
+            if(!h.isCancellable()){
+                System.out.println(h.getBookingNo()+","+h.getHotelName());
+                bookingNoThatCannotBeCancelled = h.getBookingNo();
+                break;
+            }
+        }
+        
+        HotelBookingWithCreditCard booking = createBooking(bookingNoThatCannotBeCancelled); 
+        bookHotelOperation(booking);
+        
+        boolean cancelStatus;
+        cancelStatus = cancelHotelOperation(bookingNoThatCannotBeCancelled);
+        Assert.assertTrue(cancelStatus);  
+    }    
 
     private HotelQuery createHotelQuery() {
         HotelQuery query = new HotelQuery();
@@ -79,9 +108,17 @@ public class HotelReservationTest {
         return query;
     }
     
-    private HotelBookingWithCreditCard createBooking() {
+    private HotelQuery createHotelQueryNonCancellable() {
+        HotelQuery query = new HotelQuery();
+        query.setArrivalDate(toXMLGregCal(DateUtil.today()));
+        query.setCity("Lyngby");
+        query.setDepartureDate(toXMLGregCal(DateUtil.tommorow()));
+        return query;
+    }    
+    
+    private HotelBookingWithCreditCard createBooking(String bookingNo) {
         HotelBookingWithCreditCard booking = new HotelBookingWithCreditCard();
-        booking.setBookingNumber("00001");
+        booking.setBookingNumber(bookingNo);
         
         CreditCardInfoType info = new CreditCardInfoType();
         info.setName("Anne Strandberg");

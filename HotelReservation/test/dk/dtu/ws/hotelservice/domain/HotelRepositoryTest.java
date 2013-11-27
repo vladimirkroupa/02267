@@ -41,12 +41,12 @@ public class HotelRepositoryTest {
     
     private static Hotel hotel1() {
         Address address = new Address("Dynamovej", "15", "Copenhagen", "2750");
-        return new Hotel("Royal Hotel", address, 3, 50.0);
+        return new Hotel("Royal Hotel", address, 3, 50.0, true);
     }
     
     private static Hotel hotel2() {
         Address address = new Address("Elektrovej", "27", "Copenhagen", "2750");
-        return new Hotel("DTU Hostel", address, 10, 20.0);
+        return new Hotel("DTU Hostel", address, 10, 20.0, true);
     }
     
 }
