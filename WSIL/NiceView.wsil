@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<inspection xmlns="http://schemas.xmlsoap.org/ws/2001/10/inspection/">
+	
+    <service>
+        <name>NiceView</name>
+        <abstract>Hotel Reservation Service from Nice View</abstract>
+        <description referencedNamespace="http://schemas.xmlsoap.org/wsdl/"
+                     location="http://localhost:8080/HotelReservation/hotelService?wsdl"/>
+    </service>
+    
+    <link referencedNamespace="http://schemas.xmlsoap.org/ws/2001/10/inspection/" 
+          location="http://fastmoney.imm.dtu.dk:8080/inspection.wsil" >
+        <abstract>Fast money bank service company</abstract>
+    </link>    
+
+</inspection>
