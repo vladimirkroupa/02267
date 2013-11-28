@@ -87,7 +87,7 @@ public class LameDuckService {
         } catch (CreditCardFaultMessage ex) {
             CreditCardFaultType fault = ex.getFaultInfo();
             if (fault != null) {
-                throw createBookingFault("Could not process credit card" + fault.getMessage(), fault.getMessage());
+                throw createBookingFault("Could not process credit card: " + fault.getMessage(), fault.getMessage());
             } else {
                 throw createBookingFault("Could not process credit card", "Credit card information are invalid");
             }
