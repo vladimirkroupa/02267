@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
     <system systemId="file:/D:/OpenESBProjects/02267/HotelReservation/src/java/hotelReservation.xsd" uri="test/hotelReservation.xsd"/>
-    <system systemId="http://localhost:8080/HotelReservation/hotelService?xsd=1" uri="xml-resources/jaxb/hotelBinding/localhost_8080/HotelReservation/hotelService.xsd_1.xsd"/>
     <system systemId="http://localhost:8080/LameDuck/lameDuckService?xsd=1" uri="xml-resources/jaxb/flightBinding/localhost_8080/LameDuck/lameDuckService.xsd_1.xsd"/>
-    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="xml-resources/jaxb/flightBinding/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/HotelReservation/hotelService?xsd=1" uri="xml-resources/jaxb/hotelBinding/localhost_8080/HotelReservation/hotelService.xsd_1.xsd"/>
+    <system systemId="http://fastmoney.imm.dtu.dk:8080/BankService?xsd=1" uri="xml-resources/jaxb/hotelBinding/fastmoney.imm.dtu.dk_8080/BankService.xsd_1.xsd"/>
 </catalog>
