@@ -24,9 +24,12 @@ public class StaticHotelSource {
         Hotel h5 = new Hotel("Luxury Hotel", address5, 2, 100.0, false);     
         
         Address address6 = new Address("Nyborgvej", "5", "Lyngby", "2800");
-        Hotel h6 = new Hotel("Church Hotel", address6, 2, 100.0, true);    
+        Hotel h6 = new Hotel("Church Hotel", address6, 2, 100.0, true);
         
-        return Arrays.asList(h1, h2, h3, h4, h5,h6);
+        Address address7 = new Address("Spittlesea Road", "", "Luton", "LU2 9NZ");
+        Hotel h7 = new Hotel("Ibis Luton", address7, 2, 200.0, true);
+        
+        return Arrays.asList(h1, h2, h3, h4, h5, h6, h7);
     }
     
     
