@@ -58,42 +58,61 @@ public class FlightDB {
         flight6.setDatetimeLift(date("2013-12-06", "12:00"));
         flight6.setDatetimeLanding(date("2013-12-06", "14:30"));
 
-
+        FlightType flight7 = new FlightType();
+        flight7.setCarrier("Air Koryo");
+        flight7.setStartAirpot("CPH");
+        flight7.setDestinationAirport("FNJ");
+        flight7.setDatetimeLift(date("2014-01-05", "12:00"));
+        flight7.setDatetimeLanding(date("2014-01-12", "14:30"));
+                
         FlightInfoType flightInfo1 = new FlightInfoType();
         flightInfo1.setBookingNumber("1234567");
         flightInfo1.setFlight(flight1);
         flightInfo1.setFlightPrice(1500);
         flightInfo1.setAirlineReservationServiceName("LameDuck");
+        flightInfo1.setCancellable(true);
 
         FlightInfoType flightInfo2 = new FlightInfoType();
         flightInfo2.setBookingNumber("1234568");
         flightInfo2.setFlight(flight2);
         flightInfo2.setFlightPrice(7500);
         flightInfo2.setAirlineReservationServiceName("LameDuck");
+        flightInfo2.setCancellable(true);
 
         FlightInfoType flightInfo3 = new FlightInfoType();
         flightInfo3.setBookingNumber("1234570");
         flightInfo3.setFlight(flight3);
         flightInfo3.setFlightPrice(1030);
         flightInfo3.setAirlineReservationServiceName("LameDuck");
+        flightInfo3.setCancellable(true);
 
         FlightInfoType flightInfo4 = new FlightInfoType();
         flightInfo4.setBookingNumber("1234571");
         flightInfo4.setFlight(flight4);
         flightInfo4.setFlightPrice(750);
         flightInfo4.setAirlineReservationServiceName("LameDuck");
+        flightInfo4.setCancellable(true);
 
         FlightInfoType flightInfo5 = new FlightInfoType();
         flightInfo5.setBookingNumber("1234572");
         flightInfo5.setFlight(flight5);
         flightInfo5.setFlightPrice(750);
         flightInfo5.setAirlineReservationServiceName("LameDuck");
+        flightInfo5.setCancellable(true);
 
         FlightInfoType flightInfo6 = new FlightInfoType();
         flightInfo6.setBookingNumber("1234573");
         flightInfo6.setFlight(flight6);
         flightInfo6.setFlightPrice(750);
         flightInfo6.setAirlineReservationServiceName("LameDuck");
+        flightInfo6.setCancellable(true);
+        
+        FlightInfoType flightInfo7 = new FlightInfoType();
+        flightInfo7.setBookingNumber("7777777");
+        flightInfo7.setFlight(flight7);
+        flightInfo7.setFlightPrice(750);
+        flightInfo7.setAirlineReservationServiceName("LameDuck");
+        flightInfo7.setCancellable(false);        
 
         flightInfoList.getFlightInfo().add(flightInfo1);
         flightInfoList.getFlightInfo().add(flightInfo2);
@@ -101,6 +120,8 @@ public class FlightDB {
         flightInfoList.getFlightInfo().add(flightInfo4);
         flightInfoList.getFlightInfo().add(flightInfo5);
         flightInfoList.getFlightInfo().add(flightInfo6);
+        flightInfoList.getFlightInfo().add(flightInfo7);
+        
 
     }
 

@@ -215,4 +215,37 @@ public class TestItineraryResource {
         }
     }    
         
+    @Test
+    public void testCancelItinerary() {
+        // create itinerary
+        String itineraryNo = client.createItinerary().entity(); 
+        
+        // add hotel
+        HotelList hotelList = client.listHotels("Lyngby", "2013-09-17", "2013-09-19").entity();
+        String bookingNo1 = hotelList.getHotels().get(0).getBookingNo();
+        String bookingNo2 = hotelList.getHotels().get(1).getBookingNo();
+        client.addHotel(itineraryNo, bookingNo1);
+        client.addHotel(itineraryNo, bookingNo2);
+           
+        client.listFlights("2014-01-05", "CPH", "FNJ");
+        client.addFlight(itineraryNo, "7777777");        
+        
+        // book itinerary
+        ClientResponse res = client.bookItinerary(itineraryNo, "Klinkby Poul", "50408817", "3", "10");
+        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());        
+        
+        // check that booking status is confirmed
+        Itinerary itinerary = client.getItinerary(itineraryNo).entity();
+        assertEquals(StatusType.CONFIRMED, itinerary.getItineraryStatus());  
+        
+        // cancel booking
+        res = client.cancelBooking(itineraryNo);
+        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());    
+        
+        // check that booking status is partially cancelled
+        itinerary = client.getItinerary(itineraryNo).entity();
+        assertEquals(StatusType.PARTIALLY_CANCELLED, itinerary.getItineraryStatus());          
+                     
+    }
+
 }

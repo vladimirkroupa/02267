@@ -75,6 +75,12 @@ public class ItineraryResourceClient {
         return res;
     }
     
+    public ClientResponse cancelBooking(String itineraryNo) {
+        WebResource webResource = client.resource(ITINERARY + itineraryNo + "/cancelBooking");
+        ClientResponse res = webResource.post(ClientResponse.class);
+        return res;
+    }    
+    
     public ClientResponse cancelItinerary(String itineraryNo) {
         WebResource webResource = client.resource(ITINERARY + itineraryNo);
         ClientResponse res = webResource.delete(ClientResponse.class);

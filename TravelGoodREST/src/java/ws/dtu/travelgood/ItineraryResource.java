@@ -1,5 +1,6 @@
 package ws.dtu.travelgood;
 
+import common.DateUtils;
 import dk.dtu.imm.fastmoney.types.CreditCardInfoType;
 import dk.dtu.imm.fastmoney.types.ExpirationDateType;
 import flightdata.BookFlightQuery;
@@ -9,6 +10,7 @@ import hotelreservationtypes.HotelBookingWithCreditCard;
 import hotelreservationtypes.HotelType;
 import hotelservice._02267.dtu.dk.wsdl.BookHotelOperationFault;
 import hotelservice._02267.dtu.dk.wsdl.CancelHotelOperationFault;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -232,6 +234,14 @@ public class ItineraryResource {
     public Response cancelBooking(@PathParam("itineraryNo") String itineraryNo) {
         CreditCardInfoType creditCard = itineraryNoToCreditCardMap.get(itineraryNo);
         Itinerary itinerary = itineraryMap.get(itineraryNo);
+        
+        if(!validateCancellationAllowed(itinerary)){
+            return Response.status(Response.Status.PRECONDITION_FAILED).build();
+        }
+        int numberOfFlights = itinerary.getFlightBookingList().size();
+        int numberOfHotels = itinerary.getHotelBookingList().size();
+        int cancelledFlights = 0;
+        int cancelledHotels = 0;
         for (FlightBooking booking : itinerary.getFlightBookingList()) {
             if (booking.getFlightBookingStatus() == StatusType.CONFIRMED) {
                 FlightInfoType flight = booking.getFlightBooking();
@@ -243,10 +253,12 @@ public class ItineraryResource {
                     boolean cancelStatus = cancelFlight(query);
                     if (cancelStatus) {
                         booking.setFlightBookingStatus(StatusType.CANCELLED);
+                        cancelledFlights++;
                     }
                 } catch (CancelFlightFault ex) {
                     Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            
             }
         }
         for (HotelBooking booking : itinerary.getHotelBookingList()) {
@@ -256,16 +268,43 @@ public class ItineraryResource {
                     boolean cancelStatus = cancelHotelOperation(hotel.getBookingNo());
                     if (cancelStatus) {
                         booking.setHotelBookingStatus(StatusType.CANCELLED);
+                        cancelledHotels++;
                     }
                 } catch (CancelHotelOperationFault ex) {
                     Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+        }        
+        if(cancelledFlights==numberOfFlights && cancelledHotels == numberOfHotels){
+            itinerary.setItineraryStatus(StatusType.CANCELLED);
         }
-        itinerary.setItineraryStatus(StatusType.CANCELLED);
-
-
+        else{
+            itinerary.setItineraryStatus(StatusType.PARTIALLY_CANCELLED);
+        }
         return Response.ok().build();
+    }
+    
+    private boolean validateCancellationAllowed(Itinerary itinerary){
+        Date earliestFlightDate=null;
+        for (FlightBooking booking : itinerary.getFlightBookingList()) {
+            Date flightDate = DateUtils.toDate(booking.getFlightBooking().getFlight().getDatetimeLift());
+            if(earliestFlightDate==null){
+                earliestFlightDate = flightDate;
+            }
+            if(earliestFlightDate.compareTo(flightDate)>0){
+                earliestFlightDate = flightDate;
+            }
+        }        
+        
+        Date curDate = new Date();
+        final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+        int diffInDays = (int) ((earliestFlightDate.getTime()-curDate.getTime())/ DAY_IN_MILLIS );
+        if(diffInDays<2){
+            System.out.println("Validation error due to first flight in "+ earliestFlightDate+
+                    " which is less than 2 days from current date");
+            return false;
+        }
+        return true;
     }
 
     @DELETE

@@ -36,6 +36,7 @@ public class LameDuckService {
     public FlightInfoList getFlights(GetFlightQuery getFlightQuery) {
         FlightInfoList matchedFlights = new FlightInfoList();
         
+        
         for (FlightInfoType flightInfo : fdb.flightInfoList.getFlightInfo()) {
             int day = flightInfo.getFlight().getDatetimeLift().getDay();
             int month = flightInfo.getFlight().getDatetimeLift().getMonth();
@@ -59,7 +60,7 @@ public class LameDuckService {
         lameDuckAccount.setNumber(LAMEDUCK_ACCOUNT_NO);
         
         String bookingNumber = bookFlightQuery.getBookingNumber();
-        
+                
         FlightInfoType flightInfo = getFlightByBookingNumber(bookingNumber);
         if (flightInfo == null) {
             throw createBookingFault("No flight found", "Booking no:" + bookingNumber);
@@ -96,6 +97,9 @@ public class LameDuckService {
         FlightInfoType flightInfo = findBookedFlight(cancelFlightQuery.getBookingNumber());
         if (flightInfo == null) {
             throw createCancellationFault("No flight found", "Booking no:" + bookingNumber);
+        }
+        if(!flightInfo.isCancellable()){
+            throw createCancellationFault("Flight has non cancellable policy", "Booking no:" + bookingNumber);            
         }
         try {
             refundCreditCard(GROUP_NUMBER, cancelFlightQuery.getCreditcardInfo(), refundAmount, lameDuckAccount);

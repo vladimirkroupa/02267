@@ -119,6 +119,23 @@ public class LameDuckTest {
 
         cancelFlight(cf);
     }
+    
+    @Test(expected = CancelFlightFault.class)
+    public void testCancelNonCancellableFlight() throws CancelFlightFault, BookFlightFault {
+        String bookingNumber = "7777777";
+        CreditCardInfoType creditcardInfo = noLimitCreditCard();
+        
+        boolean booked = bookFlight(bookingNumber, creditcardInfo);
+        Assert.assertTrue(booked);
+        
+        CancelFlightQuery cf = new CancelFlightQuery();
+        cf.setBookingNumber(bookingNumber);
+        cf.setCreditcardInfo(creditcardInfo);
+        cf.setFlightPrice(1500);
+
+        boolean cancelled = cancelFlight(cf);
+        Assert.assertTrue(cancelled);
+    }    
 
     @Test(expected = CancelFlightFault.class)
     public void testCancelNonBookedFlight() throws CancelFlightFault {

@@ -14,7 +14,7 @@ public class HotelTest {
     
     @Before
     public void setUp() {
-        hotel = new Hotel("Royal Hotel", new Address("Lyngbyvej", "20", "Lyngby", "2750"), 3, 50.0);
+        hotel = new Hotel("Royal Hotel", new Address("Lyngbyvej", "20", "Lyngby", "2750"), 3, 50.0, true);                
     }
 
     @Test
