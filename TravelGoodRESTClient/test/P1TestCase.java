@@ -22,11 +22,11 @@ import travelgoodtypes.StatusType;
  *
  * @author prasopes
  */
-public class TestCases {
+public class P1TestCase {
  
     private final ItineraryResourceClient client;
 
-    public TestCases() {
+    public P1TestCase() {
         this.client = new ItineraryResourceClient();
     }
     
@@ -130,6 +130,19 @@ public class TestCases {
             assertEquals(StatusType.UNCONFIRMED, hotel.getHotelBookingStatus());
         }                                
         
+        // book itinerary
+        ClientResponse res = client.bookItinerary(itineraryNo, "Anne Strandberg", "50408816", "5", "9");
+        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+        
+        // check that booking status is confirmed
+        Itinerary itinerary2 = client.getItinerary(itineraryNo).entity();
+        assertEquals(StatusType.CONFIRMED, itinerary2.getItineraryStatus());
+        for (FlightBooking flight : itinerary2.getFlightBookingList()) {
+            assertEquals(StatusType.CONFIRMED, flight.getFlightBookingStatus());
+        }
+        for (HotelBooking hotel : itinerary2.getHotelBookingList()) {
+            assertEquals(StatusType.CONFIRMED, hotel.getHotelBookingStatus());
+        }
     }
     
 }
