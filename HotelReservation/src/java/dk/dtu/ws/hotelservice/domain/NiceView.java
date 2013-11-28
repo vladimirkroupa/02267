@@ -116,11 +116,11 @@ public class NiceView {
         if (offered && confirmed) {
             throw new IllegalStateException("Invalid booking state.");
         }
-        if(confirmed){
+        if (confirmed) {
             Booking booking = confirmedBookings.get(bookingNo);
-            boolean isHotelCancellable = booking.getHotel().getCancellable();
-            if(!isHotelCancellable){
-                throw createCancellationFault("Hotel has a nonCancellable policy", "Booking number: " + bookingNo);            
+            boolean isHotelCancellable = booking.getHotel().isCancellable();
+            if (!isHotelCancellable) {
+                throw createCancellationFault("Hotel has a nonCancellable policy", "Booking number: " + bookingNo);
             }        
         }
     }
