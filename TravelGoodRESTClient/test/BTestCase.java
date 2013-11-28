@@ -22,11 +22,11 @@ import travelgoodtypes.StatusType;
  *
  * @author prasopes
  */
-public class P2TestCase {
+public class BTestCase {
  
     private final ItineraryResourceClient client;
 
-    public P2TestCase() {
+    public BTestCase() {
         this.client = new ItineraryResourceClient();
     }
     
@@ -34,18 +34,18 @@ public class P2TestCase {
     public void clean() {
         client.reset();
     }
-
+    
     /**
-     * Cancel plannin scenario.
+     * Booking fails scenario.
      */
     @Test
-    public void testP2() {
+    public void testB() {
         ClientResponse resp;
         
         // create itinerary
         String itineraryNo = client.createItinerary().entity();
 
-        /* add flight */
+        /* first flight */
         
         // list flights
         ResponseWrapper<FlightInfoList> flightsResp = client.listFlights("2013-09-18", "CPH", "LHR");
@@ -59,7 +59,7 @@ public class P2TestCase {
         resp = client.addFlight(itineraryNo, flightBookingNo);
         assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
         
-        /* add hotel */
+        /* first hotel */
         
         // list hotels
         ResponseWrapper<HotelList> hotelsResp = client.listHotels("Luton", "2013-09-18", "2013-12-05");
@@ -73,28 +73,33 @@ public class P2TestCase {
         resp = client.addHotel(itineraryNo, hotelBookingNo);
         assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
 
-        /* check itinerary */
+        /* second flight */
         
-        // get itinerary 
+        // list flights
+        ResponseWrapper<FlightInfoList> flightsResp2 = client.listFlights("2013-12-02", "CPH", "PEK");
+        assertEquals(Response.Status.OK.getStatusCode(), flightsResp.status());
+
+        List<FlightInfoType> flights2 = flightsResp2.entity().getFlightInfo();
+        assertFalse(flights.isEmpty());
+        
+        // add flight
+        String flightBookingNo2 = flights2.get(0).getBookingNumber();
+        resp = client.addFlight(itineraryNo, flightBookingNo2);
+        assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());                      
+               
+        // book itinerary
+        ClientResponse res = client.bookItinerary(itineraryNo, "Bech Camilla", "50408822", "7", "9");         
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
+        
+        // check that booking status is cancelled
         Itinerary itinerary = client.getItinerary(itineraryNo).entity();
-        
-        assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
-        assertThat(itinerary.getHotelBookingList().size(), is(1));
-        assertThat(itinerary.getFlightBookingList().size(), is(1));
+        assertEquals(StatusType.CANCELLED, itinerary.getItineraryStatus());
         for (FlightBooking flight : itinerary.getFlightBookingList()) {
-            assertEquals(StatusType.UNCONFIRMED, flight.getFlightBookingStatus());
+            assertEquals(StatusType.CANCELLED, flight.getFlightBookingStatus());
         }
         for (HotelBooking hotel : itinerary.getHotelBookingList()) {
-            assertEquals(StatusType.UNCONFIRMED, hotel.getHotelBookingStatus());
-        }                                
-        
-        // cancel itinerary
-        resp = client.cancelItinerary(itineraryNo);
-        assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
-        
-        // should not be able to get cancelled itinerary
-        ResponseWrapper<Itinerary> itineraryResp = client.getItinerary(itineraryNo);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), itineraryResp.status());
+            assertEquals(StatusType.CANCELLED, hotel.getHotelBookingStatus());
+        }
     }
     
 }
