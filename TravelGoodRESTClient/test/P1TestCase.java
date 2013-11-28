@@ -121,8 +121,8 @@ public class P1TestCase {
         Itinerary itinerary = client.getItinerary(itineraryNo).entity();
         
         assertEquals(StatusType.UNCONFIRMED, itinerary.getItineraryStatus());
-        assertTrue(itinerary.getHotelBookingList().size() == 2);
-        assertTrue(itinerary.getFlightBookingList().size() == 3);
+        assertThat(itinerary.getHotelBookingList().size(), is(2));
+        assertThat(itinerary.getFlightBookingList().size(), is(3));
         for (FlightBooking flight : itinerary.getFlightBookingList()) {
             assertEquals(StatusType.UNCONFIRMED, flight.getFlightBookingStatus());
         }
