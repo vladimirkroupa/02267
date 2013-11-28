@@ -202,7 +202,7 @@ public class TestItineraryResource {
         
         // book itinerary
         ClientResponse res = client.bookItinerary(itineraryNo, "Bech Camilla", "50408822", "7", "9");         
-        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res.getStatus());
         
         // check that booking status is cancelled
         Itinerary itinerary = client.getItinerary(itineraryNo).entity();
@@ -240,7 +240,7 @@ public class TestItineraryResource {
         
         // cancel booking
         res = client.cancelBooking(itineraryNo);
-        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());    
+        assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
         
         // check that booking status is partially cancelled
         itinerary = client.getItinerary(itineraryNo).entity();
