@@ -34,7 +34,7 @@ public class P2TestCase {
     public void clean() {
         client.reset();
     }
-    
+
     /**
      * Planning and booking scenario.
      */
@@ -73,8 +73,6 @@ public class P2TestCase {
         resp = client.addHotel(itineraryNo, hotelBookingNo);
         assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
 
-        assertFalse(flights.isEmpty());
-
         /* check itinerary */
         
         // get itinerary 
@@ -94,15 +92,9 @@ public class P2TestCase {
         resp = client.cancelItinerary(itineraryNo);
         assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
         
-        // check that booking status is confirmed
-        itinerary = client.getItinerary(itineraryNo).entity();
-        assertEquals(StatusType.CANCELLED, itinerary.getItineraryStatus());
-        for (FlightBooking flight : itinerary.getFlightBookingList()) {
-            assertEquals(StatusType.CANCELLED, flight.getFlightBookingStatus());
-        }
-        for (HotelBooking hotel : itinerary.getHotelBookingList()) {
-            assertEquals(StatusType.CANCELLED, hotel.getHotelBookingStatus());
-        }
+        // should not be able to get cancelled itinerary
+        ResponseWrapper<Itinerary> itineraryResp = client.getItinerary(itineraryNo);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), itineraryResp.status());
     }
     
 }
