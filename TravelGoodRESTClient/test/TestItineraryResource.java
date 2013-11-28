@@ -216,7 +216,7 @@ public class TestItineraryResource {
     }    
         
     @Test
-    public void testCancelItinerary() {
+    public void testCancelBooking() {
         // create itinerary
         String itineraryNo = client.createItinerary().entity(); 
         
