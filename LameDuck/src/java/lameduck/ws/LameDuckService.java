@@ -36,8 +36,18 @@ public class LameDuckService {
     public FlightInfoList getFlights(GetFlightQuery getFlightQuery) {
         FlightInfoList matchedFlights = new FlightInfoList();
         
+        System.out.println("inside getFlights");
+        System.out.println(getFlightQuery.getDate());
+        System.out.println(getFlightQuery.getStartDest());
+        System.out.println(getFlightQuery.getFinalDest());
         
         for (FlightInfoType flightInfo : fdb.flightInfoList.getFlightInfo()) {
+            
+            System.out.println("HENRY:"+flightInfo.getFlight().getStartAirpot()+
+                    ","+flightInfo.getFlight().getDestinationAirport());
+            System.out.println("HENRY:"+flightInfo.getFlight().getDatetimeLift());
+            XMLGregorianCalendar dateTimeLift = flightInfo.getFlight().getDatetimeLift();
+            System.out.println("HENRY:"+dateTimeLift.getDay());
             int day = flightInfo.getFlight().getDatetimeLift().getDay();
             int month = flightInfo.getFlight().getDatetimeLift().getMonth();
             int year = flightInfo.getFlight().getDatetimeLift().getYear();

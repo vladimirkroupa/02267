@@ -122,7 +122,7 @@ public class LameDuckTest {
     
     @Test(expected = CancelFlightFault.class)
     public void testCancelNonCancellableFlight() throws CancelFlightFault, BookFlightFault {
-        String bookingNumber = "7777777";
+        String bookingNumber = "8001001";
         CreditCardInfoType creditcardInfo = noLimitCreditCard();
         
         boolean booked = bookFlight(bookingNumber, creditcardInfo);
