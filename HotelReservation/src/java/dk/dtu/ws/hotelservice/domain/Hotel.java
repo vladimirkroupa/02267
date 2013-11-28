@@ -52,7 +52,7 @@ public class Hotel {
         return days * pricePerNight;
     }
     
-    public boolean getCancellable(){
+    public boolean isCancellable(){
         return cancellable;
     }
 
