@@ -228,7 +228,7 @@ public class TestItineraryResource {
         client.addHotel(itineraryNo, bookingNo2);
            
         client.listFlights("2014-01-05", "CPH", "FNJ");
-        client.addFlight(itineraryNo, "7777777");        
+        client.addFlight(itineraryNo, "8001001");        
         
         // book itinerary
         ClientResponse res = client.bookItinerary(itineraryNo, "Klinkby Poul", "50408817", "3", "10");
