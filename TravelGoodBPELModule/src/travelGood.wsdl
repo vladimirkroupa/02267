@@ -286,64 +286,64 @@
         <operation name="listHotelsOperation">
             <soap:operation/>
             <input name="listHotelsOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="listHotelsOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>
         </operation>
         <operation name="listFlightsOperation">
             <soap:operation/>
             <input name="listFlightsOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="listFlightsOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>
         </operation>
         <operation name="createItineraryOperation">
             <soap:operation/>
             <input name="createItineraryOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="createItineraryOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>
         </operation>
         <operation name="addHotelToItineraryOperation">
             <soap:operation/>
             <input name="addHotelToItineraryOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="addHotelToItineraryOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>
         </operation>
         <operation name="addFlightToItineraryOperation">
             <soap:operation/>
             <input name="addFlightToItineraryOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="addFlightToItineraryOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>
         </operation>
         <operation name="getItineraryOperation">
             <soap:operation/>
             <input name="getItineraryOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="getItineraryOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>
         </operation>
         <operation name="bookItineraryOperation">
             <soap:operation/>
             <input name="bookItineraryOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="bookItineraryOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>
             <fault name="bookItineraryOperationFault">
                 <soap:fault name="bookItineraryOperationFault" use="literal"/>
@@ -352,10 +352,10 @@
         <operation name="cancelItineraryOperation">
             <soap:operation/>
             <input name="cancelItineraryOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="cancelItineraryOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>
             <fault name="cancelItineraryOperationFault">
                 <soap:fault name="cancelItineraryOperationFault" use="literal"/>
@@ -364,10 +364,10 @@
         <operation name="cancelBookingOperation">
             <soap:operation/>
             <input name="cancelBookingOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="cancelBookingOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>
             <fault name="cancelBookingOperationFault">
                 <soap:fault name="cancelBookingOperationFault" use="literal"/>
@@ -377,10 +377,10 @@
           <operation name="readItineraryOperation">
             <soap:operation/>
             <input name="readItineraryOperationInput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </input>
             <output name="readItineraryOperationOutput">
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="urn://travelGood"/>
             </output>       
         </operation>
     </binding>

@@ -9,13 +9,8 @@ import flightdata.FlightInfoType;
 import hotelreservationtypes.HotelList;
 import hotelreservationtypes.HotelType;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import static org.junit.Assert.*;
-import travelgoodtypes.OperationSuccessType;
 import travelgoodtypes.XItinerary;
 /**
  *

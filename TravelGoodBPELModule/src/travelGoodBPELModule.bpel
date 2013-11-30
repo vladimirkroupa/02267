@@ -20,9 +20,9 @@
         <partnerLink name="flightLink" xmlns:tns="http://lameDuck.ws" partnerLinkType="tns:partnerlinktype1" partnerRole="lameDuckServiceRole"/>
     </partnerLinks>
     <variables>
+        <variable name="cancellingPhase" type="xsd:boolean"/>
         <variable name="CancelBookingOperationOut" messageType="ns2:cancelBookingResponse"/>
         <variable name="CancelBookingOperationIn" messageType="ns2:cancelBookingRequest"/>
-        <variable name="secondPhase" type="xsd:boolean"/>
         <variable name="ReadItineraryOperationOut" messageType="ns2:readItineraryOperationResponse"/>
         <variable name="ReadItineraryOperationIn" messageType="ns2:readItineraryOperationRequest"/>
         <variable name="BookItineraryOperationOut" messageType="ns2:bookItineraryResponse"/>
@@ -81,12 +81,12 @@
     </correlationSets>
     <sequence>
         <sequence name="Sequence7">
-            <receive name="Receive1" createInstance="yes" partnerLink="travelGoodLink" operation="createItineraryOperation" portType="ns2:travelGoodPortType" variable="CreateItineraryOperationIn">
+            <receive name="ReceiveCreateRequest" createInstance="yes" partnerLink="travelGoodLink" operation="createItineraryOperation" portType="ns2:travelGoodPortType" variable="CreateItineraryOperationIn">
                 <correlations>
                         <correlation set="CorrelationSet1" initiate="yes"/>
                     </correlations>
             </receive>
-            <assign name="Assign5">
+            <assign name="AssignVar">
                 <copy>
                         <from>'unconfirmed'</from>
                             <to>$BPEL_itinerary/ns0:itineraryStatus</to>
@@ -108,8 +108,8 @@
                             <to>$CreateItineraryOperationOut.createItineraryResult/status</to>
                     </copy>
             </assign>
-            <reply name="Reply3" partnerLink="travelGoodLink" operation="createItineraryOperation" portType="ns2:travelGoodPortType" variable="CreateItineraryOperationOut"/>
-            <assign name="Assign6">
+            <reply name="ReplyCreateIT" partnerLink="travelGoodLink" operation="createItineraryOperation" portType="ns2:travelGoodPortType" variable="CreateItineraryOperationOut"/>
+            <assign name="InitialVar">
                 <copy>
                         <from>true()</from>
                             <to variable="planning"/>
@@ -124,20 +124,20 @@
                         <correlation set="CorrelationSet1" initiate="no"/>
                     </correlations>
                     <sequence name="Sequence1">
-                        <assign name="Assign1">
+                        <assign name="AssignInputListH">
                             <copy>
                                     <from>$ListHotelsOperationIn.hotelQueryRequest/ns3:hotelQuery</from>
                                         <to variable="GetHotelsOperationIn" part="hotelQuery"/>
                                 </copy>
                         </assign>
-                        <invoke name="Invoke1" partnerLink="HotelLink" operation="getHotelsOperation" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" portType="tns:hotelServicePortType" inputVariable="GetHotelsOperationIn" outputVariable="GetHotelsOperationOut"/>
-                        <assign name="Assign3">
+                        <invoke name="InvokeGetHotel" partnerLink="HotelLink" operation="getHotelsOperation" xmlns:tns="http://dk.dtu.02267.hotelservice/WSDL" portType="tns:hotelServicePortType" inputVariable="GetHotelsOperationIn" outputVariable="GetHotelsOperationOut"/>
+                        <assign name="AssignReplyVarH">
                             <copy>
                                     <from variable="GetHotelsOperationOut" part="hotelArray"/>
                                         <to variable="ListHotelsOperationOut" part="hotelArray"/>
                                 </copy>
                         </assign>
-                        <reply name="Reply1" partnerLink="travelGoodLink" operation="listHotelsOperation" portType="ns2:travelGoodPortType" variable="ListHotelsOperationOut"/>
+                        <reply name="ReplyListHotel" partnerLink="travelGoodLink" operation="listHotelsOperation" portType="ns2:travelGoodPortType" variable="ListHotelsOperationOut"/>
                             </sequence>
                     </onMessage>
                     <onMessage partnerLink="travelGoodLink" operation="listFlightsOperation" portType="ns2:travelGoodPortType" variable="ListFlightsOperationIn">
@@ -145,20 +145,20 @@
                             <correlation set="CorrelationSet1" initiate="no"/>
                         </correlations>
                         <sequence name="Sequence2">
-                                <assign name="Assign2">
+                                <assign name="AssignInputListF">
                                         <copy>
                                                 <from>$ListFlightsOperationIn.flightQuery/ns1:getFlightQuery</from>
                                                     <to variable="GetFlightsIn" part="getFlightQuery"/>
                                             </copy>
                                     </assign>
-                                    <invoke name="Invoke2" partnerLink="flightLink" operation="getFlights" xmlns:tns="http://lameDuck.ws" portType="tns:lameDuckPortType" inputVariable="GetFlightsIn" outputVariable="GetFlightsOut"/>
-                                    <assign name="Assign4">
+                                    <invoke name="InvokeGetFlight" partnerLink="flightLink" operation="getFlights" xmlns:tns="http://lameDuck.ws" portType="tns:lameDuckPortType" inputVariable="GetFlightsIn" outputVariable="GetFlightsOut"/>
+                                    <assign name="AssignReplyVarF">
                                         <copy>
                                                 <from variable="GetFlightsOut" part="flightsList"/>
                                                     <to variable="ListFlightsOperationOut" part="flightList"/>
                                             </copy>
                                     </assign>
-                                    <reply name="Reply2" partnerLink="travelGoodLink" operation="listFlightsOperation" portType="ns2:travelGoodPortType" variable="ListFlightsOperationOut"/>
+                                    <reply name="ReplyListFlight" partnerLink="travelGoodLink" operation="listFlightsOperation" portType="ns2:travelGoodPortType" variable="ListFlightsOperationOut"/>
                             </sequence>
                     </onMessage>
        
@@ -167,7 +167,7 @@
                         <correlation set="CorrelationSet1" initiate="no"/>
                     </correlations>
                     <sequence name="Sequence4">
-                        <assign name="Assign8">
+                        <assign name="initialVarFlight">
                             <copy>
                                 <from>count($BPEL_itinerary/ns0:flightBookingList/ns0:flightInfo)</from>
                                 <to variable="sizeOfFlightList"/>
@@ -181,7 +181,7 @@
                                 <to>$flightToBook/ns0:bookingStatus</to>
                             </copy>
                         </assign>
-                        <assign name="Assign9">
+                        <assign name="addFlightVariable">
                            
                             <copy>
                                 <from>$AddFlightToItineraryOperationIn.addFlightRequest/customerID</from>
@@ -204,7 +204,7 @@
                                 </to>
                             </copy>
                         </assign>
-                        <reply name="Reply5" partnerLink="travelGoodLink" operation="addFlightToItineraryOperation" portType="ns2:travelGoodPortType" variable="AddFlightToItineraryOperationOut"/>
+                        <reply name="ReplyAddFlight" partnerLink="travelGoodLink" operation="addFlightToItineraryOperation" portType="ns2:travelGoodPortType" variable="AddFlightToItineraryOperationOut"/>
                     </sequence>
                 </onMessage>
                
@@ -213,7 +213,7 @@
                         <correlation set="CorrelationSet1" initiate="no"/>
                     </correlations>
                     <sequence name="Sequence6">
-                        <assign name="Assign11">
+                        <assign name="initialVarHotel">
                             <copy>
                                 <from>count($BPEL_itinerary/ns0:hotelBookingList/ns0:hotelInfo)</from>
                                 <to variable="sizeOfHotelList"/>
@@ -227,7 +227,7 @@
                                 <to>$hotelToBook/ns0:hotelInfo</to>
                             </copy>
                         </assign>
-                        <assign name="Assign12">
+                        <assign name="addHotelVariable">
                             <copy>
                                 <from variable="hotelToBook"/>
                                 <to>$BPEL_itinerary/ns0:hotelBookingList[$sizeOfHotelList + 1]
@@ -249,7 +249,7 @@
                                 <to>$AddHotelToItineraryOperationOut.addHotelResult/customerID</to>
                             </copy>
                         </assign>
-                        <reply name="Reply7" partnerLink="travelGoodLink" operation="addHotelToItineraryOperation" portType="ns2:travelGoodPortType" variable="AddHotelToItineraryOperationOut"/>
+                        <reply name="ReplyAddHotel" partnerLink="travelGoodLink" operation="addHotelToItineraryOperation" portType="ns2:travelGoodPortType" variable="AddHotelToItineraryOperationOut"/>
                     </sequence>
                 </onMessage>
                 
@@ -258,13 +258,13 @@
                         <correlation set="CorrelationSet1" initiate="no"/>
                     </correlations>
                     <sequence name="Sequence5">
-                        <assign name="Assign10">
+                        <assign name="findItinerary">
                             <copy>
                                 <from variable="BPEL_itinerary"/>
                                 <to variable="GetItineraryOperationOut" part="itineraryResult"/>
                             </copy>
                         </assign>
-                        <reply name="Reply6" partnerLink="travelGoodLink" operation="getItineraryOperation" portType="ns2:travelGoodPortType" variable="GetItineraryOperationOut"/>
+                        <reply name="ReplyGetIT" partnerLink="travelGoodLink" operation="getItineraryOperation" portType="ns2:travelGoodPortType" variable="GetItineraryOperationOut"/>
                     </sequence>
                 </onMessage>
                          <onMessage partnerLink="travelGoodLink" operation="cancelItineraryOperation" portType="ns2:travelGoodPortType" variable="CancelItineraryOperationIn">
@@ -272,7 +272,7 @@
                         <correlation set="CorrelationSet1" initiate="no"/>
                     </correlations>
                     <sequence name="Sequence3">
-                        <assign name="Assign7">
+                        <assign name="AssignValue">
                             <copy>
                                     <from>false()</from>
                                         <to variable="planning"/>
@@ -290,7 +290,7 @@
                                 <to>$CancelItineraryOperationOut.cancelItineraryResult/status</to>
                             </copy>
                         </assign>
-                        <reply name="Reply4" partnerLink="travelGoodLink" operation="cancelItineraryOperation" portType="ns2:travelGoodPortType" variable="CancelItineraryOperationOut"/>
+                        <reply name="ReplyCancelIT" partnerLink="travelGoodLink" operation="cancelItineraryOperation" portType="ns2:travelGoodPortType" variable="CancelItineraryOperationOut"/>
                         <exit name="Exit1"/>
                     </sequence>
                 </onMessage>
@@ -299,11 +299,11 @@
                         <correlation set="CorrelationSet1" initiate="no"/>
                     </correlations>
                     <sequence name="Sequence9">
-                        <scope name="Scope4">
+                        <scope name="ScopeBooking">
                             <faultHandlers>
                                 <catch faultName="tns:fault1">
                                     <sequence name="Sequence11">
-                                        <forEach name="ForEachFlight2" parallel="no" counterName="ForEachFlight2Counter">
+                                        <forEach name="ForEachFlight" parallel="no" counterName="ForEachFlight2Counter">
                                                 <startCounterValue>1</startCounterValue>
                                                     <finalCounterValue>$sizeOfFlightList + 1</finalCounterValue>
                                                     <scope name="Scope3">
@@ -311,14 +311,19 @@
                                                                 <variable name="CancelFlightOut" messageType="tns:cancelFlightResponse"/>
                                                                     <variable name="CancelFlightIn" messageType="tns:cancelFlightRequest"/>
                                                             </variables>
-                                                            <if name="If3">
+                                                        <faultHandlers>
+                                                            <catch faultName="tns:fault1">
+                                                                <empty name="DoNothing"/>
+                                                            </catch>
+                                                        </faultHandlers>
+                                                        <if name="IfStatusConfirmed">
                                                                 <condition>'confirmed' = $BPEL_itinerary/ns0:flightBookingList[$ForEachFlight2Counter]/ns0:bookingStatus
                                                                             <sxed:editor>
                                                                                 <sxed:predicate path="$BPEL_itinerary/ns0:flightBookingList[$ForEachFlight2Counter]" source="from"/>
                                                                             </sxed:editor>
                                                                     </condition>
                                                                     <sequence name="Sequence12">
-                                                                        <assign name="Assign18">
+                                                                        <assign name="AssignInput">
                                                                                 <copy>
                                                                                         <from>$BPEL_itinerary/ns0:flightBookingList[$ForEachFlight2Counter]/ns0:flightInfo/ns1:bookingNumber
                                                                                                     <sxed:editor>
@@ -341,7 +346,7 @@
                                                                                     </copy>
                                                                             </assign>
                                                                             <invoke name="InvokeCancelFlight" partnerLink="flightLink" operation="cancelFlight" portType="tns:lameDuckPortType" inputVariable="CancelFlightIn" outputVariable="CancelFlightOut"/>
-                                                                            <if name="If4">
+                                                                            <if name="IfSuccessCancelled">
                                                                                 <condition>$CancelFlightOut.cancelResult</condition>
                                                                                     <assign name="changeStatus">
                                                                                         <copy>
@@ -358,7 +363,7 @@
                                                             </if>
                                                     </scope>
                                             </forEach>
-                                            <assign name="Assign20">
+                                            <assign name="AssignReply">
                                                 <copy>
                                                         <from>$BookItineraryOperationIn.bookItineraryQuery/customerID</from>
                                                             <to>$BookItineraryOperationOut.bookItineraryResult/customerID</to>
@@ -372,14 +377,14 @@
                                                             <to>$BookItineraryOperationOut.bookItineraryResult/status</to>
                                                     </copy>
                                             </assign>
-                                            <reply name="Reply8" partnerLink="travelGoodLink" operation="bookItineraryOperation" portType="ns2:travelGoodPortType" variable="BookItineraryOperationOut"/>
+                                            <reply name="ReplyBookItinerary" partnerLink="travelGoodLink" operation="bookItineraryOperation" portType="ns2:travelGoodPortType" variable="BookItineraryOperationOut"/>
                                     </sequence>
                                 </catch>
                                 <catch faultName="ns4:bookHotelOperationFault">
                                     <sequence name="Sequence15">
-                                        <if name="If14">
+                                        <if name="IfFNotEmpty">
                                             <condition>count($BPEL_itinerary/ns0:flightBookingList/ns0:flightInfo) &gt; 0</condition>
-                                                <forEach name="ForEachFlight3" parallel="no" counterName="ForEachFlight3Counter">
+                                                <forEach name="ForEachF" parallel="no" counterName="ForEachFlight3Counter">
                                                     <startCounterValue>1</startCounterValue>
                                                         <finalCounterValue>$sizeOfFlightList + 1</finalCounterValue>
                                                         <scope name="Scope8">
@@ -387,14 +392,19 @@
                                                                     <variable name="CancelFlightOut" messageType="tns:cancelFlightResponse"/>
                                                                         <variable name="CancelFlightIn" messageType="tns:cancelFlightRequest"/>
                                                                 </variables>
-                                                                <if name="If9">
+                                                            <faultHandlers>
+                                                                <catch faultName="tns:fault1">
+                                                                    <empty name="DoNothing"/>
+                                                                </catch>
+                                                            </faultHandlers>
+                                                            <if name="IfStatusConfirmed">
                                                                     <condition>'confirmed' = $BPEL_itinerary/ns0:flightBookingList[$ForEachFlight3Counter]/ns0:bookingStatus
                                                         <sxed:editor>
                                                                                     <sxed:predicate path="$BPEL_itinerary/ns0:flightBookingList[$ForEachFlight3Counter]" source="from"/>
                                                                                 </sxed:editor>
                                                                         </condition>
                                                                         <sequence name="Sequence22">
-                                                                            <assign name="Assign30">
+                                                                            <assign name="AssignInput">
                                                                                     <copy>
                                                                                             <from>$BPEL_itinerary/ns0:flightBookingList[$ForEachFlight3Counter]/ns0:flightInfo/ns1:bookingNumber
                                                                     <sxed:editor>
@@ -417,7 +427,7 @@
                                                                                         </copy>
                                                                                 </assign>
                                                                                 <invoke name="InvokeCancelF" partnerLink="flightLink" operation="cancelFlight" portType="tns:lameDuckPortType" inputVariable="CancelFlightIn" outputVariable="CancelFlightOut"/>
-                                                                                <if name="If10">
+                                                                                <if name="IfSuccess">
                                                                                     <condition>$CancelFlightOut.cancelResult</condition>
                                                                                         <assign name="changeStatusF">
                                                                                             <copy>
@@ -435,9 +445,9 @@
                                                         </scope>
                                                 </forEach>
                                         </if>
-                                        <if name="If15">
+                                        <if name="IfHotNotEmpty">
                                             <condition>count($BPEL_itinerary/ns0:hotelBookingList/ns0:hotelInfo) &gt; 0</condition>
-                                                <forEach name="ForEachHotel2" parallel="no" counterName="ForEachHotel2Counter">
+                                                <forEach name="ForEachH" parallel="no" counterName="ForEachHotel2Counter">
                                                     <startCounterValue>1</startCounterValue>
                                                         <finalCounterValue>$sizeOfHotelList + 1</finalCounterValue>
                                                         <scope name="Scope5">
@@ -445,35 +455,19 @@
                                                                     <variable name="CancelHotelOperationOut" messageType="ns4:cancelHotelOperationResponse"/>
                                                                         <variable name="CancelHotelOperationIn" messageType="ns4:cancelHotelOperationRequest"/>
                                                                 </variables>
-                                                                <faultHandlers>
-                                                                    <catchAll>
-                                                                            <sequence name="Sequence24">
-                                                                                    <assign name="Assign34">
-                                                                                            <copy>
-                                                                                                    <from>$BookItineraryOperationIn.bookItineraryQuery/customerID</from>
-                                                                                                        <to>$BookItineraryOperationOut.bookItineraryResult/customerID</to>
-                                                                                                </copy>
-                                                                                                <copy>
-                                                                                                    <from>$BookItineraryOperationIn.bookItineraryQuery/itineraryNo</from>
-                                                                                                        <to>$BookItineraryOperationOut.bookItineraryResult/itineraryNo</to>
-                                                                                                </copy>
-                                                                                                <copy>
-                                                                                                    <from>'failed'</from>
-                                                                                                        <to>$BookItineraryOperationOut.bookItineraryResult/status</to>
-                                                                                                </copy>
-                                                                                        </assign>
-                                                                                        <reply name="Reply12" partnerLink="travelGoodLink" operation="bookItineraryOperation" portType="ns2:travelGoodPortType" variable="BookItineraryOperationOut"/>
-                                                                                </sequence>
-                                                                        </catchAll>
-                                                                </faultHandlers>
-                                                                <if name="If5">
+                                                            <faultHandlers>
+                                                                <catch faultName="ns4:cancelHotelOperationFault">
+                                                                    <empty name="DoNothing"/>
+                                                                </catch>
+                                                            </faultHandlers>
+                                                            <if name="IfStatusConfirmed">
                                                                     <condition>'confirmed' = $BPEL_itinerary/ns0:hotelBookingList[$ForEachHotel2Counter]/ns0:bookingStatus
                                                                         <sxed:editor>
                                                                                     <sxed:predicate path="$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotel2Counter]" source="from"/>
                                                                                 </sxed:editor>
                                                                         </condition>
                                                                         <sequence name="Sequence14">
-                                                                            <assign name="Assign21">
+                                                                            <assign name="AssignInput">
                                                                                     <copy>
                                                                                             <from>$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotel2Counter]/ns0:hotelInfo/ns3:bookingNo
                                                                                                 <sxed:editor>
@@ -484,7 +478,7 @@
                                                                                         </copy>
                                                                                 </assign>
                                                                                 <invoke name="InvokeCancelHotel" partnerLink="HotelLink" operation="cancelHotelOperation" portType="ns4:hotelServicePortType" inputVariable="CancelHotelOperationIn" outputVariable="CancelHotelOperationOut"/>
-                                                                                <if name="If6">
+                                                                                <if name="IfSuccess">
                                                                                     <condition>$CancelHotelOperationOut.cancellationResult</condition>
                                                                                         <assign name="changeStatusHotel">
                                                                                             <copy>
@@ -521,9 +515,9 @@
                                 </catch>
                             </faultHandlers>
                             <sequence name="Sequence13">
-                                <if name="If11">
+                                <if name="IfFlightNotEmpty">
                                     <condition>count($BPEL_itinerary/ns0:flightBookingList/ns0:flightInfo) &gt; 0</condition>
-                                    <forEach name="ForEachFlight" parallel="no" counterName="ForEachFlightCounter">
+                                    <forEach name="ForEachFlightToBook" parallel="no" counterName="ForEachFlightCounter">
                                         <startCounterValue>1</startCounterValue>
                                             <finalCounterValue>$sizeOfFlightList + 1</finalCounterValue>
                                             <scope name="Scope1">
@@ -532,7 +526,7 @@
                                                         <variable name="BookFlightIn" messageType="tns:bookFlightRequest"/>
                                                 </variables>
                                                 <sequence name="Sequence8">
-                                                    <assign name="Assign13">
+                                                    <assign name="AssignInput">
                                                             <copy>
                                                                     <from>$BookItineraryOperationIn.bookItineraryQuery/creditCardInfo</from>
                                                                         <to>$BookFlightIn.bookFlightQuery/ns1:creditcardInfo</to>
@@ -547,7 +541,7 @@
                                                                 </copy>
                                                         </assign>
                                                         <invoke name="InvokeBookFlight" partnerLink="flightLink" operation="bookFlight" portType="tns:lameDuckPortType" inputVariable="BookFlightIn" outputVariable="BookFlightOut"/>
-                                                        <if name="If1">
+                                                        <if name="IfBookSuccess">
                                                             <condition>$BookFlightOut.bookingResult</condition>
                                                                 <assign name="changeBookStatus">
                                                                     <copy>
@@ -564,9 +558,9 @@
                                         </scope>
                                     </forEach>
                                 </if>
-                                <if name="If12">
+                                <if name="IfHotelNotEmpty">
                                     <condition>count($BPEL_itinerary/ns0:hotelBookingList/ns0:hotelInfo) &gt; 0</condition>
-                                    <forEach name="ForEachHotelB" parallel="no" counterName="ForEachHotelBCounter">
+                                    <forEach name="ForEachHotelToBook" parallel="no" counterName="ForEachHotelBCounter">
                                         <startCounterValue>1</startCounterValue>
                                         <finalCounterValue>$sizeOfHotelList + 1</finalCounterValue>
                                         <scope name="Scope9">
@@ -575,7 +569,7 @@
                                                 <variable name="BookHotelOperationIn" messageType="ns4:bookHotelOperationRequest"/>
                                             </variables>
                                             <sequence name="Sequence23">
-                                                <assign name="Assign33">
+                                                <assign name="AssignInput">
                                                     <copy>
                                                         <from>$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotelBCounter]/ns0:hotelInfo/ns3:bookingNo
                                                             <sxed:editor>
@@ -589,10 +583,10 @@
                                                         <to>$BookHotelOperationIn.bookingWithCreditCard/ns3:creditCardInfo</to>
                                                     </copy>
                                                 </assign>
-                                                <invoke name="Invoke3" partnerLink="HotelLink" operation="bookHotelOperation" portType="ns4:hotelServicePortType" inputVariable="BookHotelOperationIn" outputVariable="BookHotelOperationOut"/>
-                                                <if name="If13">
+                                                <invoke name="InvokeBookHotel" partnerLink="HotelLink" operation="bookHotelOperation" portType="ns4:hotelServicePortType" inputVariable="BookHotelOperationIn" outputVariable="BookHotelOperationOut"/>
+                                                <if name="IfBookSuccess">
                                                     <condition>$BookHotelOperationOut.bookingResult</condition>
-                                                    <assign name="Assign32">
+                                                    <assign name="changeStatus">
                                                         <copy>
                                                             <from>'confirmed'</from>
                                                             <to>$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotelBCounter]/ns0:bookingStatus
@@ -607,7 +601,7 @@
                                         </scope>
                                     </forEach>
                                 </if>
-                                <assign name="Assign14">
+                                <assign name="setVar">
                                     <copy>
                                             <from>'success'</from>
                                                 <to>$BookItineraryOperationOut.bookItineraryResult/status</to>
@@ -627,10 +621,10 @@
                                             <from>false()</from>
                                                 <to variable="planning"/>
                                         </copy>
-                                        <copy>
-                                            <from>true()</from>
-                                                <to variable="secondPhase"/>
-                                        </copy>
+                                    <copy>
+                                        <from>true()</from>
+                                        <to variable="cancellingPhase"/>
+                                    </copy>
                                 </assign>
                             </sequence>
                         </scope>
@@ -638,15 +632,15 @@
                 </onMessage>
             </pick>
         </while>
-        <while name="secondPhase">
-            <condition>$secondPhase</condition>
+        <while name="cancelling">
+            <condition>$cancellingPhase</condition>
             <pick name="Pick2">
                 <onMessage partnerLink="travelGoodLink" operation="readItineraryOperation" portType="ns2:travelGoodPortType" variable="ReadItineraryOperationIn">
                     <correlations>
                         <correlation set="CorrelationSet1" initiate="no"/>
                     </correlations>
                     <sequence name="Sequence16">
-                        <assign name="Assign23">
+                        <assign name="AssignItinerary">
                             <copy>
                                 <from variable="BPEL_itinerary"/>
                                 <to variable="ReadItineraryOperationOut" part="readItineraryResult"/>
@@ -662,7 +656,7 @@
                     <sequence name="Sequence17">
                         <flow name="Flow1">
                             <sequence name="FlowSequence">
-                                <if name="If16">
+                                <if name="IfHotelNotEmpty">
                                     <condition>count($BPEL_itinerary/ns0:hotelBookingList/ns0:hotelInfo) &gt; 0</condition>
                                     <forEach name="ForEachHotelCancel" parallel="no" counterName="ForEachHotelCancelCounter">
                                         <startCounterValue>1</startCounterValue>
@@ -674,24 +668,33 @@
                                                     </variables>
                                                 <faultHandlers>
                                                     <catch faultName="ns4:cancelHotelOperationFault">
-                                                        <empty name="Empty2"/>
+                                                        <sequence name="Sequence26">
+                                                            <empty name="DoNothing"/>
+                                                        </sequence>
                                                     </catch>
                                                 </faultHandlers>
                                                 <sequence name="Sequence19">
-                                                        <assign name="Assign25">
+                                                    <if name="IfConfirmed">
+                                                        <condition>'confirmed' = $BPEL_itinerary/ns0:hotelBookingList[$ForEachHotelCancelCounter]/ns0:bookingStatus
+                                                            <sxed:editor>
+                                                                <sxed:predicate path="$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotelCancelCounter]" source="from"/>
+                                                            </sxed:editor>
+                                                        </condition>
+                                                        <sequence name="Sequence27">
+                                                            <assign name="AssignInput">
                                                                 <copy>
-                                                                        <from>$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotelCancelCounter]/ns0:hotelInfo/ns3:bookingNo
+                                                                    <from>$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotelCancelCounter]/ns0:hotelInfo/ns3:bookingNo
                                                 <sxed:editor>
-                                                                                        <sxed:predicate path="$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotelCancelCounter]" source="from"/>
-                                                                                    </sxed:editor>
-                                                                            </from>
-                                                                            <to variable="CancelHotelOperationIn" part="bookingCancellation"/>
-                                                                    </copy>
+                                                                                    <sxed:predicate path="$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotelCancelCounter]" source="from"/>
+                                                                                </sxed:editor>
+                                                                        </from>
+                                                                        <to variable="CancelHotelOperationIn" part="bookingCancellation"/>
+                                                                </copy>
                                                             </assign>
                                                             <invoke name="InvokeCancelHotel" partnerLink="HotelLink" operation="cancelHotelOperation" portType="ns4:hotelServicePortType" inputVariable="CancelHotelOperationIn" outputVariable="CancelHotelOperationOut"></invoke>
-                                                            <if name="If8">
+                                                            <if name="IfCancelSuccess">
                                                                 <condition>$CancelHotelOperationOut.cancellationResult</condition>
-                                                                    <assign name="Assign27">
+                                                                    <assign name="changeStatus">
                                                                         <copy>
                                                                                 <from>'canceled'</from>
                                                                                     <to>$BPEL_itinerary/ns0:hotelBookingList[$ForEachHotelCancelCounter]/ns0:bookingStatus
@@ -702,13 +705,15 @@
                                                                             </copy>
                                                                     </assign>
                                                             </if>
+                                                        </sequence>
+                                                    </if>
                                                     </sequence>
                                             </scope>
                                     </forEach>
                                 </if>
                             </sequence>
                             <sequence name="FlowSequence1">
-                                <if name="If17">
+                                <if name="IfFlightNotEmpty">
                                     <condition>count($BPEL_itinerary/ns0:flightBookingList/ns0:flightInfo) &gt; 0</condition>
                                     <forEach name="ForEachFlightCancel" parallel="no" counterName="ForEachFlightCancelCounter">
                                         <startCounterValue>1</startCounterValue>
@@ -721,12 +726,19 @@
                                                 <faultHandlers>
                                                     <catch faultName="ns5:fault1">
                                                         <sequence name="Sequence25">
-                                                            <empty name="Empty3"/>
+                                                            <empty name="DoNothing"/>
                                                         </sequence>
                                                     </catch>
                                                 </faultHandlers>
                                                 <sequence name="Sequence18">
-                                                    <assign name="Assign24">
+                                                    <if name="IfConfirmed">
+                                                        <condition>'confirmed' = $BPEL_itinerary/ns0:flightBookingList[$ForEachFlightCancelCounter]/ns0:bookingStatus
+                                                            <sxed:editor>
+                                                                <sxed:predicate path="$BPEL_itinerary/ns0:flightBookingList[$ForEachFlightCancelCounter]" source="from"/>
+                                                            </sxed:editor>
+                                                        </condition>
+                                                        <sequence name="Sequence28">
+                                                            <assign name="AssignInput">
                                                                 <copy>
                                                                     <from>$BPEL_itinerary/ns0:flightBookingList[$ForEachFlightCancelCounter]/ns0:flightInfo/ns1:bookingNumber
                                                     <sxed:editor>
@@ -735,7 +747,7 @@
                                                                         </from>
                                                                         <to>$CancelFlightIn.cancelFlightQuery/ns1:bookingNumber</to>
                                                                 </copy>
-                                                                <copy>
+                                                                    <copy>
                                                                     <from>$BPEL_itinerary/ns0:flightBookingList[$ForEachFlightCancelCounter]/ns0:flightInfo/ns1:flightPrice
                                                     <sxed:editor>
                                                                                     <sxed:predicate path="$BPEL_itinerary/ns0:flightBookingList[$ForEachFlightCancelCounter]" source="from"/>
@@ -743,28 +755,30 @@
                                                                         </from>
                                                                         <to>$CancelFlightIn.cancelFlightQuery/ns1:flightPrice</to>
                                                                 </copy>
-                                                                <copy>
+                                                                    <copy>
                                                                     <from>$BookItineraryOperationIn.bookItineraryQuery/creditCardInfo</from>
                                                                         <to>$CancelFlightIn.cancelFlightQuery/ns1:creditcardInfo</to>
                                                                 </copy>
-                                                        <copy>
-                                                            <from>false()</from>
-                                                            <to variable="CancelFlightOut" part="cancelResult"/>
-                                                        </copy>
-                                                    </assign>
-                                                        <invoke name="InvokeCancelFlight" partnerLink="flightLink" operation="cancelFlight" portType="ns5:lameDuckPortType" inputVariable="CancelFlightIn" outputVariable="CancelFlightOut"/>
-                                                    <if name="If18">
-                                                        <condition>$CancelFlightOut.cancelResult</condition>
-                                                        <assign name="Assign35">
-                                                            <copy>
-                                                                <from>'canceled'</from>
-                                                                <to>$BPEL_itinerary/ns0:flightBookingList[$ForEachFlightCancelCounter]/ns0:bookingStatus
+                                                                    <copy>
+                                                                    <from>false()</from>
+                                                                        <to variable="CancelFlightOut" part="cancelResult"/>
+                                                                </copy>
+                                                            </assign>
+                                                            <invoke name="InvokeCancelFlight" partnerLink="flightLink" operation="cancelFlight" portType="ns5:lameDuckPortType" inputVariable="CancelFlightIn" outputVariable="CancelFlightOut"/>
+                                                            <if name="IfCancelSuccess">
+                                                                <condition>$CancelFlightOut.cancelResult</condition>
+                                                                    <assign name="changeStatus">
+                                                                        <copy>
+                                                                                <from>'canceled'</from>
+                                                                                    <to>$BPEL_itinerary/ns0:flightBookingList[$ForEachFlightCancelCounter]/ns0:bookingStatus
                                                                     <sxed:editor>
-                                                                        <sxed:predicate path="$BPEL_itinerary/ns0:flightBookingList[$ForEachFlightCancelCounter]" source="to"/>
-                                                                    </sxed:editor>
-                                                                </to>
-                                                            </copy>
-                                                        </assign>
+                                                                                                <sxed:predicate path="$BPEL_itinerary/ns0:flightBookingList[$ForEachFlightCancelCounter]" source="to"/>
+                                                                                            </sxed:editor>
+                                                                                    </to>
+                                                                            </copy>
+                                                                    </assign>
+                                                            </if>
+                                                        </sequence>
                                                     </if>
                                                 </sequence>
                                         </scope>
