@@ -9,14 +9,15 @@
     </service>
     
     <link referencedNamespace="http://schemas.xmlsoap.org/ws/2001/10/inspection/" 
-          location="http://localhost:8080/NiceView/Inspection.wsil" >
+          location="http://localhost:8080/NiceViewWSIL/inspection.wsil" >
         <!--the path to NiceView WSIL can be in any other location in the glassfish server-->
         <abstract>Hotel registration company</abstract>
     </link>    
 
     <link referencedNamespace="http://schemas.xmlsoap.org/ws/2001/10/inspection/" 
-              location="http://localhost:8080/LameDuck/Inspection.wsil" >
+              location="http://localhost:8080/LameDuckWSIL/inspection.wsil" >
         <!--the path to LameDuck WSIL can be in any other location in the glassfish server-->        
         <abstract>Travel planning company</abstract>
     </link>	
 </inspection>
+
