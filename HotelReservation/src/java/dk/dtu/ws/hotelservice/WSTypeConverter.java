@@ -16,7 +16,7 @@ public class WSTypeConverter {
         hotel.setHotelName(booking.getHotel().getName());
         hotel.setHotelServiceName(NiceView.SERVICE_NAME);
         hotel.setPrice(booking.getPrice());
-        hotel.setCancellable(booking.getHotel().getCancellable());
+        hotel.setCancellable(booking.getHotel().isCancellable());
         return hotel;
     }
     
