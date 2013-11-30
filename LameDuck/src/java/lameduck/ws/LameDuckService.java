@@ -36,18 +36,9 @@ public class LameDuckService {
     public FlightInfoList getFlights(GetFlightQuery getFlightQuery) {
         FlightInfoList matchedFlights = new FlightInfoList();
         
-        System.out.println("inside getFlights");
-        System.out.println(getFlightQuery.getDate());
-        System.out.println(getFlightQuery.getStartDest());
-        System.out.println(getFlightQuery.getFinalDest());
-        
+
         for (FlightInfoType flightInfo : fdb.flightInfoList.getFlightInfo()) {
-            
-            System.out.println("HENRY:"+flightInfo.getFlight().getStartAirpot()+
-                    ","+flightInfo.getFlight().getDestinationAirport());
-            System.out.println("HENRY:"+flightInfo.getFlight().getDatetimeLift());
-            XMLGregorianCalendar dateTimeLift = flightInfo.getFlight().getDatetimeLift();
-            System.out.println("HENRY:"+dateTimeLift.getDay());
+           
             int day = flightInfo.getFlight().getDatetimeLift().getDay();
             int month = flightInfo.getFlight().getDatetimeLift().getMonth();
             int year = flightInfo.getFlight().getDatetimeLift().getYear();
@@ -83,7 +74,7 @@ public class LameDuckService {
             validateCreditCard(GROUP_NUMBER, bookFlightQuery.getCreditcardInfo(), flightPrice);
             chargeCreditCard(GROUP_NUMBER, bookFlightQuery.getCreditcardInfo(), flightPrice, lameDuckAccount);
             bookedFlights.add(flightInfo);
-            System.out.println("New flight booked, booking number is:  " + bookedFlights.get(0).getBookingNumber());
+            System.out.println("New flight booked, booking number is:  " + bookingNumber);
         } catch (CreditCardFaultMessage ex) {
             CreditCardFaultType fault = ex.getFaultInfo();
             if (fault != null) {
@@ -96,6 +87,7 @@ public class LameDuckService {
     }
 
     public boolean cancelFlight(CancelFlightQuery cancelFlightQuery) throws CancelFlightFault {
+          
         AccountType lameDuckAccount = new AccountType();
         lameDuckAccount.setName("LameDuck");
         lameDuckAccount.setNumber("50208812");
@@ -107,13 +99,14 @@ public class LameDuckService {
         FlightInfoType flightInfo = findBookedFlight(cancelFlightQuery.getBookingNumber());
         if (flightInfo == null) {
             throw createCancellationFault("No flight found", "Booking no:" + bookingNumber);
-        }
+        } 
         if(!flightInfo.isCancellable()){
-            throw createCancellationFault("Flight has non cancellable policy", "Booking no:" + bookingNumber);            
-        }
+            System.out.println("Flight : "+bookingNumber+" is not cancellable based on policy============");
+            throw createCancellationFault("Flight has non cancellable policy", "Booking no:" + bookingNumber);          
+        } 
         try {
             refundCreditCard(GROUP_NUMBER, cancelFlightQuery.getCreditcardInfo(), refundAmount, lameDuckAccount);
-            System.out.println("Flight with booking number " + bookedFlights.get(0).getBookingNumber() + " has been canceled.");
+            System.out.println("Flight with booking number " +  bookingNumber + " has been canceled.");
             bookedFlights.remove(flightInfo);
         } catch (CreditCardFaultMessage ex) {
             CreditCardFaultType fault = ex.getFaultInfo();
@@ -123,7 +116,8 @@ public class LameDuckService {
                 throw createCancellationFault("Could not process credit card", "Credit card information are invalid");
             }
         }
-        return true;
+          return true;
+      
     }
     
     public void reset(String resetQuery){

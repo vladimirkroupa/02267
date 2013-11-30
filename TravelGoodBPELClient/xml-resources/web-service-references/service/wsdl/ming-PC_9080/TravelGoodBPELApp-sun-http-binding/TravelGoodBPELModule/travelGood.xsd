@@ -39,7 +39,7 @@
         
     <xsd:complexType name="flightBooking">
         <xsd:sequence>
-            <xsd:element name="flightBooking" type="fd:FlightInfoType"></xsd:element>
+            <xsd:element name="flightBooking" type="fd:FlightInfoType" maxOccurs="1"></xsd:element>
             <xsd:element name="flightBookingStatus" type="tns:statusType"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
@@ -94,4 +94,29 @@
         <xsd:restriction base="xsd:string"/>
     </xsd:simpleType>
     <xsd:element name="x_itineraryNo" type="tns:itineraryNoType"></xsd:element>
+    <xsd:element name="x_itinerary">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="itineraryNo" type="tns:itineraryNoType"></xsd:element>
+                <xsd:element name="itineraryStatus" type="xsd:string"></xsd:element>
+                <xsd:element name="flightBookingList" type="tns:x_flightBooking" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+                <xsd:element name="hotelBookingList" type="tns:x_hotelBooking" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="customerIdType">
+        <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+    <xsd:complexType name="x_flightBooking">
+        <xsd:sequence>
+            <xsd:element name="bookingStatus" type="xsd:string"></xsd:element>
+            <xsd:element name="flightInfo" type="fd:FlightInfoType"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="x_hotelBooking">
+        <xsd:sequence>
+            <xsd:element name="bookingStatus" type="xsd:string"></xsd:element>
+            <xsd:element name="hotelInfo" type="hr:hotelType"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
 </xsd:schema>
