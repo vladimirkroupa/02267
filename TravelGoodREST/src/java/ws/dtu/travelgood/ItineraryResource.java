@@ -108,7 +108,7 @@ public class ItineraryResource {
             itinerary.setItineraryStatus(StatusType.CONFIRMED);
             return Response.ok().build();
         } else {
-            //TODO: cancel all previous
+            cancelBooking(itineraryNo);
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
@@ -234,8 +234,8 @@ public class ItineraryResource {
     public Response cancelBooking(@PathParam("itineraryNo") String itineraryNo) {
         CreditCardInfoType creditCard = itineraryNoToCreditCardMap.get(itineraryNo);
         Itinerary itinerary = itineraryMap.get(itineraryNo);
-        
-        if(!validateCancellationAllowed(itinerary)){
+
+        if (!validateCancellationAllowed(itinerary)) {
             return Response.status(Response.Status.PRECONDITION_FAILED).build();
         }
         int numberOfFlights = itinerary.getFlightBookingList().size();
@@ -258,7 +258,7 @@ public class ItineraryResource {
                 } catch (CancelFlightFault ex) {
                     Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            
+
             }
         }
         for (HotelBooking booking : itinerary.getHotelBookingList()) {
@@ -274,11 +274,10 @@ public class ItineraryResource {
                     Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }        
-        if(cancelledFlights==numberOfFlights && cancelledHotels == numberOfHotels){
-            itinerary.setItineraryStatus(StatusType.CANCELLED);
         }
-        else{
+        if (cancelledFlights == numberOfFlights && cancelledHotels == numberOfHotels) {
+            itinerary.setItineraryStatus(StatusType.CANCELLED);
+        } else {
             itinerary.setItineraryStatus(StatusType.PARTIALLY_CANCELLED);
         }
         return Response.ok().build();
