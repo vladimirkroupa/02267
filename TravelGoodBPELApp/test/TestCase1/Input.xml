@@ -1,9 +1,0 @@
-<soapenv:Envelope xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:trav="urn://travelGood" xmlns:trav1="urn://travelGoodTypes">
-  <soapenv:Body>
-    <trav:flightQuery>
-      <trav1:startDest>?string?</trav1:startDest>
-      <trav1:finalDest>?string?</trav1:finalDest>
-      <trav1:date>?2008-09-29?</trav1:date>
-    </trav:flightQuery>
-  </soapenv:Body>
-</soapenv:Envelope>
