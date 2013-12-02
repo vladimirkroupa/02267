@@ -50,7 +50,7 @@ public class ItineraryResource {
         itineraryMap = new HashMap<String, Itinerary>();
         itineraryNoToCreditCardMap = new HashMap<String, CreditCardInfoType>();
     }
-       
+
     @POST
     @Path("itineraries")
     @Produces(MediaType.TEXT_PLAIN)
@@ -62,7 +62,7 @@ public class ItineraryResource {
         itineraryMap.put(itinerary.getItineraryNo(), itinerary);
         return itinerary.getItineraryNo();
     }
-    
+
     @GET
     @Path("itinerary/{itineraryNo}")
     @Produces(MediaType.APPLICATION_XML)
@@ -71,7 +71,7 @@ public class ItineraryResource {
         Itinerary itinerary = itineraryMap.get(itineraryNo);
         return itinerary;
     }
-    
+
     @POST
     @Path("itinerary/{itineraryNo}/book")
     public Response bookItinerary(@PathParam("itineraryNo") String itineraryNo,
@@ -108,11 +108,11 @@ public class ItineraryResource {
             itinerary.setItineraryStatus(StatusType.CONFIRMED);
             return Response.ok().build();
         } else {
-            cancelBooking(itineraryNo);
+            System.out.println(cancelBooking(itineraryNo).getStatus());
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
-    
+
     private boolean bookFlight(List<FlightBooking> flights, CreditCardInfoType ccInfo) {
         for (FlightBooking booking : flights) {
             BookFlightQuery query = new BookFlightQuery();
@@ -128,7 +128,7 @@ public class ItineraryResource {
         }
         return true;
     }
-    
+
     private boolean bookHotels(List<HotelBooking> hotels, CreditCardInfoType ccInfo) {
         for (HotelBooking booking : hotels) {
             HotelBookingWithCreditCard query = new HotelBookingWithCreditCard();
@@ -169,13 +169,13 @@ public class ItineraryResource {
         if (hotelBooking == null) {
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
-        
+
         Itinerary itinerary = itineraryMap.get(itineraryNo);
-        
+
         HotelBooking hb = new HotelBooking();
         hb.setHotelBookingStatus(StatusType.UNCONFIRMED);
         hb.setHotelBooking(hotelBooking);
-        
+
         itinerary.getHotelBookingList().add(hb);
 
         return Response.ok().build();
@@ -256,9 +256,12 @@ public class ItineraryResource {
                         cancelledFlights++;
                     }
                 } catch (CancelFlightFault ex) {
-                    Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);                    
                 }
 
+            } else {
+                booking.setFlightBookingStatus(StatusType.CANCELLED);
+                cancelledFlights++;
             }
         }
         for (HotelBooking booking : itinerary.getHotelBookingList()) {
@@ -273,8 +276,12 @@ public class ItineraryResource {
                 } catch (CancelHotelOperationFault ex) {
                     Logger.getLogger(ItineraryResource.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } else {
+                booking.setHotelBookingStatus(StatusType.CANCELLED);
+                cancelledHotels++;
             }
         }
+                        
         if (cancelledFlights == numberOfFlights && cancelledHotels == numberOfHotels) {
             itinerary.setItineraryStatus(StatusType.CANCELLED);
         } else {
@@ -282,25 +289,25 @@ public class ItineraryResource {
         }
         return Response.ok().build();
     }
-    
-    private boolean validateCancellationAllowed(Itinerary itinerary){
-        Date earliestFlightDate=null;
+
+    private boolean validateCancellationAllowed(Itinerary itinerary) {
+        Date earliestFlightDate = null;
         for (FlightBooking booking : itinerary.getFlightBookingList()) {
             Date flightDate = DateUtils.toDate(booking.getFlightBooking().getFlight().getDatetimeLift());
-            if(earliestFlightDate==null){
+            if (earliestFlightDate == null) {
                 earliestFlightDate = flightDate;
             }
-            if(earliestFlightDate.compareTo(flightDate)>0){
+            if (earliestFlightDate.compareTo(flightDate) > 0) {
                 earliestFlightDate = flightDate;
             }
-        }        
-        
+        }
+
         Date curDate = new Date();
         final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
-        int diffInDays = (int) ((earliestFlightDate.getTime()-curDate.getTime())/ DAY_IN_MILLIS );
-        if(diffInDays<2){
-            System.out.println("Validation error due to first flight in "+ earliestFlightDate+
-                    " which is less than 2 days from current date");
+        int diffInDays = (int) ((earliestFlightDate.getTime() - curDate.getTime()) / DAY_IN_MILLIS);
+        if (diffInDays < 2) {
+            System.out.println("Validation error due to first flight in " + earliestFlightDate
+                    + " which is less than 2 days from current date");
             return false;
         }
         return true;
@@ -310,15 +317,15 @@ public class ItineraryResource {
     public void reset() {
         HotelBookingOffers.reset();
         FlightBookingData.reset();
-        
+
         itineraryMap.clear();
         itineraryNoToCreditCardMap.clear();
         itineraryNo = 1;
-        
+
         resetNiceView("");
         resetLameDuck("");
     }
-    
+
     private void validateItineraryNo(String itineraryNo) {
         if (!itineraryMap.containsKey(itineraryNo)) {
             // return HTTP 400
@@ -365,5 +372,4 @@ public class ItineraryResource {
         ws.lameduck.LameDuckPortType port = service.getLameDuckPortTypeBindingPort();
         port.reset(resetQuery);
     }
-    
 }
